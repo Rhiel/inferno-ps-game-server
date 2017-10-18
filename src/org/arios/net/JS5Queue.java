@@ -1,5 +1,6 @@
 package org.arios.net;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +11,7 @@ import org.arios.game.system.task.TaskExecutor;
 
 /**
  * Handles the JS5 queue for a session.
+ *
  * @author Emperor
  */
 public final class JS5Queue {
@@ -36,79 +38,94 @@ public final class JS5Queue {
 
     /**
      * Constructs a new {@code JS5Queue} {@code Object}.
+     *
      * @param session The I/O session.
      */
     public JS5Queue(IoSession session) {
-	this.session = session;
+        this.session = session;
     }
 
     /**
      * Queues a JS-5 request.
-     * @param container The container.
-     * @param archive The archive.
+     *
+     * @param container    The container.
+     * @param archive      The archive.
      * @param highPriority If the request is high priority.
      */
     public void queue(int container, int archive, boolean highPriority) {
-	lock.lock();
-	int key = container << 16 | archive;
-	if (queue.containsKey(key)) {
-	    // System.err.println("Queue already contained request " + container
-	    // + "," + archive + " > " + (container << 16 | archive) + ".");
-	}
-	queue.put(key, highPriority);
-	lock.unlock();
-	release();
+        lock.lock();
+        int key = container << 16 | archive;
+        if (queue.containsKey(key)) {
+            // System.err.println("Queue already contained request " + container
+            // + "," + archive + " > " + (container << 16 | archive) + ".");
+        }
+        queue.put(key, highPriority);
+        lock.unlock();
+        release();
+    }
+
+    public void queueData(ByteBuffer buffer) {
+        int key = (buffer.get() & 0xFF);
+        session.setJs5Encryption(key);
+        byte[] data = new byte[key];
+        for ( int p = 0; p < data.length; p++ )
+            data[p] ^= key;
+        buffer.getShort();
+       // session.queue(ByteBuffer.wrap(data));
     }
 
     /**
      * Releases the queue.
      */
     public void release() {
-	lock.lock();
-	if (!scheduledRelease) {
-	    scheduledRelease = true;
-	    TaskExecutor.getExecutor().schedule(new Runnable() {
-		@Override
-		public void run() {
-		    lock.lock();
-		    for (Integer hash : queue.keySet()) {
-			try {
-			    session.write(new int[] { hash >> 16 & 0xFF, hash & 0xFFFF, queue.get(hash) ? 1 : 0 });
-			} catch (Throwable t) {
-			    t.printStackTrace();
-			}
-		    }
-		    queue.clear();
-		    scheduledRelease = false;
-		    lock.unlock();
-		}
-	    }, 100, TimeUnit.MILLISECONDS);
-	}
-	lock.unlock();
+        lock.lock();
+        if (!scheduledRelease) {
+            scheduledRelease = true;
+            TaskExecutor.getExecutor().schedule(new Runnable() {
+                @Override
+                public void run() {
+                    lock.lock();
+                    for (Integer hash : queue.keySet()) {
+                        try {
+                            session.write(new int[]{hash >> 16 & 0xFF, hash & 0xFFFF, queue.get(hash) ? 1 : 0});
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                        }
+                    }
+                    queue.clear();
+                    scheduledRelease = false;
+                    lock.unlock();
+                }
+            }, 100, TimeUnit.MILLISECONDS);
+        }
+        lock.unlock();
     }
 
     /**
      * Gets the session.
+     *
      * @return the session
      */
     public IoSession getSession() {
-	return session;
+        return session;
     }
 
     /**
      * Gets the scheduledRelease.
+     *
      * @return the scheduledRelease
      */
     public boolean isScheduledRelease() {
-	return scheduledRelease;
+        return scheduledRelease;
     }
 
     /**
      * Sets the scheduledRelease.
+     *
      * @param scheduledRelease the scheduledRelease to set.
      */
     public void setScheduledRelease(boolean scheduledRelease) {
-	this.scheduledRelease = scheduledRelease;
+        this.scheduledRelease = scheduledRelease;
     }
 
 }

@@ -262,7 +262,6 @@ public class DynamicRegion extends Region {
      * @param r The region the chunk is copied from.
      */
     public void replaceChunk(int z, int x, int y, RegionChunk chunk, Region r) {
-	Region.load(DynamicRegion.super);
 	RegionPlane p = getPlanes()[z];
 	chunks[z][x][y] = chunk;
 	p.getChunks()[x][y] = chunk;

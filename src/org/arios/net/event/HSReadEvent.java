@@ -11,6 +11,7 @@ import org.arios.tools.RandomFunction;
 
 /**
  * Handles handshake read events.
+ *
  * @author Emperor
  */
 public final class HSReadEvent extends IoReadEvent {
@@ -20,47 +21,48 @@ public final class HSReadEvent extends IoReadEvent {
 
     /**
      * Constructs a new {@code HSReadEvent}.
+     *
      * @param session The session.
-     * @param buffer The buffer.
+     * @param buffer  The buffer.
      */
     public HSReadEvent(IoSession session, ByteBuffer buffer) {
-	super(session, buffer);
+        super(session, buffer);
     }
 
     @Override
     public void read(IoSession session, ByteBuffer buffer) {
-	Integer amount = count.get(session.getAddress());
-	if (amount == null) {
-	    amount = 0;
-	}
-	count.put(session.getAddress(), amount + 1);
-	if (amount > 0 && amount % 2000 == 0) {
-	    // System.out.println("Handshake from IP: " + session.getAddress() +
-	    // ", type: " + (buffer.get(0) == 14 ? "LOGIN" : "JS-5") +
-	    // " count: " + amount + ".");
-	}
-	int opcode = buffer.get() & 0xFF;
-	switch (opcode) {
-	case 14:
-	    session.setNameHash(buffer.get() & 0xFF);
-	    session.setServerKey(RandomFunction.RANDOM.nextLong());
-	    session.write(true);
-	    break;
-	case 15:
-	    int revision = buffer.getInt();
-	    if (revision != Constants.REVISION) {
-		System.err.println("Client build does not match server build!");
-		session.disconnect();
-		break;
-	    }
-	    session.write(false);
-	    break;
-	default:
-	    // System.err.println("Unhandled handshake opcode: " + opcode +
-	    // ".");
-	    session.disconnect();
-	    break;
-	}
+        Integer amount = count.get(session.getAddress());
+        if (amount == null) {
+            amount = 0;
+        }
+        count.put(session.getAddress(), amount + 1);
+        if (amount > 0 && amount % 2000 == 0) {
+            // System.out.println("Handshake from IP: " + session.getAddress() +
+            // ", type: " + (buffer.get(0) == 14 ? "LOGIN" : "JS-5") +
+            // " count: " + amount + ".");
+        }
+        int opcode = buffer.get() & 0xFF;
+        switch (opcode) {
+            case 14:
+                //session.setNameHash(buffer.get() & 0xFF);
+                session.setServerKey(RandomFunction.RANDOM.nextLong());
+                session.write(true);
+                break;
+            case 15:
+                int revision = buffer.getInt();
+                if (revision != Constants.REVISION) {
+                    System.err.println("Client build does not match server build!");
+                    session.disconnect();
+                    break;
+                }
+                session.write(false);
+                break;
+            default:
+                // System.err.println("Unhandled handshake opcode: " + opcode +
+                // ".");
+                session.disconnect();
+                break;
+        }
     }
 
 }

@@ -58,7 +58,7 @@ public class ShopSQLHandler extends SQLEntryHandler<Object> {
 	    SQLManager.close(connection);
 	    return;
 	}
-	PreparedStatement statement = connection.prepareStatement("SELECT * FROM kratos_server.shops");
+	PreparedStatement statement = connection.prepareStatement("SELECT * FROM game-server.shops");
 	ResultSet set = statement.executeQuery();
 	while (set.next()) {
 	    parseShop(set);

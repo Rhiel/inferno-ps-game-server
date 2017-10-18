@@ -47,7 +47,7 @@ public abstract class AbstractNPC extends NPC implements Plugin<Object> {
 	    setAggressive(true);
 	    setDefaultBehavior();
 	}
-	getAggressiveHandler().setChanceRatio(6);
+//	getAggressiveHandler().setChanceRatio(6);
 	getAggressiveHandler().setAllowTolerance(false);
 	getAggressiveHandler().setTargetSwitching(true);
 	getAggressiveHandler().setRadius(64);

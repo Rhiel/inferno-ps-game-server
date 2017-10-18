@@ -43,7 +43,6 @@ public final class CheckRandomCondition extends ScriptContext {
 
     @Override
     public boolean execute(Object... args) {
-	System.out.println(((Entity) args[0]).getAttribute("asc_random"));
 	return ((Entity) args[0]).getAttribute("asc_random", 0) == value;
     }
 

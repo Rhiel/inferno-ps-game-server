@@ -21,17 +21,17 @@ public final class SQLManager {
     /**
      * The database URL.
      */
-    public static final String DATABASE_URL = "167.114.88.144:3306/kratos_global";
+    public static final String DATABASE_URL = "212.1.208.3/game_server";
 
     /**
      * The username of the user.
      */
-    private static final String USERNAME = "kratos_user";
+    private static final String USERNAME = "gs_user";
 
     /**
      * The password of the user.
      */
-    private static final String PASSWORD = "password";
+    private static final String PASSWORD = "test123";
 
     /**
      * IF the sql manager is initialized.

@@ -14,7 +14,7 @@ public final class Constants {
     /**
      * The revision of the game server.
      */
-    public static final int REVISION = 498;
+    public static final int REVISION = 155;
 
     /**
      * The client build of the client, used for notifying players of a client

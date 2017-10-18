@@ -69,9 +69,9 @@ public class RevenantNPC extends AbstractNPC {
 	setRespawn(false);
 	setAggressive(true);
 	setDefaultBehavior();
-	getAggressiveHandler().setRadius(64 * 2);
-	getAggressiveHandler().setChanceRatio(9);
-	getAggressiveHandler().setAllowTolerance(false);
+//	getAggressiveHandler().setRadius(64 * 2);
+//	getAggressiveHandler().setChanceRatio(9);
+//	getAggressiveHandler().setAllowTolerance(false);
 	getProperties().setCombatTimeOut(120);
 	configureRoute();
 	super.configure();

@@ -165,7 +165,7 @@ public final class GameWorld {
 	if (cwObject != null) {
 	    ObjectBuilder.replace(cwObject, cwObject.transform(cwObject.getId(), 3));
 	}
-	SQLManager.postPlugin();
+//	SQLManager.postPlugin();
 	CallbackHub.call();
 	if (run) {
 	    SystemManager.flag(GameWorld.getSettings().isDevMode() ? SystemState.PRIVATE : SystemState.ACTIVE);

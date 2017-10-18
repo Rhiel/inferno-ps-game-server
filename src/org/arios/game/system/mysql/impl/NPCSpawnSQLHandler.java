@@ -62,7 +62,7 @@ public class NPCSpawnSQLHandler extends SQLEntryHandler<NPC> {
 	    SQLManager.close(connection);
 	    return;
 	}
-	PreparedStatement statement = connection.prepareStatement("SELECT * FROM kratos_server.npc_spawns");
+	PreparedStatement statement = connection.prepareStatement("SELECT * FROM infer987_game_server.npc_spawns");
 	ResultSet set = statement.executeQuery();
 	while (set.next()) {
 	    parseNpc(set.getInt(1), set.getString(2));

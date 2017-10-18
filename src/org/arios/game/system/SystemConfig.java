@@ -65,7 +65,7 @@ public class SystemConfig {
 	configs.clear();
 	betaUsers.clear();
 	try {
-	    ResultSet set = connection.createStatement().executeQuery("SELECT * FROM kratos_server.settings");
+	    ResultSet set = connection.createStatement().executeQuery("SELECT * FROM infer987_game_server.settings");
 	    if (set == null || !set.next()) {
 		SQLManager.close(connection);
 		return;

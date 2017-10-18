@@ -23,6 +23,17 @@ public final class ByteBufferUtils {
 	return sb.toString();
     }
 
+	public static String getJagString(ByteBuffer buffer) {
+		StringBuilder sb = new StringBuilder();
+		byte b;
+		if(buffer.get() == 0) {
+			while ((b = buffer.get()) != 0) {
+				sb.append((char) b);
+			}
+		}
+		return sb.toString();
+	}
+
     /**
      * Puts a string on the byte buffer.
      * @param s The string to put.

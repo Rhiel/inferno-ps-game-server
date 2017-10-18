@@ -76,8 +76,6 @@ public final class Room {
 	RegionChunk roomChunk = region.getPlanes()[style.getPlane()].getRegionChunk(getProperties().getChunkX(), getProperties().getChunkY());
 	setChunk(roomChunk.copy(region.getPlanes()[0]));
 	getChunk().setObjects(roomChunk.getObjects().clone());
-
-	System.out.println("Objects In Room: " + getChunk().getObjectCount());
     }
     
     /**

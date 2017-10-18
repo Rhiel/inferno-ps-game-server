@@ -1,5 +1,7 @@
 package org.arios.game.world.map;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,15 +38,15 @@ public final class Viewport {
     /**
      * The region planes the entity can see.
      */
-    private List<RegionPlane> viewingPlanes = new LinkedList<>();
+    private Deque<RegionPlane> viewingPlanes = new ArrayDeque<>();
 
     /**
      * Constructs a new {@code Viewport} {@code Object}.
      */
     public Viewport() {
-	/*
-	 * empty.
-	 */
+		/*
+		 * empty.
+		 */
     }
 
     /**
@@ -52,18 +54,18 @@ public final class Viewport {
      * @param entity The entity.
      */
     public void updateViewport(Entity entity) {
-	RegionChunk chunk = RegionManager.getRegionChunk(entity.getLocation());
-	int center = chunks.length >> 1;
-	if (chunks[center][center] == chunk) {
-	    return;
-	}
-	int offset = center * -8;
-	Location l = chunk.getCurrentBase();
-	for (int x = 0; x < chunks.length; x++) {
-	    for (int y = 0; y < chunks[x].length; y++) {
-		chunks[x][y] = RegionManager.getRegionChunk(l.transform(offset + (8 * x), offset + (8 * y), 0));
-	    }
-	}
+        RegionChunk chunk = RegionManager.getRegionChunk(entity.getLocation());
+        int center = chunks.length >> 1;
+        if (chunks[center][center] == chunk) {
+            return;
+        }
+        int offset = center * -8;
+        Location l = chunk.getCurrentBase();
+        for (int x = 0; x < chunks.length; x++) {
+            for (int y = 0; y < chunks[x].length; y++) {
+                chunks[x][y] = RegionManager.getRegionChunk(l.transform(offset + (8 * x), offset + (8 * y), 0));
+            }
+        }
     }
 
     /**
@@ -71,22 +73,24 @@ public final class Viewport {
      * @param entity The entity.
      */
     public void remove(Entity entity) {
-	if (region == null) {
-	    return;
-	}
-	if (entity instanceof Player) {
-	    region.remove((Player) entity);
-	    Region region = null;
-	    for (RegionPlane r : viewingPlanes) {
-		if (region != r.getRegion()) {
-		    region = r.getRegion();
-		    region.decrementViewAmount();
-		    region.checkInactive();
-		}
-	    }
-	} else {
-	    region.remove((NPC) entity);
-	}
+        //System.out.println("Removing entity " + entity + " - " + region);
+        if (region == null) {
+            return;
+        }
+        if (entity instanceof Player) {
+            region.remove((Player) entity);
+            Region region = null;
+
+            for (RegionPlane r : viewingPlanes) {
+                if (region != r.getRegion()) {
+                    region = r.getRegion();
+                    region.decrementViewAmount();
+                    region.checkInactive();
+                }
+            }
+        } else {
+            region.remove((NPC) entity);
+        }
     }
 
     /**
@@ -94,7 +98,7 @@ public final class Viewport {
      * @return The region.
      */
     public Region getRegion() {
-	return region;
+        return region;
     }
 
     /**
@@ -102,7 +106,7 @@ public final class Viewport {
      * @param region The region to set.
      */
     public void setRegion(Region region) {
-	this.region = region;
+        this.region = region;
     }
 
     /**
@@ -110,7 +114,7 @@ public final class Viewport {
      * @return The chunks.
      */
     public RegionChunk[][] getChunks() {
-	return chunks;
+        return chunks;
     }
 
     /**
@@ -118,23 +122,23 @@ public final class Viewport {
      * @param chunks The chunks to set.
      */
     public void setChunks(RegionChunk[][] chunks) {
-	this.chunks = chunks;
+        this.chunks = chunks;
     }
 
     /**
      * Gets the viewingPlanes.
      * @return The viewingPlanes.
      */
-    public List<RegionPlane> getViewingPlanes() {
-	return viewingPlanes;
+    public Deque<RegionPlane> getViewingPlanes() {
+        return viewingPlanes;
     }
 
     /**
      * Sets the viewingPlanes.
      * @param viewingPlanes The viewingPlanes to set.
      */
-    public void setViewingPlanes(List<RegionPlane> regions) {
-	this.viewingPlanes = regions;
+    public void setViewingPlanes(Deque<RegionPlane> regions) {
+        this.viewingPlanes = regions;
     }
 
     /**
@@ -142,7 +146,7 @@ public final class Viewport {
      * @return The currentPlane.
      */
     public RegionPlane getCurrentPlane() {
-	return currentPlane;
+        return currentPlane;
     }
 
     /**
@@ -150,7 +154,7 @@ public final class Viewport {
      * @param currentPlane The currentPlane to set.
      */
     public void setCurrentPlane(RegionPlane currentPlane) {
-	this.currentPlane = currentPlane;
+        this.currentPlane = currentPlane;
     }
 
 }

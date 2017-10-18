@@ -58,7 +58,7 @@ public class ShopSQLHandler extends SQLEntryHandler<Object> {
 	    SQLManager.close(connection);
 	    return;
 	}
-	PreparedStatement statement = connection.prepareStatement("SELECT * FROM game-server.shops");
+	PreparedStatement statement = connection.prepareStatement("SELECT * FROM infer987_game_server.shops");
 	ResultSet set = statement.executeQuery();
 	while (set.next()) {
 	    parseShop(set);

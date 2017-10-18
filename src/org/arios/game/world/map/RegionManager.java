@@ -1,11 +1,10 @@
 package org.arios.game.world.map;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 import org.arios.game.node.Node;
 import org.arios.game.node.entity.Entity;
@@ -17,6 +16,7 @@ import org.arios.tools.RandomFunction;
 
 /**
  * Manages the regions.
+ *
  * @author Emperor
  */
 public final class RegionManager {
@@ -32,26 +32,26 @@ public final class RegionManager {
      * @return The region.
      */
     public static Region forId(int regionId) {
-	Region region = REGION_CACHE.get(regionId);
-	if (region == null) {
-	    region = new Region(regionId >> 8 & 0xFF, regionId & 0xFF);
-	    REGION_CACHE.put(regionId, region);
-	}
-	return region;
+        Region region = REGION_CACHE.get(regionId);
+        if (region == null) {
+            region = new Region(regionId >> 8 & 0xFF, regionId & 0xFF);
+            REGION_CACHE.put(regionId, region);
+        }
+        return region;
     }
 
     /**
      * Pulses the active regions.
      */
     public static void pulse() {
-	for (Iterator<Region> it = REGION_CACHE.values().iterator(); it.hasNext();) {
-	    Region r = it.next();
-	    if (r != null && r.isActive()) {
-		for (RegionPlane plane : r.getPlanes()) {
-		    plane.pulse();
-		}
-	    }
-	}
+        for (Iterator<Region> it = REGION_CACHE.values().iterator(); it.hasNext();) {
+            Region r = it.next();
+            if (r != null && r.isActive()) {
+                for (RegionPlane plane : r.getPlanes()) {
+                    plane.pulse();
+                }
+            }
+        }
     }
 
     /**
@@ -60,7 +60,7 @@ public final class RegionManager {
      * @return The clipping flag.
      */
     public static int getClippingFlag(Location l) {
-	return getClippingFlag(l.getZ(), l.getX(), l.getY());
+        return getClippingFlag(l.getZ(), l.getX(), l.getY());
     }
 
     /**
@@ -71,14 +71,14 @@ public final class RegionManager {
      * @return The clipping flags.
      */
     public static int getClippingFlag(int z, int x, int y) {
-	Region region = forId((x >> 6) << 8 | y >> 6);
-	Region.load(region);
-	if (!region.isHasFlags()) {
-	    return -1;
-	}
-	x -= (x >> 6) << 6;
-	y -= (y >> 6) << 6;
-	return region.getPlanes()[z].getFlags().getClippingFlags()[x][y];
+        Region region = forId((x >> 6) << 8 | y >> 6);
+        Region.load(region);
+        if (!region.isHasFlags()) {
+            return -1;
+        }
+        x -= (x >> 6) << 6;
+        y -= (y >> 6) << 6;
+        return region.getPlanes()[z].getFlags().getClippingFlags()[x][y];
     }
 
     /**
@@ -87,7 +87,7 @@ public final class RegionManager {
      * @return {@code True} if so.
      */
     public static boolean isLandscape(Location l) {
-	return isLandscape(l.getZ(), l.getX(), l.getY());
+        return isLandscape(l.getZ(), l.getX(), l.getY());
     }
 
     /**
@@ -98,14 +98,14 @@ public final class RegionManager {
      * @return {@code True} if so.
      */
     public static boolean isLandscape(int z, int x, int y) {
-	Region region = forId((x >> 6) << 8 | y >> 6);
-	Region.load(region);
-	if (!region.isHasFlags() || region.getPlanes()[z].getFlags().getLandscape() == null) {
-	    return false;
-	}
-	x -= (x >> 6) << 6;
-	y -= (y >> 6) << 6;
-	return region.getPlanes()[z].getFlags().getLandscape()[x][y];
+        Region region = forId((x >> 6) << 8 | y >> 6);
+        Region.load(region);
+        if (!region.isHasFlags() || region.getPlanes()[z].getFlags().getLandscape() == null) {
+            return false;
+        }
+        x -= (x >> 6) << 6;
+        y -= (y >> 6) << 6;
+        return region.getPlanes()[z].getFlags().getLandscape()[x][y];
     }
 
     /**
@@ -114,17 +114,17 @@ public final class RegionManager {
      * @param flag The flag to set.
      */
     public static void setClippingFlag(Location l, int flag) {
-	int x = l.getX();
-	int y = l.getY();
-	int z = l.getZ();
-	Region region = forId((x >> 6) << 8 | y >> 6);
-	Region.load(region);
-	if (!region.isHasFlags()) {
-	    return;
-	}
-	x -= (x >> 6) << 6;
-	y -= (y >> 6) << 6;
-	region.getPlanes()[z].getFlags().getClippingFlags()[x][y] = flag;
+        int x = l.getX();
+        int y = l.getY();
+        int z = l.getZ();
+        Region region = forId((x >> 6) << 8 | y >> 6);
+        Region.load(region);
+        if (!region.isHasFlags()) {
+            return;
+        }
+        x -= (x >> 6) << 6;
+        y -= (y >> 6) << 6;
+        region.getPlanes()[z].getFlags().getClippingFlags()[x][y] = flag;
     }
 
     /**
@@ -136,18 +136,18 @@ public final class RegionManager {
      * @param flag The clipping flag.
      */
     public static void addClippingFlag(int z, int x, int y, boolean projectile, int flag) {
-	Region region = forId((x >> 6) << 8 | y >> 6);
-	Region.load(region);
-	if (!region.isHasFlags()) {
-	    return;
-	}
-	x -= (x >> 6) << 6;
-	y -= (y >> 6) << 6;
-	if (projectile) {
-	    region.getPlanes()[z].getProjectileFlags().flag(x, y, flag);
-	} else {
-	    region.getPlanes()[z].getFlags().flag(x, y, flag);
-	}
+        Region region = forId((x >> 6) << 8 | y >> 6);
+        Region.load(region);
+        if (!region.isHasFlags()) {
+            return;
+        }
+        x -= (x >> 6) << 6;
+        y -= (y >> 6) << 6;
+        if (projectile) {
+            region.getPlanes()[z].getProjectileFlags().flag(x, y, flag);
+        } else {
+            region.getPlanes()[z].getFlags().flag(x, y, flag);
+        }
     }
 
     /**
@@ -159,18 +159,18 @@ public final class RegionManager {
      * @param flag The clipping flag.
      */
     public static void removeClippingFlag(int z, int x, int y, boolean projectile, int flag) {
-	Region region = forId((x >> 6) << 8 | y >> 6);
-	Region.load(region);
-	if (!region.isHasFlags()) {
-	    return;
-	}
-	x -= (x >> 6) << 6;
-	y -= (y >> 6) << 6;
-	if (projectile) {
-	    region.getPlanes()[z].getProjectileFlags().unflag(x, y, flag);
-	} else {
-	    region.getPlanes()[z].getFlags().unflag(x, y, flag);
-	}
+        Region region = forId((x >> 6) << 8 | y >> 6);
+        Region.load(region);
+        if (!region.isHasFlags()) {
+            return;
+        }
+        x -= (x >> 6) << 6;
+        y -= (y >> 6) << 6;
+        if (projectile) {
+            region.getPlanes()[z].getProjectileFlags().unflag(x, y, flag);
+        } else {
+            region.getPlanes()[z].getFlags().unflag(x, y, flag);
+        }
     }
 
     /**
@@ -181,14 +181,14 @@ public final class RegionManager {
      * @return The clipping flags.
      */
     public static int getProjectileFlag(int z, int x, int y) {
-	Region region = forId((x >> 6) << 8 | y >> 6);
-	Region.load(region);
-	if (!region.isHasFlags()) {
-	    return -1;
-	}
-	x -= (x >> 6) << 6;
-	y -= (y >> 6) << 6;
-	return region.getPlanes()[z].getProjectileFlags().getClippingFlags()[x][y];
+        Region region = forId((x >> 6) << 8 | y >> 6);
+        Region.load(region);
+        if (!region.isHasFlags()) {
+            return -1;
+        }
+        x -= (x >> 6) << 6;
+        y -= (y >> 6) << 6;
+        return region.getPlanes()[z].getProjectileFlags().getClippingFlags()[x][y];
     }
 
     /**
@@ -197,7 +197,7 @@ public final class RegionManager {
      * @return the clipping flag
      */
     public static boolean isTeleportPermitted(Location location) {
-	return isTeleportPermitted(location.getZ(), location.getX(), location.getY());
+        return isTeleportPermitted(location.getZ(), location.getX(), location.getY());
     }
 
     /**
@@ -208,21 +208,20 @@ public final class RegionManager {
      * @return The clipping flags.
      */
     public static boolean isTeleportPermitted(int z, int x, int y) {
-	if (!isLandscape(z, x, y)) {
-	    return false;
-	}
-	int flag = getClippingFlag(z, x, y);
-	return (flag & 0x12c0102) == 0 || (flag & 0x12c0108) == 0 || (flag & 0x12c0120) == 0 || (flag & 0x12c0180) == 0;
+        if (!isLandscape(z, x, y)) {
+            return false;
+        }
+        int flag = getClippingFlag(z, x, y);
+        return (flag & 0x12c0102) == 0 || (flag & 0x12c0108) == 0 || (flag & 0x12c0120) == 0 || (flag & 0x12c0180) == 0;
     }
 
     /**
      * Checks if the location has any clipping flags.
      * @param location The location.
-     * @return {@code True} if a clipping flag disables access for this
-     * location.
+     * @return {@code True} if a clipping flag disables access for this location.
      */
     public static boolean isClipped(Location location) {
-	return isClipped(location.getZ(), location.getX(), location.getY());
+        return isClipped(location.getZ(), location.getX(), location.getY());
     }
 
     /**
@@ -230,15 +229,14 @@ public final class RegionManager {
      * @param z The plane.
      * @param x The x-coordinate.
      * @param y The y-coordinate.
-     * @return {@code True} if a clipping flag disables access for this
-     * location.
+     * @return {@code True} if a clipping flag disables access for this location.
      */
     public static boolean isClipped(int z, int x, int y) {
-	if (!isLandscape(z, x, y)) {
-	    return true;
-	}
-	int flag = getClippingFlag(z, x, y);
-	return (flag & 0x12c0102) != 0 || (flag & 0x12c0108) != 0 || (flag & 0x12c0120) != 0 || (flag & 0x12c0180) != 0;
+        if (!isLandscape(z, x, y)) {
+            return true;
+        }
+        int flag = getClippingFlag(z, x, y);
+        return (flag & 0x12c0102) != 0 || (flag & 0x12c0108) != 0 || (flag & 0x12c0120) != 0 || (flag & 0x12c0180) != 0;
     }
 
     /**
@@ -248,30 +246,30 @@ public final class RegionManager {
      * @return the location.
      */
     public static Location getSpawnLocation(Player owner, Node node) {
-	if (owner == null || node == null) {
-	    return null;
-	}
-	Location destination = null;
-	for (int i = 0; i < 4; i++) {
-	    Direction dir = Direction.get(i);
-	    Location l = owner.getLocation().transform(dir, dir.toInteger() < 2 ? 1 : node.size());
-	    boolean success = true;
-	    loop: {
-		for (int x = 0; x < node.size(); x++) {
-		    for (int y = 0; y < node.size(); y++) {
-			if (RegionManager.isClipped(l.transform(x, y, 0))) {
-			    success = false;
-			    break loop;
-			}
-		    }
-		}
-	    }
-	    if (success) {
-		destination = l;
-		break;
-	    }
-	}
-	return destination;
+        if (owner == null || node == null) {
+            return null;
+        }
+        Location destination = null;
+        for (int i = 0; i < 4; i++) {
+            Direction dir = Direction.get(i);
+            Location l = owner.getLocation().transform(dir, dir.toInteger() < 2 ? 1 : node.size());
+            boolean success = true;
+            loop:{
+                for (int x = 0; x < node.size(); x++) {
+                    for (int y = 0; y < node.size(); y++) {
+                        if (RegionManager.isClipped(l.transform(x, y, 0))) {
+                            success = false;
+                            break loop;
+                        }
+                    }
+                }
+            }
+            if (success) {
+                destination = l;
+                break;
+            }
+        }
+        return destination;
     }
 
     /**
@@ -280,7 +278,7 @@ public final class RegionManager {
      * @return The game object, or {@code null} if no object was found.
      */
     public static GameObject getObject(Location l) {
-	return getObject(l.getZ(), l.getX(), l.getY());
+        return getObject(l.getZ(), l.getX(), l.getY());
     }
 
     /**
@@ -291,16 +289,64 @@ public final class RegionManager {
      * @return The game object, or {@code null} if no object was found.
      */
     public static GameObject getObject(int z, int x, int y) {
-	int regionId = ((x >> 6) << 8) | y >> 6;
-	x -= ((x >> 6) << 6);
-	y -= ((y >> 6) << 6);
-	Region region = forId(regionId);
-	Region.load(region);
-	GameObject object = region.getPlanes()[z].getChunkObject(x, y);
-	if (object != null && !object.isRenderable()) {
-	    return null;
-	}
-	return object;
+        return getObject(z, x, y, -1);
+    }
+
+    /**
+     * Gets the object on the given absolute coordinates.
+     * @param z The height.
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @param objectId The object id.
+     * @return The game object, or {@code null} if no object was found.
+     */
+    public static GameObject getObject(int z, int x, int y, int objectId) {
+        int regionId = ((x >> 6) << 8) | y >> 6;
+        x -= ((x >> 6) << 6);
+        y -= ((y >> 6) << 6);
+        Region region = forId(regionId);
+        Region.load(region);
+        RegionChunk chunk = region.getPlanes()[z].getChunks()[x >> 3][y >> 3];
+        /*if (chunk instanceof BuildRegionChunk) {
+            BuildRegionChunk c = (BuildRegionChunk) chunk;
+            int chunkX = x - ((x >> 3) << 3);
+            int chunkY = y - ((y >> 3) << 3);
+            return c.get(chunkX, chunkY, c.getIndex(chunkX, chunkY, objectId));
+        }*/
+        GameObject object = region.getPlanes()[z].getChunkObject(x, y);
+        if (object != null && !object.isRenderable()) {
+            return null;
+        }
+        return object;
+    }
+
+    /**
+     * Gets the object on the given absolute coordinates. Unlike the {@link #getObject(int, int, int, int)}
+     * method, we don't check if the object isn't being rendered.
+     * <p>
+     * <b>This method is {@link Deprecated} and may cause harm to the sever,
+     * use the {@link #getObject(int, int, int, int)} method instead!</b>
+     * @param z The height.
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The game object, or {@code null} if no object was found.
+     */
+    @Deprecated
+    public static GameObject findObject(int z, int x, int y) {
+        int regionId = ((x >> 6) << 8) | y >> 6;
+        x -= ((x >> 6) << 6);
+        y -= ((y >> 6) << 6);
+        Region region = forId(regionId);
+        Region.load(region);
+        RegionChunk chunk = region.getPlanes()[z].getChunks()[x >> 3][y >> 3];
+        /*if (chunk instanceof BuildRegionChunk) {
+            BuildRegionChunk c = (BuildRegionChunk) chunk;
+            int chunkX = x - ((x >> 3) << 3);
+            int chunkY = y - ((y >> 3) << 3);
+            return c.get(chunkX, chunkY, c.getIndex(chunkX, chunkY, -1));
+        }*/
+        GameObject object = region.getPlanes()[z].getChunkObject(x, y);
+        return object;
     }
 
     /**
@@ -309,8 +355,8 @@ public final class RegionManager {
      * @return The region plane.
      */
     public static RegionPlane getRegionPlane(Location l) {
-	int regionId = ((l.getX() >> 6) << 8) | l.getY() >> 6;
-	return forId(regionId).getPlanes()[l.getZ()];
+        int regionId = ((l.getX() >> 6) << 8) | l.getY() >> 6;
+        return forId(regionId).getPlanes()[l.getZ()];
     }
 
     /**
@@ -319,8 +365,8 @@ public final class RegionManager {
      * @return The region chunk.
      */
     public static RegionChunk getRegionChunk(Location l) {
-	RegionPlane plane = getRegionPlane(l);
-	return plane.getRegionChunk(l.getLocalX() / RegionChunk.SIZE, l.getLocalY() / RegionChunk.SIZE);
+        RegionPlane plane = getRegionPlane(l);
+        return plane.getRegionChunk(l.getLocalX() / RegionChunk.SIZE, l.getLocalY() / RegionChunk.SIZE);
     }
 
     /**
@@ -328,42 +374,42 @@ public final class RegionManager {
      * @param entity The entity.
      */
     public static void move(Entity entity) {
-	boolean player = entity instanceof Player;
-	int regionId = (entity.getLocation().getRegionX() >> 3) << 8 | (entity.getLocation().getRegionY() >> 3);
-	Viewport viewport = entity.getViewport();
-	Region current = forId(regionId);
-	int z = entity.getLocation().getZ();
-	RegionPlane plane = current.getPlanes()[z];
-	viewport.updateViewport(entity);
-	if (plane == viewport.getCurrentPlane()) {
-	    entity.getZoneMonitor().updateLocation(entity.getWalkingQueue().getFootPrint());
-	    return;
-	}
-	viewport.remove(entity);
-	if (player) {
-	    current.add((Player) entity);
-	} else {
-	    current.add((NPC) entity);
-	}
-	viewport.setRegion(current);
-	viewport.setCurrentPlane(plane);
-	List<RegionPlane> view = new LinkedList<>();
-	for (int regionX = (entity.getLocation().getRegionX() >> 3) - 1; regionX <= (entity.getLocation().getRegionX() >> 3) + 1; regionX++) {
-	    for (int regionY = (entity.getLocation().getRegionY() >> 3) - 1; regionY <= (entity.getLocation().getRegionY() >> 3) + 1; regionY++) {
-		if (regionX < 0 || regionY < 0) {
-		    continue;
-		}
-		Region region = forId(regionX << 8 | regionY);
-		RegionPlane p = region.getPlanes()[z];
-		if (player) {
-		    region.incrementViewAmount();
-		    region.flagActive();
-		}
-		view.add(p);
-	    }
-	}
-	viewport.setViewingPlanes(view);
-	entity.getZoneMonitor().updateLocation(entity.getWalkingQueue().getFootPrint());
+        boolean player = entity instanceof Player;
+        int regionId = (entity.getLocation().getRegionX() >> 3) << 8 | (entity.getLocation().getRegionY() >> 3);
+        Viewport viewport = entity.getViewport();
+        Region current = forId(regionId);
+        int z = entity.getLocation().getZ();
+        RegionPlane plane = current.getPlanes()[z];
+        viewport.updateViewport(entity);
+        if (plane == viewport.getCurrentPlane()) {
+            entity.getZoneMonitor().updateLocation(entity.getWalkingQueue().getFootPrint());
+            return;
+        }
+        viewport.remove(entity);
+        if (player) {
+            current.add((Player) entity);
+        } else {
+            current.add((NPC) entity);
+        }
+        viewport.setRegion(current);
+        viewport.setCurrentPlane(plane);
+        Deque<RegionPlane> view = new ArrayDeque<>();
+        for (int regionX = (entity.getLocation().getRegionX() >> 3) - 1; regionX <= (entity.getLocation().getRegionX() >> 3) + 1; regionX++) {
+            for (int regionY = (entity.getLocation().getRegionY() >> 3) - 1; regionY <= (entity.getLocation().getRegionY() >> 3) + 1; regionY++) {
+                if (regionX < 0 || regionY < 0) {
+                    continue;
+                }
+                Region region = forId(regionX << 8 | regionY);
+                RegionPlane p = region.getPlanes()[z];
+                if (player) {
+                    region.incrementViewAmount();
+                    region.flagActive();
+                }
+                view.add(p);
+            }
+        }
+        viewport.setViewingPlanes(view);
+        entity.getZoneMonitor().updateLocation(entity.getWalkingQueue().getFootPrint());
     }
 
     /**
@@ -372,7 +418,7 @@ public final class RegionManager {
      * @return The list of local NPCs.
      */
     public static List<NPC> getLocalNpcs(Entity n) {
-	return getLocalNpcs(n, MapDistance.RENDERING.getDistance());
+        return getLocalNpcs(n, MapDistance.RENDERING.getDistance());
     }
 
     /**
@@ -381,11 +427,11 @@ public final class RegionManager {
      * @param distance the distance.
      * @return the list.
      */
-    public static List<Entity> getLocalEntitys(Location location, int distance) {
-	List<Entity> entitys = new ArrayList<>();
-	entitys.addAll(getLocalNpcs(location, distance));
-	entitys.addAll(getLocalPlayers(location, distance));
-	return entitys;
+    public static List<Entity> getLocalEntitys(Location location, int distance){
+        List<Entity> entitys = new ArrayList<>();
+        entitys.addAll(getLocalNpcs(location, distance));
+        entitys.addAll(getLocalPlayers(location, distance));
+        return entitys;
     }
 
     /**
@@ -395,7 +441,7 @@ public final class RegionManager {
      * @return the list.
      */
     public static List<Entity> getLocalEntitys(Entity entity, int distance) {
-	return getLocalEntitys(entity.getLocation(), distance);
+        return getLocalEntitys(entity.getLocation(), distance);
     }
 
     /**
@@ -404,7 +450,7 @@ public final class RegionManager {
      * @return the entitys.
      */
     public static List<Entity> getLocalEntitys(Entity entity) {
-	return getLocalEntitys(entity.getLocation(), MapDistance.RENDERING.getDistance());
+        return getLocalEntitys(entity.getLocation(), MapDistance.RENDERING.getDistance());
     }
 
     /**
@@ -414,15 +460,15 @@ public final class RegionManager {
      * @return The list of local NPCs.
      */
     public static List<NPC> getLocalNpcs(Entity n, int distance) {
-	List<NPC> npcs = new LinkedList<>();
-	for (RegionPlane r : n.getViewport().getViewingPlanes()) {
-	    for (NPC npc : r.getNpcs()) {
-		if (npc.getLocation().withinDistance(n.getLocation(), distance)) {
-		    npcs.add(npc);
-		}
-	    }
-	}
-	return npcs;
+        List<NPC> npcs = new ArrayList<>();
+        for (RegionPlane r : n.getViewport().getViewingPlanes()) {
+            for (NPC npc : r.getNpcs()) {
+                if (npc.getLocation().withinDistance(n.getLocation(), distance)) {
+                    npcs.add(npc);
+                }
+            }
+        }
+        return npcs;
     }
 
     /**
@@ -431,7 +477,7 @@ public final class RegionManager {
      * @return The list of local players.
      */
     public static List<Player> getLocalPlayers(Entity n) {
-	return getLocalPlayers(n, MapDistance.RENDERING.getDistance());
+        return getLocalPlayers(n, MapDistance.RENDERING.getDistance());
     }
 
     /**
@@ -441,15 +487,15 @@ public final class RegionManager {
      * @return The list of local players.
      */
     public static List<Player> getLocalPlayers(Entity n, int distance) {
-	List<Player> players = new LinkedList<>();
-	for (RegionPlane r : n.getViewport().getViewingPlanes()) {
-	    for (Player p : r.getPlayers()) {
-		if (p.getLocation().withinDistance(n.getLocation(), distance)) {
-		    players.add(p);
-		}
-	    }
-	}
-	return players;
+        List<Player> players = new ArrayList<>();
+        for (RegionPlane r : n.getViewport().getViewingPlanes()) {
+            for (Player p : r.getPlayers()) {
+                if (p.getLocation().withinDistance(n.getLocation(), distance)) {
+                    players.add(p);
+                }
+            }
+        }
+        return players;
     }
 
     /**
@@ -458,8 +504,8 @@ public final class RegionManager {
      * @param ignore The nodes not to add to the list.
      * @return The list of players.
      */
-    public static List<Player> getSurroundingPlayers(Node n, Node... ignore) {
-	return getSurroundingPlayers(n, 9, ignore);
+    public static List<Player> getSurroundingPlayers(Node n, Node...ignore) {
+        return getSurroundingPlayers(n, 9, ignore);
     }
 
     /**
@@ -468,24 +514,24 @@ public final class RegionManager {
      * @param ignore The nodes not to add to the list.
      * @return The list of players.
      */
-    public static List<Player> getSurroundingPlayers(Node n, int maximum, Node... ignore) {
-	List<Player> players = getLocalPlayers(n.getLocation(), 1);
-	int count = 0;
-	for (Iterator<Player> it = players.iterator(); it.hasNext();) {
-	    Player p = it.next();
-	    if (++count >= maximum) {
-		it.remove();
-		continue;
-	    }
-	    for (Node node : ignore) {
-		if (p == node) {
-		    count--;
-		    it.remove();
-		    break;
-		}
-	    }
-	}
-	return players;
+    public static List<Player> getSurroundingPlayers(Node n, int maximum, Node...ignore) {
+        List<Player> players = getLocalPlayers(n.getLocation(), 1);
+        int count = 0;
+        for (Iterator<Player> it = players.iterator(); it.hasNext();) {
+            Player p = it.next();
+            if (++count >= maximum) {
+                it.remove();
+                continue;
+            }
+            for (Node node : ignore) {
+                if (p == node) {
+                    count--;
+                    it.remove();
+                    break;
+                }
+            }
+        }
+        return players;
     }
 
     /**
@@ -494,8 +540,8 @@ public final class RegionManager {
      * @param ignore The nodes not to add to the list.
      * @return The list of players.
      */
-    public static List<NPC> getSurroundingNPCs(Node n, Node... ignore) {
-	return getSurroundingNPCs(n, 9, ignore);
+    public static List<NPC> getSurroundingNPCs(Node n, Node...ignore) {
+        return getSurroundingNPCs(n, 9, ignore);
     }
 
     /**
@@ -504,24 +550,24 @@ public final class RegionManager {
      * @param ignore The nodes not to add to the list.
      * @return The list of npcs.
      */
-    public static List<NPC> getSurroundingNPCs(Node n, int maximum, Node... ignore) {
-	List<NPC> npcs = getLocalNpcs(n.getLocation(), 1);
-	int count = 0;
-	for (Iterator<NPC> it = npcs.iterator(); it.hasNext();) {
-	    NPC p = it.next();
-	    if (++count > maximum) {
-		it.remove();
-		continue;
-	    }
-	    for (Node node : ignore) {
-		if (p == node) {
-		    count--;
-		    it.remove();
-		    break;
-		}
-	    }
-	}
-	return npcs;
+    public static List<NPC> getSurroundingNPCs(Node n, int maximum, Node...ignore) {
+        List<NPC> npcs = getLocalNpcs(n.getLocation(), 1);
+        int count = 0;
+        for (Iterator<NPC> it = npcs.iterator(); it.hasNext();) {
+            NPC p = it.next();
+            if (++count > maximum) {
+                it.remove();
+                continue;
+            }
+            for (Node node : ignore) {
+                if (p == node) {
+                    count--;
+                    it.remove();
+                    break;
+                }
+            }
+        }
+        return npcs;
     }
 
     /**
@@ -531,12 +577,12 @@ public final class RegionManager {
      * @return A random teleport location.
      */
     public static Location getTeleportLocation(Location location, int radius) {
-	int mod = radius >> 1;
-	if (mod == 0) {
-	    mod++;
-	    radius--;
-	}
-	return getTeleportLocation(location.transform(-mod, -mod, 0), mod + radius, mod + radius);
+        int mod = radius >> 1;
+        if (mod == 0) {
+            mod++;
+            radius--;
+        }
+        return getTeleportLocation(location.transform(-mod, -mod, 0), mod + radius, mod + radius);
     }
 
     /**
@@ -546,27 +592,26 @@ public final class RegionManager {
      * @return A random teleport location.
      */
     public static Location getTeleportLocation(Location location, int areaX, int areaY) {
-	Location destination = location;
-	int x = RandomFunction.random(1 + areaX);
-	int y = RandomFunction.random(1 + areaY);
-	int count = 0;
-	while (!isTeleportPermitted(destination = location.transform(x, y, 0))) {
-	    x = RandomFunction.random(1 + areaX);
-	    y = RandomFunction.random(1 + areaY);
-	    if (count++ >= areaX * 2) {
-		// This would be able to keep looping for several seconds
-		// otherwise (this actually happens).
-		for (x = 0; x < areaX + 1; x++) {
-		    for (y = 0; y < areaY + 1; y++) {
-			if (isTeleportPermitted(destination = location.transform(x, y, 0))) {
-			    return destination;
-			}
-		    }
-		}
-		break;
-	    }
-	}
-	return destination;
+        Location destination = location;
+        int x = RandomFunction.random(1 + areaX);
+        int y = RandomFunction.random(1 + areaY);
+        int count = 0;
+        while (!isTeleportPermitted(destination = location.transform(x, y, 0))) {
+            x = RandomFunction.random(1 + areaX);
+            y = RandomFunction.random(1 + areaY);
+            if (count++ >= areaX * 2) {
+                //This would be able to keep looping for several seconds otherwise (this actually happens).
+                for (x = 0; x < areaX + 1; x++) {
+                    for (y = 0; y < areaY + 1; y++) {
+                        if (isTeleportPermitted(destination = location.transform(x, y, 0))) {
+                            return destination;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        return destination;
     }
 
     /**
@@ -574,21 +619,21 @@ public final class RegionManager {
      * @param l The location.
      * @return The viewport.
      */
-    public static List<Player> getViewportPlayers(Location l) {
-	List<Player> players = new LinkedList<>();
-	l = l.getChunkBase().transform(-8, -8, 0);
-	ZoneBorders b = new ZoneBorders(l.getX(), l.getY(), l.getX() + 24, l.getY() + 24);
-	for (int regionX = (l.getRegionX() - 6) >> 3; regionX <= (l.getRegionX() + 6) >> 3; regionX++) {
-	    for (int regionY = (l.getRegionY() - 6) >> 3; regionY <= (l.getRegionY() + 6) >> 3; regionY++) {
-		for (Player player : forId(regionX << 8 | regionY).getPlanes()[l.getZ()].getPlayers()) {
-		    l = player.getLocation();
-		    if (b.insideBorder(l.getX(), l.getY())) {
-			players.add(player);
-		    }
-		}
-	    }
-	}
-	return players;
+    public static Deque<Player> getViewportPlayers(Location l) {
+        Deque<Player> players = new ArrayDeque<>();
+        l = l.getChunkBase().transform(-8, -8, 0);
+        ZoneBorders b = new ZoneBorders(l.getX(), l.getY(), l.getX() + 24, l.getY() + 24);
+        for (int regionX = (l.getRegionX() - 6) >> 3; regionX <= (l.getRegionX() + 6) >> 3; regionX++) {
+            for (int regionY = (l.getRegionY() - 6) >> 3; regionY <= (l.getRegionY() + 6) >> 3; regionY++) {
+                for (Player player : forId(regionX << 8 | regionY).getPlanes()[l.getZ()].getPlayers()) {
+                    l = player.getLocation();
+                    if (b.insideBorder(l.getX(), l.getY())) {
+                        players.add(player);
+                    }
+                }
+            }
+        }
+        return players;
     }
 
     /**
@@ -597,12 +642,12 @@ public final class RegionManager {
      * @return The list of players in this region.
      */
     public static List<Player> getRegionPlayers(int regionId) {
-	Region r = forId(regionId);
-	List<Player> players = new ArrayList<>();
-	for (RegionPlane plane : r.getPlanes()) {
-	    players.addAll(plane.getPlayers());
-	}
-	return players;
+        Region r = forId(regionId);
+        List<Player> players = new ArrayList<>();
+        for (RegionPlane plane : r.getPlanes()) {
+            players.addAll(plane.getPlayers());
+        }
+        return players;
     }
 
     /**
@@ -611,7 +656,7 @@ public final class RegionManager {
      * @return The list of players.
      */
     public static List<Player> getLocalPlayers(Location l) {
-	return getLocalPlayers(l, MapDistance.RENDERING.getDistance());
+        return getLocalPlayers(l, MapDistance.RENDERING.getDistance());
     }
 
     /**
@@ -621,17 +666,17 @@ public final class RegionManager {
      * @return The list of players.
      */
     public static List<Player> getLocalPlayers(Location l, int distance) {
-	List<Player> players = new LinkedList<>();
-	for (int regionX = (l.getRegionX() - 6) >> 3; regionX <= (l.getRegionX() + 6) >> 3; regionX++) {
-	    for (int regionY = (l.getRegionY() - 6) >> 3; regionY <= (l.getRegionY() + 6) >> 3; regionY++) {
-		for (Player player : forId(regionX << 8 | regionY).getPlanes()[l.getZ()].getPlayers()) {
-		    if (player.getLocation().withinDistance(l, distance)) {
-			players.add(player);
-		    }
-		}
-	    }
-	}
-	return players;
+        List<Player> players = new ArrayList<>();
+        for (int regionX = (l.getRegionX() - 6) >> 3; regionX <= (l.getRegionX() + 6) >> 3; regionX++) {
+            for (int regionY = (l.getRegionY() - 6) >> 3; regionY <= (l.getRegionY() + 6) >> 3; regionY++) {
+                for (Player player : forId(regionX << 8 | regionY).getPlanes()[l.getZ()].getPlayers()) {
+                    if (player.getLocation().withinDistance(l, distance)) {
+                        players.add(player);
+                    }
+                }
+            }
+        }
+        return players;
     }
 
     /**
@@ -640,7 +685,7 @@ public final class RegionManager {
      * @return The list of players.
      */
     public static List<NPC> getLocalNpcs(Location l) {
-	return getLocalNpcs(l, MapDistance.RENDERING.getDistance());
+        return getLocalNpcs(l, MapDistance.RENDERING.getDistance());
     }
 
     /**
@@ -649,7 +694,7 @@ public final class RegionManager {
      * @param id the id.
      */
     public static NPC getNpc(final Entity entity, final int id) {
-	return getNpc(entity, id, 16);
+        return getNpc(entity, id, 16);
     }
 
     /**
@@ -660,7 +705,7 @@ public final class RegionManager {
      * @return the npc.
      */
     public static NPC getNpc(Entity entity, int id, int distance) {
-	return getNpc(entity.getLocation(), id, distance);
+        return getNpc(entity.getLocation(), id, distance);
     }
 
     /**
@@ -671,13 +716,13 @@ public final class RegionManager {
      * @return the npc.
      */
     public static NPC getNpc(final Location location, int id, int distance) {
-	List<NPC> npcs = getLocalNpcs(location, distance);
-	for (NPC n : npcs) {
-	    if (n.getId() == id) {
-		return n;
-	    }
-	}
-	return null;
+        List<NPC> npcs = getLocalNpcs(location, distance);
+        for (NPC n : npcs) {
+            if (n.getId() == id) {
+                return n;
+            }
+        }
+        return null;
     }
 
     /**
@@ -687,17 +732,36 @@ public final class RegionManager {
      * @return The list of players.
      */
     public static List<NPC> getLocalNpcs(Location l, int distance) {
-	List<NPC> npcs = new LinkedList<>();
-	for (int regionX = (l.getRegionX() - 6) >> 3; regionX <= (l.getRegionX() + 6) >> 3; regionX++) {
-	    for (int regionY = (l.getRegionY() - 6) >> 3; regionY <= (l.getRegionY() + 6) >> 3; regionY++) {
-		for (NPC n : forId(regionX << 8 | regionY).getPlanes()[l.getZ()].getNpcs()) {
-		    if (n.getLocation().withinDistance(l, (n.size() >> 1) + distance)) {
-			npcs.add(n);
-		    }
-		}
-	    }
-	}
-	return npcs;
+        List<NPC> npcs = new ArrayList<>();
+        for (int regionX = (l.getRegionX() - 6) >> 3; regionX <= (l.getRegionX() + 6) >> 3; regionX++) {
+            for (int regionY = (l.getRegionY() - 6) >> 3; regionY <= (l.getRegionY() + 6) >> 3; regionY++) {
+                for (NPC n : forId(regionX << 8 | regionY).getPlanes()[l.getZ()].getNpcs()) {
+                    if (n.getLocation().withinDistance(l, (n.size() >> 1) + distance)) {
+                        npcs.add(n);
+                    }
+                }
+            }
+        }
+        return npcs;
+    }
+
+    public static List<Integer> getKeys(int regionId) {
+        List<Integer> keys = new ArrayList<Integer>();
+        File file = new File("./data/xtea/"+regionId+".txt");
+        try {
+            if(!file.exists()) {
+                for(int i = 0; i < 4; i++)
+                    keys.add(0);
+                return keys;
+            }
+            Files.lines(Paths.get(".").resolve("data/xtea/" + file.getName()))
+                    .forEach((String line) -> {
+                        keys.add(Integer.valueOf(line));
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return keys;
     }
 
     /**
@@ -705,6 +769,7 @@ public final class RegionManager {
      * @return The regionCache.
      */
     public static Map<Integer, Region> getRegionCache() {
-	return REGION_CACHE;
+        return REGION_CACHE;
     }
+
 }

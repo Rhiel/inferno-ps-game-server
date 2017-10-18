@@ -21,12 +21,12 @@ public final class SQLManager {
     /**
      * The database URL.
      */
-    public static final String DATABASE_URL = "212.1.208.3/game_server";
+    public static final String DATABASE_URL = "212.1.208.3/infer987_game_server";
 
     /**
      * The username of the user.
      */
-    private static final String USERNAME = "gs_user";
+    private static final String USERNAME = "infer987_gs_user";
 
     /**
      * The password of the user.

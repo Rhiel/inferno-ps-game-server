@@ -35,7 +35,7 @@ public class NPCDropSQLHandler extends SQLEntryHandler<Object> {
 	    SQLManager.close(connection);
 	    return;
 	}
-	PreparedStatement statement = connection.prepareStatement("SELECT * FROM kratos_server.npc_drops");
+	PreparedStatement statement = connection.prepareStatement("SELECT * FROM infer987_game_server.npc_drops");
 	ResultSet set = statement.executeQuery();
 	while (set.next()) {
 	    parseDrop(set);

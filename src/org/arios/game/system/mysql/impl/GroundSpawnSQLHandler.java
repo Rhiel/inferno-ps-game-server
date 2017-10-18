@@ -62,7 +62,7 @@ public class GroundSpawnSQLHandler extends SQLEntryHandler<GroundSpawn> {
 	    SQLManager.close(connection);
 	    return;
 	}
-	PreparedStatement statement = connection.prepareStatement("SELECT * FROM kratos_server.ground_spawns");
+	PreparedStatement statement = connection.prepareStatement("SELECT * FROM infer987_game_server.ground_spawns");
 	ResultSet set = statement.executeQuery();
 	while (set.next()) {
 	    parseItem(set.getInt(1), set.getString(2));

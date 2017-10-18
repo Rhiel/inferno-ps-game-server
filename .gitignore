@@ -1,0 +1,36 @@
+*.class
+workspace.xml
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Target
+target/
+
+# Package Files #
+*.war
+*.ear
+
+# Intellij
+*.iml
+.idea/
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Cache
+/data/cache/
+.DS_Store
+.idea/compiler.xml
+.idea/libraries/libs.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/compiler.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+
+bin/*
+bin/
+.DS_Store

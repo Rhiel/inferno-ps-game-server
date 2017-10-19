@@ -15,7 +15,7 @@ public final class MSHSWriteEvent extends IoWriteEvent {
     /**
      * The password used to verify
      */
-    private static final String PASSWORD = "0x14ari0SSbh9898";
+    private static final String PASSWORD = "0x14ari0SSbh98989910";
 
     /**
      * Constructs a new {@code MSHSWriteEvent} {@code Object}

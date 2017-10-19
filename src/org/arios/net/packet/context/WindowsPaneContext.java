@@ -20,25 +20,18 @@ public final class WindowsPaneContext implements Context {
     private final int windowId;
 
     /**
-     * The type.
-     */
-    private final int type;
-
-    /**
      * Constructs a new {@code WindowsPaneContext} object.
      * @param player The player.
      * @param windowId The window id.
-     * @param type The type.
      */
-    public WindowsPaneContext(Player player, int windowId, int type) {
-	this.player = player;
-	this.windowId = windowId;
-	this.type = type;
+    public WindowsPaneContext(Player player, int windowId) {
+        this.player = player;
+        this.windowId = windowId;
     }
 
     @Override
     public Player getPlayer() {
-	return player;
+        return player;
     }
 
     /**
@@ -46,15 +39,7 @@ public final class WindowsPaneContext implements Context {
      * @return The windowId.
      */
     public int getWindowId() {
-	return windowId;
-    }
-
-    /**
-     * Gets the type.
-     * @return The type.
-     */
-    public int getType() {
-	return type;
+        return windowId;
     }
 
 }

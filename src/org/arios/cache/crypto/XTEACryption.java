@@ -64,8 +64,20 @@ public final class XTEACryption {
 		return buffer;
 	}
 
-	private static final int DELTA1 = -1640531527;
-	private static final int SUM1 = -957401312;
+	public static ByteBuffer decrypt(ByteBuffer buffer, int[] keys) {
+		byte[] readable = new byte[buffer.remaining()];
+
+		buffer.get(readable);
+
+		ByteBuffer xtea_buffer = ByteBuffer.wrap(readable);
+
+		decrypt(keys, readable, 0, readable.length);
+
+		return xtea_buffer;
+	}
+
+	private static final int DELTA1 = -0x61c88647;
+	private static final int SUM1 = -0x61c88647 * 32;
 
 	public static byte[] decrypt(int[] cryption, byte[] data, int offset, int length) {
 		int numBlocks = length / 8;

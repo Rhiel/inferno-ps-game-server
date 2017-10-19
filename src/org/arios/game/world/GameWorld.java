@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.arios.ServerConstants;
 import org.arios.cache.Cache;
 import org.arios.cache.ServerStore;
+import org.arios.cache.xtea.XteaManager;
 import org.arios.game.content.eco.ge.GrandExchangeDatabase;
 import org.arios.game.node.entity.player.Player;
 import org.arios.game.node.object.GameObject;
@@ -155,6 +156,7 @@ public final class GameWorld {
     public static void prompt(boolean run, String directory) throws Throwable {
 	SystemLogger.log("Prompting " + GameWorld.getName() + " Game World...");
 	Cache.init(ServerConstants.CACHE_PATH);
+	XteaManager.init();
 	ServerStore.init(ServerConstants.STORE_PATH);
 	GrandExchangeDatabase.init();
 	ParserSequence.prepare();

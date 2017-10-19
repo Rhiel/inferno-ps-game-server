@@ -317,6 +317,12 @@ public class IoBuffer {
 	return this;
     }
 
+    public IoBuffer put(int[] val) {
+        for(int i : val)
+            buf.putInt(i);
+        return this;
+    }
+
     /**
      * Puts a byte array as byte A in reverse.
      * @param data The data to put.

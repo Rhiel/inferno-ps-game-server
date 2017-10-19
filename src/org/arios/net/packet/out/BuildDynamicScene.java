@@ -62,8 +62,8 @@ public final class BuildDynamicScene implements OutgoingPacket<DynamicSceneConte
 	}
 	buffer.setByteAccess();
 	for (int i = 0; i < regionIds.size(); i++) {// int id : regionIds) {
-	    int[] keys = UpdateSceneGraph.KEYS;
-	    buffer.putInt(keys[0]).putInt(keys[1]).putInt(keys[2]).putInt(keys[3]);
+	    /*int[] keys = UpdateSceneGraph.KEYS;
+	    buffer.putInt(keys[0]).putInt(keys[1]).putInt(keys[2]).putInt(keys[3]);*/
 	}
 	buffer.putLEShort(player.getLocation().getSceneY());
 	buffer.putShortA(player.getLocation().getSceneX());

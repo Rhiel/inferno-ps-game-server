@@ -50,7 +50,7 @@ public class Component {
      * Opens the component.
      */
     public void open(Player player) {
-        if (definition.getAccessMask() != null) {
+        /*if (definition.getAccessMask() != null) {
             PacketRepository.send(AccessMask.class, definition.getAccessMask().setPlayer(player));
         }
         for (ConfigContext context : definition.getConfigContext()) {
@@ -58,7 +58,7 @@ public class Component {
         }
         if (definition.getCs2ScriptContext() != null) {
             PacketRepository.send(RunScriptPacket.class, definition.getCs2ScriptContext().setPlayer(player));
-        }
+        }*/
         if (definition.getContext() != null) {
             PacketRepository.send(Interface.class, definition.getContext().setPlayer(player));
         } else {

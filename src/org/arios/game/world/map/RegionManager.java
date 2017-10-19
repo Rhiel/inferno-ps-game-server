@@ -745,25 +745,6 @@ public final class RegionManager {
         return npcs;
     }
 
-    public static List<Integer> getKeys(int regionId) {
-        List<Integer> keys = new ArrayList<Integer>();
-        File file = new File("./data/xtea/"+regionId+".txt");
-        try {
-            if(!file.exists()) {
-                for(int i = 0; i < 4; i++)
-                    keys.add(0);
-                return keys;
-            }
-            Files.lines(Paths.get(".").resolve("data/xtea/" + file.getName()))
-                    .forEach((String line) -> {
-                        keys.add(Integer.valueOf(line));
-                    });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return keys;
-    }
-
     /**
      * Gets the regionCache.
      * @return The regionCache.

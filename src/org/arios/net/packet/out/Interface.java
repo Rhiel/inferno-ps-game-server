@@ -6,15 +6,18 @@ import org.arios.net.packet.context.InterfaceContext;
 
 /**
  * The interface outgoing packet.
+ *
  * @author Emperor
  */
 public final class Interface implements OutgoingPacket<InterfaceContext> {
 
     @Override
     public void send(InterfaceContext context) {
-	IoBuffer buffer = new IoBuffer(6);
-	buffer.putIntB(context.getWindowId() << 16 | context.getComponentId()).putS(context.isWalkable() ? 1 : 0).putLEShort(context.getInterfaceId());
-	context.getPlayer().getDetails().getSession().write(buffer);
+        IoBuffer buffer = new IoBuffer(127);
+        buffer.putS(context.isWalkable() ? 1 : 0);
+        buffer.putLEShort(context.getInterfaceId());
+        buffer.putIntB(context.getWindowId() << 16 | context.getComponentId());
+        context.getPlayer().getDetails().getSession().write(buffer);
     }
 
 }

@@ -339,12 +339,12 @@ public final class ItemConfigurationEditor {
 		anims[i] = new Animation(Integer.parseInt(args[i]));
 	    }
 	    Item item = new Item(itemId);
-	    if (WeaponInterface.getWeaponInterface(item).getInterfaceId() == 89 && item.getName().contains(" sword")) {
+	  /*  if (WeaponInterface.getWeaponInterface(item).getInterfaceId() == 89 && item.getName().contains(" sword")) {
 		Animation sw = anims[0];
 		anims[0] = anims[2];
 		anims[2] = sw;
 		// System.out.println("Fixed sword " + item.getId());
-	    }
+	    }*/
 	    ItemDefinition def = ItemDefinition.forId(itemId);
 	    def.getConfigurations().put(ItemConfiguration.ATTACK_ANIMS, anims);
 	    if (hasDefence) {

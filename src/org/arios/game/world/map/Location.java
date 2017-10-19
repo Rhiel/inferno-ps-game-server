@@ -426,4 +426,19 @@ public final class Location extends Node {
     public void setZ(int z) {
 	this.z = z;
     }
+
+
+    public int toPositionPacked() {
+        return y + (x << 14) + (z << 28);
+    }
+
+    public int get18BitsHash() {//this might be wrong, i got it from the 149
+        int regionId = ((getRegionX() / 8) << 8) + (getRegionY() / 8);
+        return (((regionId & 0xff) << 6) >> 6) | (getZ() << 16) | ((((regionId >> 8) << 6) >> 6) << 8);
+    }
+
+    public int toRegionPacked() {
+        return (y >> 6) + ((x >> 6) << 8) + (z << 16);
+    }
+
 }

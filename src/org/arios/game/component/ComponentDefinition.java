@@ -77,16 +77,17 @@ public final class ComponentDefinition {
     public static ComponentDefinition parse(ByteBuffer buffer) {
         int opcode;
         ComponentDefinition def = new ComponentDefinition();
-        while ((opcode = buffer.get() & 0xFF) != 0) {
+        while (buffer.remaining() > 0 && (opcode = buffer.get() & 0xFF) != 0) { //TODO REMOVE THIS AND ENABLE EARLIER VERSION.
             switch (opcode) {
                 case 1:
-                    int data = buffer.getInt();
-                    def.context = new InterfaceContext(null, (data >> 16) & 0xFFFF, data & 0xFFFF, buffer.getShort() & 0xFFFF, buffer.get() == 1);
+                    int data;
+                    def.context = new InterfaceContext(null, buffer.getShort() & 0xFFFF, buffer.getShort() & 0xFFFF, buffer.getShort() & 0xFFFF, buffer.getShort() & 0xFFFF, buffer.get() == 1);
                     break;
                 case 2:
                     int id = buffer.getShort() & 0xFFFF;
                     data = buffer.getInt();
-                    def.accessMask = new AccessMaskContext(null, id, data >> 16 & 0xFFFF, data & 0xFFFF, buffer.getShort() & 0xFFFF, buffer.getShort() & 0xFFFF);
+                    def.accessMask = new AccessMaskContext(null, id, data >> 16 & 0xFFFF, data & 0xFFFF,
+                            buffer.getShort() & 0xFFFF, buffer.getShort() & 0xFFFF);
                     break;
                 case 3:
                     def.configContext = new ConfigContext[buffer.get() & 0xFF];

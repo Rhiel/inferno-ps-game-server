@@ -23,6 +23,7 @@ import org.arios.game.world.GameWorld;
 
 /**
  * Handles the players SQL functions.
+ *
  * @author Vexia
  */
 public final class PlayerSQLManager {
@@ -39,53 +40,55 @@ public final class PlayerSQLManager {
 
     /**
      * Constructs a new {@code PlayerSQLManager} {@code Object}.
+     *
      * @param details the details.
      */
     public PlayerSQLManager(final PlayerDetails details) {
-	this.details = details;
+        this.details = details;
     }
 
     /**
      * Parses the sql on login.
      */
     public void parse() {
-	details.getSqlManager().setDefaultTable();
-	SQLEntryHandler.read(new PlayerSQLHandler(details));
-	details.getSqlManager().setSQLData();
+        details.getSqlManager().setDefaultTable();
+        SQLEntryHandler.read(new PlayerSQLHandler(details));
+        details.getSqlManager().setSQLData();
     }
 
     /**
      * Saves the sql data.
+     *
      * @param player the player.
      */
     public void save(final Player player) {
-	if (!GameWorld.isEconomyWorld() || GameWorld.getSettings().isDevMode() && !SystemManager.getSystemConfig().isAdmin(player.getName())) {
-	    return;
-	}
-	TaskExecutor.executeSQL(new Runnable() {
-	    @Override
-	    public void run() {
-		if (player != null) {
-		    table.getColumn("netWorth").updateValue(player.getMonitor().getNetworth());
-		    table.getColumn("ironManMode").updateValue(player.getIronmanManager().getMode().name());
-		    table.getColumn("bank").updateValue(player.getBank().format());
-		    table.getColumn("inventory").updateValue(player.getInventory().format());
-		    table.getColumn("equipment").updateValue(player.getEquipment().format());
-		    table.getColumn("ge").updateValue(player.getGrandExchange().format());
-		}
-		SQLEntryHandler.write(new PlayerSQLHandler(getDetails()));
-		if (player != null) {
-		    SQLEntryHandler.write(new HighscoreSQLHandler(player));
-		}
-	    }
-	});
+        if (!GameWorld.isEconomyWorld() || GameWorld.getSettings().isDevMode() && !SystemManager.getSystemConfig().isAdmin(player.getName())) {
+            return;
+        }
+        TaskExecutor.executeSQL(new Runnable() {
+            @Override
+            public void run() {
+                if (player != null) {
+                    table.getColumn("netWorth").updateValue(player.getMonitor().getNetworth());
+                    table.getColumn("ironManMode").updateValue(player.getIronmanManager().getMode().name());
+                    table.getColumn("bank").updateValue(player.getBank().format());
+                    table.getColumn("inventory").updateValue(player.getInventory().format());
+                    table.getColumn("equipment").updateValue(player.getEquipment().format());
+                    table.getColumn("ge").updateValue(player.getGrandExchange().format());
+                }
+                SQLEntryHandler.write(new PlayerSQLHandler(getDetails()));
+                if (player != null) {
+                    SQLEntryHandler.write(new HighscoreSQLHandler(player));
+                }
+            }
+        });
     }
 
     /**
      * Saves the data without a player instance.
      */
     public void save() {
-	save(null);
+        save(null);
     }
 
     /**
@@ -93,144 +96,151 @@ public final class PlayerSQLManager {
      */
     @SuppressWarnings("deprecation")
     public void setSQLData() {
-	if ((int) table.getColumn("rights").getValue() == -1) {
-	    table.getColumn("rights").setValue(0);
-	}
-	details.setPassword((String) table.getColumn("password").getValue());
-	details.getPortal().setDonatorType((int) table.getColumn("donatorType").getValue() != -1 ? DonatorType.values()[(int) table.getColumn("donatorType").getValue()] : null);
-	details.setRights(Rights.forId((Integer) table.getColumn("rights").getValue()));
-	details.getPortal().getShop().setCredits((Integer) table.getColumn("credits").getValue());
-	details.getPortal().getIconManager().setIcon((Integer) table.getColumn("icon").getValue());
-	details.getShop().parsePerks((String) table.getColumn("perks").getValue());
-	table.getColumn("ip").updateValue(getAddressLog((String) table.getColumn("ip").getValue(), details.getInfo().getIp()));
-	table.getColumn("mac").updateValue(getAddressLog((String) table.getColumn("mac").getValue(), details.getInfo().getMac()));
-	table.getColumn("serial").updateValue(getAddressLog((String) table.getColumn("serial").getValue(), details.getInfo().getSerial()));
-	table.getColumn("computerName").updateValue(getAddressLog((String) table.getColumn("computerName").getValue(), details.getInfo().getCompName()));
-	if ((int) table.getColumn("icon").getValue() == 0 && details.getPortal().isDonator()) {
-	    table.getColumn("icon").updateValue(details.getPortal().getDonatorType().getIcon().getId());
-	    details.getPortal().getIconManager().setIcon(details.getPortal().getDonatorType().getIcon());
-	}
+        if ((int) table.getColumn("rights").getValue() == -1) {
+            table.getColumn("rights").setValue(0);
+        }
+        details.setPassword((String) table.getColumn("password").getValue());
+        details.getPortal().setDonatorType((int) table.getColumn("donatorType").getValue() != -1 ? DonatorType.values()[(int) table.getColumn("donatorType").getValue()] : null);
+        details.setRights(Rights.forId((Integer) table.getColumn("rights").getValue()));
+        details.getPortal().getShop().setCredits((Integer) table.getColumn("credits").getValue());
+        details.getPortal().getIconManager().setIcon((Integer) table.getColumn("icon").getValue());
+        System.out.println("t1");
+        details.getShop().parsePerks((String) table.getColumn("perks").getValue());
+        System.out.println("here");
+        table.getColumn("ip").updateValue(getAddressLog((String) table.getColumn("ip").getValue(), details.getInfo().getIp()));
+        table.getColumn("mac").updateValue(getAddressLog((String) table.getColumn("mac").getValue(), details.getInfo().getMac()));
+        table.getColumn("serial").updateValue(getAddressLog((String) table.getColumn("serial").getValue(), details.getInfo().getSerial()));
+        table.getColumn("computerName").updateValue(getAddressLog((String) table.getColumn("computerName").getValue(), details.getInfo().getCompName()));
+        if ((int) table.getColumn("icon").getValue() == 0 && details.getPortal().isDonator()) {
+            table.getColumn("icon").updateValue(details.getPortal().getDonatorType().getIcon().getId());
+            details.getPortal().getIconManager().setIcon(details.getPortal().getDonatorType().getIcon());
+        }
     }
 
     /**
      * Sets the default table values.
      */
     public void setDefaultTable() {
-	table.getColumn("credits").setValue(details.getShop().getCredits());
-	table.getColumn("password").setValue(details.getPassword());
-	table.getColumn("rights").setValue(details.getRights().ordinal());
-	table.getColumn("donatorType").setValue(details.getPortal().isDonator());
-	table.getColumn("icon").setValue(details.getPortal().getIconManager().getIcon().getId());
-	table.getColumn("donatorType").setValue(details.getPortal().getDonatorValue());
-	table.getColumn("perks").setValue("");
-	table.getColumn("salt").setValue(details.getPassword().substring(0, 29));
-	table.getColumn("ip").setValue(details.getInfo().getIp() == null ? "" : details.getInfo().getIp());
-	table.getColumn("mac").setValue(details.getInfo().getMac() == null ? "" : details.getInfo().getMac());
-	table.getColumn("serial").setValue(details.getInfo().getSerial() == null ? "" : details.getInfo().getSerial());
-	table.getColumn("computerName").setValue(details.getInfo().getCompName() == null ? "" : details.getInfo().getCompName());
-	table.getColumn("netWorth").setValue(0);
-	table.getColumn("ironManMode").setValue(IronmanMode.NONE.name());
+        table.getColumn("credits").setValue(details.getShop().getCredits());
+        table.getColumn("password").setValue(details.getPassword());
+        table.getColumn("rights").setValue(details.getRights().ordinal());
+        table.getColumn("donatorType").setValue(details.getPortal().isDonator());
+        table.getColumn("icon").setValue(details.getPortal().getIconManager().getIcon().getId());
+        table.getColumn("donatorType").setValue(details.getPortal().getDonatorValue());
+        table.getColumn("perks").setValue("");
+        table.getColumn("salt").setValue(details.getPassword().substring(0, 29));
+        table.getColumn("ip").setValue(details.getInfo().getIp() == null ? "" : details.getInfo().getIp());
+        table.getColumn("mac").setValue(details.getInfo().getMac() == null ? "" : details.getInfo().getMac());
+        table.getColumn("serial").setValue(details.getInfo().getSerial() == null ? "" : details.getInfo().getSerial());
+        table.getColumn("computerName").setValue(details.getInfo().getCompName() == null ? "" : details.getInfo().getCompName());
+        table.getColumn("netWorth").setValue(0);
+        table.getColumn("ironManMode").setValue(IronmanMode.NONE.name());
     }
 
     /**
      * Gets the table.
+     *
      * @return The table.
      */
     public SQLTable getTable() {
-	return table;
+        return table;
     }
 
     /**
      * Gets the details.
+     *
      * @return The details.
      */
     public PlayerDetails getDetails() {
-	return details;
+        return details;
     }
 
     /**
      * Gets the address log.
+     *
      * @param original the original log.
-     * @param address the address.
+     * @param address  the address.
      * @return the address.
      */
     private String getAddressLog(String original, String address) {
-	String log = "";
-	if (original != null && original.length() > 0) {
-	    log += original;
-	    if (log.charAt(log.length() - 1) != '|') {
-		log += "|";
-	    }
-	}
-	if (address != null && address.length() > 0 && (original == null || !original.contains(address))) {
-	    log += address + "|";
-	}
-	if (log.length() > 0 && log.charAt(log.length() - 1) == '|') {
-	    log = log.substring(0, log.length() - 1);
-	}
-	if (log == null) {
-	    log = "";
-	}
-	return log;
+        String log = "";
+        if (original != null && original.length() > 0) {
+            log += original;
+            if (log.charAt(log.length() - 1) != '|') {
+                log += "|";
+            }
+        }
+        if (address != null && address.length() > 0 && (original == null || !original.contains(address))) {
+            log += address + "|";
+        }
+        if (log.length() > 0 && log.charAt(log.length() - 1) == '|') {
+            log = log.substring(0, log.length() - 1);
+        }
+        if (log == null) {
+            log = "";
+        }
+        return log;
     }
 
     /**
      * Checks if an sql account was created under a name.
-     * @param name the name.
+     *
+     * @param name  the name.
      * @param field the field
      * @return {@code True} if so.
      */
     public static boolean hasSqlAccount(String name, String field) throws SQLException {
-	Connection connection = SQLManager.getConnection();
-	if (connection == null) {
-	    return true;
-	}
-	ResultSet result = null;
-	PreparedStatement statement;
-	statement = connection.prepareStatement("SELECT * FROM " + "members" + " WHERE " + "" + field + "='" + name.toLowerCase() + "' LIMIT 1");
-	result = statement.executeQuery();
-	if (result == null || !result.next()) {
-	    SQLManager.close(connection);
-	    return false;
-	}
-	SQLManager.close(connection);
-	return true;
+        Connection connection = SQLManager.getConnection();
+        if (connection == null) {
+            return true;
+        }
+        ResultSet result = null;
+        PreparedStatement statement;
+        statement = connection.prepareStatement("SELECT * FROM " + "members" + " WHERE " + "" + field + "='" + name.toLowerCase() + "' LIMIT 1");
+        result = statement.executeQuery();
+        if (result == null || !result.next()) {
+            SQLManager.close(connection);
+            return false;
+        }
+        SQLManager.close(connection);
+        return true;
     }
 
     /**
      * Checks if a username & password are correct.
+     *
      * @param name the name.
      * @param pass the pass.
      * @return the response.
      * @throws SQLException the exception if thrown.
      */
     public static Response getCredentialResponse(PlayerDetails details, String name, String pass) throws SQLException {
-	if (!SQLManager.isInitialized()) {
-	    return Response.INVALID_CREDENTIALS;
-	}
-	Connection connection = SQLManager.getConnection();
-	if (connection == null) {
-	    details.parse(false);
-	    if (SystemManager.getEncryption().checkPassword(pass, details.getPassword())) {
-		return Response.INVALID_CREDENTIALS;
-	    }
-	    return Response.WEBSITE_ERROR;
-	}
-	ResultSet result = null;
-	PreparedStatement statement;
-	statement = connection.prepareStatement("SELECT * FROM " + "members" + " WHERE " + "" + "username" + "='" + name.toLowerCase() + "' LIMIT 1");
-	result = statement.executeQuery();
-	if (result == null || !result.next()) {
-	    SQLManager.close(connection);
-	    return Response.NON_CREATED_ACCOUNT;
-	}
-	String realPass = result.getString("password");
-	if (SystemManager.getEncryption().checkPassword(pass, realPass)) {
-	    SQLManager.close(connection);
-	    return Response.SUCCESSFUL;
-	}
-	SQLManager.close(connection);
-	return Response.INVALID_CREDENTIALS;
+        if (!SQLManager.isInitialized()) {
+            return Response.INVALID_CREDENTIALS;
+        }
+        Connection connection = SQLManager.getConnection();
+        if (connection == null) {
+            details.parse(false);
+            if (SystemManager.getEncryption().checkPassword(pass, details.getPassword())) {
+                return Response.INVALID_CREDENTIALS;
+            }
+            return Response.WEBSITE_ERROR;
+        }
+        ResultSet result = null;
+        PreparedStatement statement;
+        statement = connection.prepareStatement("SELECT * FROM " + "members" + " WHERE " + "" + "username" + "='" + name.toLowerCase() + "' LIMIT 1");
+        result = statement.executeQuery();
+        if (result == null || !result.next()) {
+            SQLManager.close(connection);
+            return Response.NON_CREATED_ACCOUNT;
+        }
+        String realPass = result.getString("password");
+        if (SystemManager.getEncryption().checkPassword(pass, realPass)) {
+            SQLManager.close(connection);
+            return Response.SUCCESSFUL;
+        }
+        SQLManager.close(connection);
+        return Response.INVALID_CREDENTIALS;
     }
 
 }

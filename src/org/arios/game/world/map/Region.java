@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.arios.cache.Cache;
+import org.arios.cache.xtea.XteaManager;
 import org.arios.game.node.entity.npc.NPC;
 import org.arios.game.node.entity.player.Player;
 import org.arios.game.node.entity.player.link.music.MusicZone;
@@ -266,11 +267,7 @@ public class Region {
 				r.hasFlags = true;
 				r.setLoaded(true);
 				if (landscapeId > -1) {
-					int[] keys = new int[4];
-					List<Integer> KEYS = RegionManager.getKeys(regionId);
-					for(int i = 0; i < keys.length; i++) {
-						keys[i] = KEYS.get(i);
-					}
+					int[] keys = XteaManager.getKey(regionId);//doesnt work
 					byte[] landscape = Cache.getIndexes()[5].getFileData(landscapeId, 0, keys);
 					if (landscape == null || landscape.length < 4) {
 						return;

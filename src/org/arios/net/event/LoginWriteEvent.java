@@ -11,6 +11,7 @@ import org.arios.net.producer.GameEventProducer;
 
 /**
  * Handles login writing events.
+ *
  * @author Emperor
  */
 public final class LoginWriteEvent extends IoWriteEvent {
@@ -22,48 +23,50 @@ public final class LoginWriteEvent extends IoWriteEvent {
 
     /**
      * Constructs a new {@code LoginWriteEvent}.
+     *
      * @param session The session.
      * @param context The event context.
      */
     public LoginWriteEvent(IoSession session, Object context) {
-	super(session, context);
+        super(session, context);
     }
 
     @Override
     public void write(IoSession session, Object context) {
-	Response response = (Response) context;
-	ByteBuffer buffer = ByteBuffer.allocate(500);
-	buffer.put((byte) response.opcode());
-	switch (response.opcode()) {
-	case 2:
-	    buffer.put(getWorldResponse(session));
-	    session.setProducer(GAME_PRODUCER);
-	    break;
-	case 21:
-	    buffer.put((byte) session.getServerKey());
-	    break;
-	}
-	buffer.flip();
-	session.queue(buffer);
+        Response response = (Response) context;
+        ByteBuffer buffer = ByteBuffer.allocate(500);
+        buffer.put((byte) response.opcode());
+        System.out.println(response.opcode());
+        switch (response.opcode()) {
+            case 2:
+                buffer.put(getWorldResponse(session));
+                session.setProducer(GAME_PRODUCER);
+                break;
+            case 21:
+                buffer.put((byte) session.getServerKey());
+                break;
+        }
+        buffer.flip();
+        session.queue(buffer);
     }
 
     /**
      * Gets the world response buffer.
+     *
      * @param session The session.
      * @return The buffer.
      */
     private static ByteBuffer getWorldResponse(IoSession session) {
-	ByteBuffer buffer = ByteBuffer.allocate(150);
-	Player player = session.getPlayer();
-	buffer.put((byte) player.getDetails().getRights().ordinal());
-	buffer.put((byte) 0);
-	buffer.put((byte) 0);
-	buffer.put((byte) 0);
-	buffer.put((byte) 1);
-	buffer.putShort((short) player.getIndex());
-	buffer.put((byte) 1);
-	buffer.flip();
-	return buffer;
+        ByteBuffer buffer = ByteBuffer.allocate(150);
+        Player player = session.getPlayer();
+        buffer.put((byte) 0);
+        buffer.putInt(0);
+        buffer.put((byte) player.getDetails().getRights().ordinal());
+        buffer.put((byte) 1);
+        buffer.putShort((short) 1);
+        buffer.put((byte) 1);
+        buffer.flip();
+        return buffer;
 
     }
 }

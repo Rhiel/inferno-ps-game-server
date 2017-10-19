@@ -15,134 +15,140 @@ import org.arios.parser.player.SavingModule;
  */
 public final class SpellBookManager implements SavingModule {
 
-    /**
-     * Represents the current interface if of the spellbook.
-     */
-    private int spellBook = SpellBook.MODERN.getInterfaceId();
-
-    /**
-     * Constructs a new {@code SpellBookManager} {@code Object}.
-     */
-    public SpellBookManager() {
 	/**
-	 * empty.
+	 * Represents the current interface if of the spellbook.
 	 */
-    }
-
-    @Override
-    public void save(ByteBuffer buffer) {
-	buffer.putInt(spellBook);
-    }
-
-    @Override
-    public void parse(ByteBuffer buffer) {
-	if (buffer.hasRemaining()) {
-	    setSpellBook(SpellBook.forInterface(buffer.getInt()));
-	}
-    }
-
-    /**
-     * Sets the spell book.
-     * @param book
-     */
-    public void setSpellBook(SpellBook book) {
-	this.spellBook = book.getInterfaceId();
-    }
-
-    /**
-     * Updates the
-     * @param player
-     */
-    public void update(Player player) {
-	player.getInterfaceManager().openTab(new Component(SpellBook.forInterface(this.spellBook).getInterfaceId()));
-    }
-
-    /**
-     * Gets the spell book.
-     * @return the spellBook
-     */
-    public int getSpellBook() {
-	return spellBook;
-    }
-
-    /**
-     * Represents a characters spellbook.
-     * @author 'Vexia
-     * @author Emperor
-     */
-    public static enum SpellBook {
+	private int spellBook = SpellBook.MODERN.getConfig();
 
 	/**
-	 * The modern magic spell book.
+	 * Constructs a new {@code SpellBookManager} {@code Object}.
 	 */
-	MODERN(192),
-
-	/**
-	 * The ancient magicks spell book.
-	 */
-	ANCIENT(193),
-
-	/**
-	 * The lunar magic spell book.
-	 */
-	LUNAR(430);
-
-	/**
-	 * The interface id of this spell book.
-	 */
-	private int interfaceId;
-
-	/**
-	 * The spells mapping.
-	 */
-	private final Map<Integer, MagicSpell> spells = new HashMap<>();
-
-	/**
-	 * Creates the spell book.
-	 * @param interfaceId The spellbook interface id.
-	 */
-	private SpellBook(int interfaceId) {
-	    this.interfaceId = interfaceId;
+	public SpellBookManager() {
+		/**
+		 * empty.
+		 */
 	}
 
-	/**
-	 * @return The interfaceId.
-	 */
-	public int getInterfaceId() {
-	    return interfaceId;
+	@Override
+	public void save(ByteBuffer buffer) {
+		buffer.put((byte) spellBook);
 	}
 
-	/**
-	 * Method used to get the book.
-	 * @param id the id.
-	 */
-	public static SpellBook forInterface(final int id) {
-	    for (SpellBook book : SpellBook.values()) {
-		if (book.interfaceId == id) {
-		    return book;
+	@Override
+	public void parse(ByteBuffer buffer) {
+		if (buffer.hasRemaining()) {
+			setSpellBook(SpellBook.forConfig(buffer.get()));
 		}
-	    }
-	    return null;
 	}
 
 	/**
-	 * Registers a new spell.
-	 * @param buttonId The button id.
-	 * @param spell The spell.
+	 * Sets the spell book.
+	 * @param book
 	 */
-	public void register(int buttonId, MagicSpell spell) {
-	    spell.setSpellId(buttonId);
-	    spells.put(buttonId, spell);
+	public void setSpellBook(SpellBook book) {
+		this.spellBook = book.getConfig();
 	}
 
 	/**
-	 * Gets a spell from the spellbook.
-	 * @param buttonId The button id.
-	 * @return The spell.
+	 * Updates the
+	 * @param player
 	 */
-	public MagicSpell getSpell(int buttonId) {
-	    return spells.get(buttonId);
+	public void update(Player player) {
+		player.getConfigManager().set(439, SpellBook.forConfig(this.spellBook).getConfig());
 	}
-    }
+
+	/**
+	 * Gets the spell book.
+	 * @return the spellBook
+	 */
+	public int getSpellBook() {
+		return spellBook;
+	}
+
+	/**
+	 * Represents a characters spellbook.
+	 * @author 'Vexia
+	 * @author Emperor
+	 *
+	 */
+	public static enum SpellBook {
+
+		/**
+		 * The modern magic spell book.
+		 */
+		MODERN(0),
+
+		/**
+		 * The ancient magicks spell book.
+		 */
+		ANCIENT(1),
+
+		/**
+		 * The lunar magic spell book.
+		 */
+		LUNAR(2),
+
+		/**
+		 * The arceuus magic spell book.
+		 */
+		ARCEUUS(3);
+
+		/**
+		 * The interface id of this spell book.
+		 */
+		private int config;
+
+		/**
+		 * The spells mapping.
+		 */
+		private final Map<Integer, MagicSpell> spells = new HashMap<>();
+
+		/**
+		 * Creates the spell book.
+		 * @param config The spellbook config id.
+		 */
+		private SpellBook(int config) {
+			this.config = config;
+		}
+
+		/**
+		 * @return The interfaceId.
+		 */
+		public int getConfig() {
+			return config;
+		}
+
+		/**
+		 * Method used to get the book.
+		 * @param id the id.
+		 */
+		public static SpellBook forConfig(final int id) {
+			for (SpellBook book : SpellBook.values()) {
+				if (book.config == id) {
+					return book;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Registers a new spell.
+		 * @param buttonId The button id.
+		 * @param spell The spell.
+		 */
+		public void register(int buttonId, MagicSpell spell) {
+			spell.setSpellId(buttonId);
+			spells.put(buttonId, spell);
+		}
+
+		/**
+		 * Gets a spell from the spellbook.
+		 * @param buttonId The button id.
+		 * @return The spell.
+		 */
+		public MagicSpell getSpell(int buttonId) {
+			return spells.get(buttonId);
+		}
+	}
 
 }

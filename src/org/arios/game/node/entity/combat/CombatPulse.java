@@ -179,6 +179,20 @@ public final class CombatPulse extends Pulse {
 	return true;
     }
 
+	public void stopForDeath(int delay) {
+		super.stop();
+		entity.setAttribute("combat-stop", GameWorld.getTicks());
+		this.lastVictim = victim;
+		GameWorld.submit(new Pulse(delay + 2) {
+			@Override
+			public boolean pulse() {
+				if (victim != null && victim.getProperties() != null && victim.getProperties().getCombatPulse() != null)
+					victim.getProperties().getCombatPulse().stop();
+				return true;
+			}
+		});
+	}
+
     /**
      * Sets the "in combat" flag for the victim and handles closing.
      * @param victim The victim.

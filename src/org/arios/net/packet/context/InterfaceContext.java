@@ -6,6 +6,7 @@ import org.arios.net.packet.Context;
 /**
  * The interface packet context.
  * @author Emperor
+ *
  */
 public final class InterfaceContext implements Context {
 
@@ -17,12 +18,17 @@ public final class InterfaceContext implements Context {
     /**
      * The window id.
      */
-    private final int windowId;
+    private int windowId;
 
     /**
      * The component id.
      */
     private int componentId;
+
+    /**
+     * The component id.
+     */
+    private int fullscreenComponentId;
 
     /**
      * The interface id.
@@ -42,12 +48,13 @@ public final class InterfaceContext implements Context {
      * @param interfaceId The interface id.
      * @param walkable If we can walk over the interface.
      */
-    public InterfaceContext(Player player, int windowId, int componentId, int interfaceId, boolean walkable) {
-	this.player = player;
-	this.windowId = windowId;
-	this.componentId = componentId;
-	this.interfaceId = interfaceId;
-	this.walkable = walkable;
+    public InterfaceContext(Player player, int windowId, int componentId, int fullscreenComponentId, int interfaceId, boolean walkable) {
+        this.player = player;
+        this.windowId = windowId;
+        this.componentId = componentId;
+        this.fullscreenComponentId = fullscreenComponentId;
+        this.interfaceId = interfaceId;
+        this.walkable = walkable;
     }
 
     /**
@@ -57,12 +64,12 @@ public final class InterfaceContext implements Context {
      * @return The interface context created.
      */
     public InterfaceContext transform(Player player, int id) {
-	return new InterfaceContext(player, windowId, componentId, id, walkable);
+        return new InterfaceContext(player, windowId, componentId, fullscreenComponentId, id, walkable);
     }
 
     @Override
     public Player getPlayer() {
-	return player;
+        return player;
     }
 
     /**
@@ -71,8 +78,8 @@ public final class InterfaceContext implements Context {
      * @return This context instance.
      */
     public Context setPlayer(Player player) {
-	this.player = player;
-	return this;
+        this.player = player;
+        return this;
     }
 
     /**
@@ -80,15 +87,17 @@ public final class InterfaceContext implements Context {
      * @return The windowId.
      */
     public int getWindowId() {
-	return windowId;
+        return windowId;
     }
+
+    public void setWindowId(int id) { this.windowId = id; }
 
     /**
      * Sets the component id.
      * @param componentId The component id.
      */
     public void setComponentId(int componentId) {
-	this.componentId = componentId;
+        this.componentId = componentId;
     }
 
     /**
@@ -96,7 +105,14 @@ public final class InterfaceContext implements Context {
      * @return The componentId.
      */
     public int getComponentId() {
-	return componentId;
+        return getPlayer().getInterfaceManager().isResizable() ? fullscreenComponentId : componentId;
+    }
+
+    public int getFixedComponentId() {
+        return componentId;
+    }
+    public int getFullComponentId() {
+        return fullscreenComponentId;
     }
 
     /**
@@ -104,7 +120,7 @@ public final class InterfaceContext implements Context {
      * @return The interfaceId.
      */
     public int getInterfaceId() {
-	return interfaceId;
+        return interfaceId;
     }
 
     /**
@@ -112,7 +128,7 @@ public final class InterfaceContext implements Context {
      * @return The walkable.
      */
     public boolean isWalkable() {
-	return walkable;
+        return walkable;
     }
 
 }

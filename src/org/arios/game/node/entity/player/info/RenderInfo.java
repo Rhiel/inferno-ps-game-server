@@ -8,9 +8,12 @@ import org.arios.game.node.entity.Entity;
 import org.arios.game.node.entity.npc.NPC;
 import org.arios.game.node.entity.player.Player;
 import org.arios.game.world.map.Location;
+import org.arios.game.world.repository.Repository;
+import org.arios.net.packet.IoBuffer;
 
 /**
  * Holds a player's render information.
+ *
  * @author Emperor
  */
 public final class RenderInfo {
@@ -62,146 +65,215 @@ public final class RenderInfo {
 
     /**
      * Constructs a new {@code RenderInfo} {@code Object}.
+     *
      * @param player The player.
      */
     public RenderInfo(Player player) {
-	this.player = player;
+        this.player = player;
     }
 
     /**
      * Updates the player rendering information.
      */
     public void updateInformation() {
-	onFirstCycle = false;
-	lastLocation = player.getLocation();
-	preparedAppearance = false;
+        onFirstCycle = false;
+        lastLocation = player.getLocation();
+        preparedAppearance = false;
     }
 
     /**
      * Registers an entity requiring a mask update.
+     *
      * @param entity The entity.
      */
     public void registerMaskUpdate(Entity entity) {
-	maskUpdates[maskUpdateCount++] = entity;
+        maskUpdates[maskUpdateCount++] = entity;
     }
 
     /**
      * Gets the localNpcs.
+     *
      * @return The localNpcs.
      */
     public List<NPC> getLocalNpcs() {
-	return localNpcs;
+        return localNpcs;
     }
 
     /**
      * Sets the localNpcs.
+     *
      * @param localNpcs The localNpcs to set.
      */
     public void setLocalNpcs(List<NPC> localNpcs) {
-	this.localNpcs = localNpcs;
+        this.localNpcs = localNpcs;
     }
 
     /**
      * Gets the onFirstCycle.
+     *
      * @return The onFirstCycle.
      */
     public boolean isOnFirstCycle() {
-	return onFirstCycle;
+        return onFirstCycle;
     }
 
     /**
      * Sets the onFirstCycle.
+     *
      * @param onFirstCycle The onFirstCycle to set.
      */
     public void setOnFirstCycle(boolean onFirstCycle) {
-	this.onFirstCycle = onFirstCycle;
+        this.onFirstCycle = onFirstCycle;
     }
 
     /**
      * Gets the lastLocation.
+     *
      * @return The lastLocation.
      */
     public Location getLastLocation() {
-	return lastLocation;
+        return lastLocation;
     }
 
     /**
      * Sets the lastLocation.
+     *
      * @param lastLocation The lastLocation to set.
      */
     public void setLastLocation(Location lastLocation) {
-	this.lastLocation = lastLocation;
+        this.lastLocation = lastLocation;
     }
 
     /**
      * Gets the localPlayers.
+     *
      * @return The localPlayers.
      */
     public List<Player> getLocalPlayers() {
-	return localPlayers;
+        return localPlayers;
     }
 
     /**
      * Sets the localPlayers.
+     *
      * @param localPlayers The localPlayers to set.
      */
     public void setLocalPlayers(List<Player> localPlayers) {
-	this.localPlayers = localPlayers;
+        this.localPlayers = localPlayers;
     }
 
     /**
      * Gets the appearanceStamps.
+     *
      * @return The appearanceStamps.
      */
     public long[] getAppearanceStamps() {
-	return appearanceStamps;
+        return appearanceStamps;
     }
 
     /**
      * Gets the maskUpdateCount.
+     *
      * @return The maskUpdateCount.
      */
     public int getMaskUpdateCount() {
-	return maskUpdateCount;
+        return maskUpdateCount;
     }
 
     /**
      * Sets the maskUpdateCount.
+     *
      * @param maskUpdateCount The maskUpdateCount to set.
      */
     public void setMaskUpdateCount(int maskUpdateCount) {
-	this.maskUpdateCount = maskUpdateCount;
+        this.maskUpdateCount = maskUpdateCount;
     }
 
     /**
      * Gets the maskUpdates.
+     *
      * @return The maskUpdates.
      */
     public Entity[] getMaskUpdates() {
-	return maskUpdates;
+        return maskUpdates;
     }
 
     /**
      * Sets the maskUpdates.
+     *
      * @param maskUpdates The maskUpdates to set.
      */
     public void setMaskUpdates(Entity[] maskUpdates) {
-	this.maskUpdates = maskUpdates;
+        this.maskUpdates = maskUpdates;
     }
 
     /**
      * Sets the prepared appearance flag.
+     *
      * @param prepared If the player has prepared appearance setting this cycle.
      */
     public void setPreparedAppearance(boolean prepared) {
-	this.preparedAppearance = prepared;
+        this.preparedAppearance = prepared;
     }
 
     /**
      * Checks if the player has prepared appearance data this cycle.
+     *
      * @return {@code True} if so.
      */
     public boolean preparedAppearance() {
-	return preparedAppearance;
+        return preparedAppearance;
+    }
+
+    /**
+     * Holds the players' hash locations.
+     */
+    public final int[] hashLocations = new int[2048];
+
+    /**
+     * The amount of local players.
+     */
+    public int localsCount = 0;
+
+    /**
+     * The amount of global players.
+     */
+    public int globalsCount = 0;
+
+    /**
+     * The local player indexes.
+     */
+    public final short[] locals = new short[2048];
+
+    /**
+     * The global player indexes.
+     */
+    public final short[] globals = new short[2048];
+
+    /**
+     * The local players.
+     */
+    public final boolean[] isLocal = new boolean[2048];
+
+    /**
+     * The skipped player indexes.
+     */
+    public final byte[] skips = new byte[2048];
+
+    public void enterWorld(IoBuffer packet) {
+        int myindex = player.getIndex();
+        locals[localsCount++] = (short) myindex;
+        isLocal[myindex] = true;
+        hashLocations[myindex] = 0;
+        packet.setBitAccess();
+        packet.putBits(30, player.getLocation().toPositionPacked());
+        for (short index = 1; index < 2048; index++) {
+            if (index == myindex) {
+                continue;
+            }
+            globals[globalsCount++] = index;
+            packet.putBits(18, 0);
+        }
+        packet.setByteAccess();
     }
 }

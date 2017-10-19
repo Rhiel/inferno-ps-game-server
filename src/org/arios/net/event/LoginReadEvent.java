@@ -9,6 +9,7 @@ import org.arios.cache.crypto.ISAACCipher;
 import org.arios.cache.crypto.ISAACPair;
 import org.arios.cache.crypto.XTEACryption;
 import org.arios.cache.misc.buffer.ByteBufferUtils;
+import org.arios.game.node.entity.player.info.ClientInfo;
 import org.arios.game.node.entity.player.info.PlayerDetails;
 import org.arios.game.node.entity.player.info.UIDInfo;
 import org.arios.game.node.entity.player.info.login.LoginParser;
@@ -30,13 +31,13 @@ import org.arios.tools.StringUtils;
 public final class LoginReadEvent extends IoReadEvent {
 
     /**
-     * The RSA exponent.
-     */
-    public static final BigInteger RSA_KEY = new BigInteger("65537");
-    /**
      * The RSA modulus.
      */
-    public static final BigInteger MODULUS = new BigInteger("94904992129904410061849432720048295856082621425118273522925386720620318960919649616773860564226013741030211135158797393273808089000770687087538386210551037271884505217469135237269866084874090369313013016228010726263597258760029391951907049483204438424117908438852851618778702170822555894057960542749301583313");
+    public static final BigInteger MODULUS = new BigInteger("123610787314551677907874298567344116546092825605786721563138484858373112431812744323286817950310420955185277119707409447778394330506113291931456288097283884073528921913702312357839491271114936987467508531371687701010613362457400925735299289293875139332422005763586035731230593313994568625608925020525012815769");
+    /**
+     * The RSA exponent.
+     */
+    public static final BigInteger RSA_KEY = new BigInteger("4064593232263589512664130390659117310173337796671657002434707644075774864436218685882525789751117035543651253383118961196918378660003877872229249139412037813980649248292120898174901611934400871795834821855106298536869547440918732619284043998938822097337735490034265919518682678773903983829362692278880641213");
 
     /**
      * Constructs a new {@code LoginReadEvent}.
@@ -74,106 +75,93 @@ public final class LoginReadEvent extends IoReadEvent {
     /**
      * Decodes a world login request.
      *
-     * @param session The session.
-     * @param rsa_buffer  The buffer to read from.
+     * @param session    The session.
+     * @param rsa_buffer The buffer to read from.
      */
     private static void decodeWorld(final int opcode, final IoSession session, ByteBuffer buffer) {
 
         ByteBuffer rsa_buffer = getRSABlock(buffer);
-
-        int op = rsa_buffer.get();
-
-        if(op != 1)
-            return;
 
         int auth_type = rsa_buffer.get();
 
         int[] xtea = new int[]{rsa_buffer.getInt(), rsa_buffer.getInt(), rsa_buffer.getInt(), rsa_buffer.getInt()};
 
         switch (auth_type) {
-            case 0:
-                int trusted = rsa_buffer.getInt();
+            case 1:
+                rsa_buffer.position(rsa_buffer.position() + 8);
+                break;
+            case 2:
+                rsa_buffer.getInt();
                 rsa_buffer.position(rsa_buffer.position() + 4);
                 break;
-            case 1:
+            case 0:
             case 3:
                 int code = ByteBufferUtils.getTriByte(rsa_buffer);
                 rsa_buffer.position(rsa_buffer.position() + 5);
-                break;
-            default:
-                rsa_buffer.position(rsa_buffer.position() + 8);
                 break;
         }
 
         String password = ByteBufferUtils.getString(rsa_buffer);
 
-        System.out.println(password);
+        ByteBuffer xtea_buffer = XTEACryption.decrypt(buffer, xtea);
 
-        byte[] block = new byte[rsa_buffer.remaining()];
+        String username = ByteBufferUtils.getString(xtea_buffer);
 
-        rsa_buffer.get(block);
-
-        rsa_buffer = ByteBuffer.wrap(XTEACryption.decrypt(xtea, block, 0, block.length));
-
-        String username = ByteBufferUtils.getString(rsa_buffer);
-
-        int displaySetting = rsa_buffer.get();
+        int displaySetting = xtea_buffer.get();
 
         int windowMode = (displaySetting >> 1) + 1;
 
-        System.out.println("Window Mode: "+windowMode);
-
         boolean lowMem = (displaySetting & 0xFF) == 1;
 
-        int width = rsa_buffer.getShort();
+        int width = xtea_buffer.getShort();
 
-        int height = rsa_buffer.getShort();
+        int height = xtea_buffer.getShort();
 
-        rsa_buffer.position(rsa_buffer.position() + 24);
+        xtea_buffer.position(xtea_buffer.position() + 24);
 
-        String sessionToken1 = ByteBufferUtils.getString(rsa_buffer);
+        String sessionToken1 = ByteBufferUtils.getString(xtea_buffer);
 
-        int affiliateID = rsa_buffer.getInt();
+        int affiliateID = xtea_buffer.getInt();
 
-        rsa_buffer.position(rsa_buffer.position() + 17);
+        xtea_buffer.get(); // machine info opcode 6
+        xtea_buffer.get(); // os type
+        xtea_buffer.get(); // 64 bit
+        xtea_buffer.get(); // os version
+        xtea_buffer.get(); // vendor
+        xtea_buffer.get(); // major
+        xtea_buffer.get(); // minor
+        xtea_buffer.get(); // patch
+        xtea_buffer.get(); // some flag
+        xtea_buffer.getShort(); // max memory
+        xtea_buffer.get();
+        xtea_buffer.get();
+        xtea_buffer.getShort();
+        xtea_buffer.getShort();
+        ByteBufferUtils.getJagString(xtea_buffer);
+        ByteBufferUtils.getJagString(xtea_buffer);
+        ByteBufferUtils.getJagString(xtea_buffer);
+        ByteBufferUtils.getJagString(xtea_buffer);
+        xtea_buffer.get();
+        xtea_buffer.getShort();
+        ByteBufferUtils.getJagString(xtea_buffer);
+        ByteBufferUtils.getJagString(xtea_buffer);
+        xtea_buffer.get();
+        xtea_buffer.get();
 
-        ByteBufferUtils.getJagString(rsa_buffer);
+        xtea_buffer.getInt();
+        xtea_buffer.getInt();
+        xtea_buffer.getInt();
+        xtea_buffer.getInt();
 
-        ByteBufferUtils.getJagString(rsa_buffer);
+        int sessionToken2 = xtea_buffer.get();
 
-        ByteBufferUtils.getJagString(rsa_buffer);
-
-        ByteBufferUtils.getJagString(rsa_buffer);
-
-        rsa_buffer.get();
-
-        rsa_buffer.getShort();
-
-        ByteBufferUtils.getJagString(rsa_buffer);
-
-        ByteBufferUtils.getJagString(rsa_buffer);
-
-        rsa_buffer.get();
-
-        rsa_buffer.get();
-
-        rsa_buffer.getInt();
-
-        rsa_buffer.getInt();
-
-        rsa_buffer.getInt();
-
-        rsa_buffer.getInt();
-
-        int sessionToken2 = rsa_buffer.get();
-
-        int crcBlock = rsa_buffer.getInt();
+        int crcBlock = xtea_buffer.getInt();
 
         //No random.dat writing in 464 lmao
         //No affiliate id in our rev
         for (int i = 0; i < 17; i++) {
             int crc = Cache.getIndexes()[i] == null ? 0 : Cache.getIndexes()[i].getInformation().getInformationContainer().getCrc();
-            if (crc != rsa_buffer.getInt() && crc != 0) {
+            if (crc != xtea_buffer.getInt() && crc != 0) {
                 session.write(Response.UPDATED);
                 return;
             }
@@ -186,7 +174,8 @@ public final class LoginReadEvent extends IoReadEvent {
         session.setIsaacPair(new ISAACPair(inCipher, outCipher));
 
         final PlayerDetails details = new PlayerDetails(username, null, session);
-        final ByteBuffer b = rsa_buffer;
+        details.setClientInfo(new ClientInfo(windowMode, width, height));
+        final ByteBuffer b = xtea_buffer;
         TaskExecutor.executeSQL(new Runnable() {
             @Override
             public void run() {
@@ -196,6 +185,7 @@ public final class LoginReadEvent extends IoReadEvent {
                         session.write(response, true);
                         return;
                     }
+                    System.out.println("logging in");
                     login(details, username, password, session, b, opcode);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -214,7 +204,7 @@ public final class LoginReadEvent extends IoReadEvent {
      * @param opcode   the opcode.
      */
     private static void login(final PlayerDetails details, String username, String password, IoSession session, ByteBuffer buffer, int opcode) {
-        LoginParser parser = new LoginParser(details, password, new UIDInfo(session.getAddress(), ByteBufferUtils.getString(buffer), ByteBufferUtils.getString(buffer), ByteBufferUtils.getString(buffer)), LoginType.fromType(opcode));
+        LoginParser parser = new LoginParser(details, password, new UIDInfo(session.getAddress(), "none", "none", "none"), LoginType.fromType(opcode));
         if (WorldCommunicator.isEnabled()) {
             WorldCommunicator.register(parser);
         } else {

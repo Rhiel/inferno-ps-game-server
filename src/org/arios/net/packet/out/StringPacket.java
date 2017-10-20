@@ -15,8 +15,8 @@ public class StringPacket implements OutgoingPacket<StringContext> {
     @Override
     public void send(StringContext context) {
         IoBuffer buffer = new IoBuffer(42, PacketHeader.SHORT);
-        buffer.putString(context.getString());
         buffer.putInt((context.getInterfaceId() << 16) | context.getLineId());
+        buffer.putString(context.getString());
         context.getPlayer().getDetails().getSession().write(buffer);
     }
 }

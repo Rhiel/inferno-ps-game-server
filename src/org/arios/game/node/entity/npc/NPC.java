@@ -451,7 +451,7 @@ public class NPC extends Entity {
     public void onRegionInactivity() {
 	getWalkingQueue().reset();
 	getPulseManager().clear();
-	getUpdateMasks().reset();
+	getUpdateMasks().finish();
 	Repository.removeRenderableNPC(this);
 	if (getViewport().getRegion() instanceof DynamicRegion) {
 	    clear();
@@ -513,30 +513,29 @@ public class NPC extends Entity {
 	super.reset();
     }
 
-    @Override
-    public boolean face(Entity entity) {
-	if (entity == null) {
-	    if (getUpdateMasks().unregisterSynced(NPCFaceEntity.getOrdinal())) {
-		return getUpdateMasks().register(new NPCFaceEntity(entity));
-	    }
-	    return true;
+	@Override
+	public boolean face(Entity entity) {
+		if (entity == null) {
+			return true;
+		}
+		getUpdateMasks().register(new NPCFaceEntity(entity));
+		return true;
 	}
-	return getUpdateMasks().register(new NPCFaceEntity(entity), true);
-    }
 
-    @Override
-    public boolean faceLocation(Location location) {
-	if (location == null) {
-	    getUpdateMasks().unregisterSynced(NPCFaceLocation.getOrdinal());
-	    return true;
+	@Override
+	public boolean faceLocation(Location location) {
+		if (location == null) {
+			return true;
+		}
+		getUpdateMasks().register(new NPCFaceLocation(location));
+		return true;
 	}
-	return getUpdateMasks().register(new NPCFaceLocation(location), true);
-    }
 
-    @Override
-    public boolean sendChat(String string) {
-	return getUpdateMasks().register(new NPCForceChat(string));
-    }
+	@Override
+	public boolean sendChat(String string) {
+		getUpdateMasks().register(new NPCForceChat(string));
+		return true;
+	}
 
     @Override
     public CombatSwingHandler getSwingHandler(boolean swing) {
@@ -631,10 +630,7 @@ public class NPC extends Entity {
 	super.interaction = new Interaction(this);
 	initConfig();
 	interaction.setDefault();
-	if (id == originalId) {
-	    getUpdateMasks().unregisterSynced(NPCSwitchId.getOrdinal());
-	}
-	getUpdateMasks().register(new NPCSwitchId(id), id != originalId);
+		getUpdateMasks().register(new NPCSwitchId(id));
     }
 
     /**

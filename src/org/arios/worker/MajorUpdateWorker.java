@@ -11,6 +11,7 @@ import org.arios.gui.tab.StatisticsTab;
 
 /**
  * The major update worker, this handles the game updating etc.
+ *
  * @author Emperor
  */
 public final class MajorUpdateWorker implements Runnable {
@@ -39,7 +40,7 @@ public final class MajorUpdateWorker implements Runnable {
      * Constructs a new {@code MajorUpdateWorker} {@code Object}.
      */
     public MajorUpdateWorker() {
-	/*
+    /*
 	 * Empty.
 	 */
     }
@@ -48,58 +49,61 @@ public final class MajorUpdateWorker implements Runnable {
      * Starts the update worker.
      */
     public void start() {
-	if (started) {
-	    return;
-	}
-	started = true;
-	EXECUTOR.execute(MajorUpdateWorker.this);
+        if (started) {
+            return;
+        }
+        started = true;
+        EXECUTOR.execute(MajorUpdateWorker.this);
     }
 
     @Override
     public void run() {
-	while (SystemManager.isActive()) {
-	    try {
-		start = System.currentTimeMillis();
-		GameWorld.pulse();
-		sequence.start();
-		sequence.run();
-		sequence.end();
-		Repository.getDisconnectionQueue().update();
-		sleep();
-	    } catch (Throwable t) {
-		t.printStackTrace();
-	    }
-	}
-	started = false;
+        while (SystemManager.isActive()) {
+            try {
+                start = System.currentTimeMillis();
+                GameWorld.pulse();
+                sequence.start();
+                sequence.run();
+                sequence.end();
+                Repository.getDisconnectionQueue().update();
+                sleep();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+        started = false;
     }
 
     /**
      * Lets the current thread sleep.
+     *
      * @throws InterruptedException When the thread is interrupted.
      */
     private void sleep() throws InterruptedException {
-	StatisticsTab.reportPerformance((int) ((System.currentTimeMillis() - start) - 600));
-	long duration = 600 - ((System.currentTimeMillis() - start) % 600);
-	if (duration > 0) {
-	    Thread.sleep(duration);
-	} else {
-	    System.err.println("Updating cycle duration took " + -duration + "ms too long!");
-	}
+        StatisticsTab.reportPerformance((int) ((System.currentTimeMillis() - start) - 600));
+        long duration = 600 - ((System.currentTimeMillis() - start) % 600);
+        if (duration > 0) {
+            Thread.sleep(duration);
+        } else {
+            System.err.println("Updating cycle duration took " + -duration + "ms too long!");
+        }
     }
 
     /**
      * Gets the started.
+     *
      * @return The started.
      */
     public boolean isStarted() {
-	return started;
+        return started;
     }
 
     /**
      * Sets the started.
+     *
      * @param started The started to set.
      */
     public void setStarted(boolean started) {
-	this.started = started;
+        this.started = started;
     }
 }

@@ -18,6 +18,7 @@ import org.arios.net.packet.out.ClearMinimapFlag;
 
 /**
  * The entity update sequence.
+ *
  * @author Emperor
  */
 public final class UpdateSequence {
@@ -36,87 +37,89 @@ public final class UpdateSequence {
      * Constructs a new {@code ParallelUpdatingSequence} {@code Object}.
      */
     public UpdateSequence() {
-	/*
+    /*
 	 * empty.
 	 */
     }
 
     /**
      * Starts the update sequence.
+     *
      * @return {@code True} if we should continue.
      */
     public void start() {
-	for (Player p : Repository.getLobbyPlayers()) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(p));
-	}
-	for (Player p : getRenderablePlayers()) {
-	    try {
-		p.tick();
-	    } catch (Throwable t) {
-		t.printStackTrace();
-	    }
-	}
-	for (NPC n : Repository.getRenderableNpcs()) {
-	    try {
-		n.tick();
-	    } catch (Throwable t) {
-		t.printStackTrace();
-	    }
-	}
+        for (Player p : Repository.getLobbyPlayers()) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(p));
+        }
+        for (Player p : getRenderablePlayers()) {
+            try {
+                p.tick();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+        for (NPC n : Repository.getRenderableNpcs()) {
+            try {
+                n.tick();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
     }
 
     /**
      * Runs the updating part of the sequence.
      */
     public void run() {
-	final CountDownLatch latch = new CountDownLatch(getRenderablePlayers().size());
-	for (final Player p : getRenderablePlayers()) {
-	    EXECUTOR.execute(new Runnable() {
-		@Override
-		public void run() {
-		    try {
-			p.update();
-		    } catch (Throwable t) {
-			t.printStackTrace();
-		    }
-		    latch.countDown();
-		}
-	    });
-	}
-	try {
-	    latch.await(1000l, TimeUnit.MILLISECONDS);
-	} catch (InterruptedException e) {
-	    e.printStackTrace();
-	}
+        final CountDownLatch latch = new CountDownLatch(getRenderablePlayers().size());
+        for (final Player p : getRenderablePlayers()) {
+            EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        p.update();
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                    latch.countDown();
+                }
+            });
+        }
+        try {
+            latch.await(1000l, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Ends the sequence, calls the {@link Entity#reset()} method..
      */
     public void end() {
-	for (Player p : getRenderablePlayers()) {
-	    p.reset();
-	}
-	for (NPC npc : Repository.getRenderableNpcs()) {
-	    npc.reset();
-	}
-	getRenderablePlayers().sync();
-	RegionManager.pulse();
-	GroundItemManager.pulse();
+        for (Player p : getRenderablePlayers()) {
+            p.reset();
+        }
+        for (NPC npc : Repository.getRenderableNpcs()) {
+            npc.reset();
+        }
+        getRenderablePlayers().sync();
+        RegionManager.pulse();
+        GroundItemManager.pulse();
     }
 
     /**
      * Terminates the update sequence.
      */
     public final void terminate() {
-	EXECUTOR.shutdown();
+        EXECUTOR.shutdown();
     }
 
     /**
      * Gets the renderablePlayers.
+     *
      * @return The renderablePlayers.
      */
     public static InitializingNodeList<Player> getRenderablePlayers() {
-	return RENDERABLE_PLAYERS;
+        return RENDERABLE_PLAYERS;
     }
 }

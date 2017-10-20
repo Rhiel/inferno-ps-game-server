@@ -1,5 +1,6 @@
 package org.arios.net.packet.out;
 
+import org.arios.cache.misc.buffer.ByteBufferUtils;
 import org.arios.net.packet.IoBuffer;
 import org.arios.net.packet.OutgoingPacket;
 import org.arios.net.packet.context.InterfaceSetContext;
@@ -13,7 +14,7 @@ public class InterfaceSet implements OutgoingPacket<InterfaceSetContext> {
     public void send(InterfaceSetContext context) {
         IoBuffer buffer = new IoBuffer(16);
         buffer.putInt((context.getFromRoot() << 16 | context.getFromChild()));
-        buffer.putIntB((context.getToRoot() << 16 | context.getToChild()));
+        buffer.putIntA((context.getToRoot() << 16 | context.getToChild()));
         context.getPlayer().getSession().write(buffer);
     }
 }

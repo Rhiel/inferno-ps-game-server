@@ -14,6 +14,8 @@ import org.arios.game.content.activity.ActivityManager;
 import org.arios.game.content.global.GlobalEvents;
 import org.arios.game.content.global.tutorial.TutorialSession;
 import org.arios.game.node.entity.player.Player;
+import org.arios.game.node.entity.player.link.InterfaceSetManager;
+import org.arios.game.node.entity.player.link.SpellBookManager;
 import org.arios.game.node.item.Item;
 import org.arios.game.system.SystemManager;
 import org.arios.game.system.mysql.SQLManager;
@@ -101,8 +103,40 @@ public final class LoginConfiguration {
      * @param player The player.
      */
     public static void configureLobby(Player player) {
+      //  player.getStateManager().init();
+        player.updateSceneGraph(true);
+        PacketRepository.send(IPEncoder.class, new IPContext(player, "127.0.0.1"));
+        player.getInterfaceManager().openWindowsPane(new Component(player.getInterfaceManager().isResizable() ? 161 : 548));
+        InterfaceSetManager.sendSets(player, player.getDetails().getClientInfo().getWindowMode() + 2);
+        player.getInterfaceManager().openChatbox(162);
+
+        //player.getPacketDispatch().sendMessage("This shit works @Julius2Kool4Skool.");
+        player.getInventory().refresh();
+        player.getEquipment().refresh();
+        player.getSkills().refresh();
+        player.getSkills().configure();
+        player.getSettings().update();
+        //player.getInteraction().setDefault();
+        player.getPacketDispatch().sendRunEnergy();
+        player.getEmotes().refreshListConfigs();
+       // player.getInterfaceManager().openDefaultTabs();
+        player.getSpellBookManager().update(player);
+        //player.getPacketDispatch().sendString("Friends List - World " + GameWorld.getSettings().getWorldId(), 550, 2);
+        if (player.getAttributes().containsKey("spell:swap")) {
+            player.getSpellBookManager().setSpellBook(SpellBookManager.SpellBook.LUNAR);
+        }
+        player.getConfigManager().init();
+        player.getAntiMacroHandler().init();
+       // player.getQuestRepository().update(player);
+
+        player.setPlaying(true);
+        UpdateSequence.getRenderablePlayers().add(player);
+        //RegionManager.move(player);
+//		player.getMusicPlayer().init();
+        player.getUpdateMasks().register(new AppearanceFlag(player));
+      //  player.getStateManager().init();
         //if (!player.isArtificial() && TutorialSession.getExtension(player).getStage() >= TutorialSession.MAX_STAGE && player.getAttribute("login_type", LoginType.NORMAL_LOGIN) != LoginType.RECONNECT_TYPE) {
-            sendLobbyScreen(player);
+       //     sendLobbyScreen(player);
         //} else {
         //    configureGameWorld(player);
         //}
@@ -167,7 +201,7 @@ public final class LoginConfiguration {
         player.getPacketDispatch().sendInterface(165, 21, 239, true);
         player.getPacketDispatch().sendInterface(165, 15, 7, true);
         player.getPacketDispatch().sendInterface(165, 8, 593, true);
-        /*
+
         player.getPacketDispatch().sendString("Never tell anyone your password, even if they claim to work for Jagex!", 378, 14);
         player.getPacketDispatch().sendString("You have 0 unread messages in your message centre.", 378, 15);
         player.getPacketDispatch().sendString("You are not a member. Subscribe to access extra skills, areas and quests, and much<br>more besides.", 378, 18);
@@ -179,10 +213,11 @@ public final class LoginConfiguration {
 
 
 
-        player.getPacketDispatch().sendCS2Script(233, new Object[] { 3276804, 33179, 0, 0, 468, 1897, 0, 392, -1 });
-        player.getPacketDispatch().sendCS2Script(233, new Object[] { 3276805, 33194, 0, 56, 54, 74, 0, 660, -1 });
+        player.getPacketDispatch().sendCS2Script(233, new Object[] { 3276804, 7085, 0, 0, 434, 1912, 0, 400, -1 });
+        player.getPacketDispatch().sendCS2Script(233, new Object[] { 3276805, 32817, 0, 100, 93, 179, 0, 800, 820 });
+        player.getPacketDispatch().sendCS2Script(1080, new Object[] { });
 
-        player.getPacketDispatch().sendInterfaceSettings(399, 7, 0, 18, 2);
+       /* player.getPacketDispatch().sendInterfaceSettings(399, 7, 0, 18, 2);
         player.getPacketDispatch().sendInterfaceSettings(399, 8, 0, 110, 2);
         player.getPacketDispatch().sendInterfaceSettings(399, 9, 0, 11, 2);
         player.getPacketDispatch().sendInterfaceSettings(261, 83, 1, 4, 2);

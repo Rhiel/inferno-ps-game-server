@@ -164,7 +164,7 @@ public final class PacketDispatch {
      * @param musicId The music id.
      */
     public void sendMusic(int musicId) {
-        PacketRepository.send(MusicPacket.class, new MusicContext(player, musicId));
+        //PacketRepository.send(MusicPacket.class, new MusicContext(player, musicId));
     }
 
     /**
@@ -173,7 +173,7 @@ public final class PacketDispatch {
      * @param musicId The music id.
      */
     public void sendTempMusic(int musicId) {
-        PacketRepository.send(MusicPacket.class, new MusicContext(player, musicId, true));
+        //PacketRepository.send(MusicPacket.class, new MusicContext(player, musicId, true));
     }
 
     /**

@@ -26,51 +26,7 @@ import org.arios.net.packet.in.ReportAbusePacket;
 import org.arios.net.packet.in.RunScriptPacketHandler;
 import org.arios.net.packet.in.SlotSwitchPacket;
 import org.arios.net.packet.in.WalkPacket;
-import org.arios.net.packet.out.AccessMask;
-import org.arios.net.packet.out.AnimateInterface;
-import org.arios.net.packet.out.AnimateObjectPacket;
-import org.arios.net.packet.out.BuildDynamicScene;
-import org.arios.net.packet.out.CameraViewPacket;
-import org.arios.net.packet.out.ClearGroundItem;
-import org.arios.net.packet.out.ClearMinimapFlag;
-import org.arios.net.packet.out.ClearObject;
-import org.arios.net.packet.out.ClearRegionChunk;
-import org.arios.net.packet.out.CloseInterface;
-import org.arios.net.packet.out.CommunicationMessage;
-import org.arios.net.packet.out.Config;
-import org.arios.net.packet.out.ConstructGroundItem;
-import org.arios.net.packet.out.ConstructObject;
-import org.arios.net.packet.out.ContactPackets;
-import org.arios.net.packet.out.ContainerPacket;
-import org.arios.net.packet.out.DisplayModel;
-import org.arios.net.packet.out.GameMessage;
-import org.arios.net.packet.out.GrandExchangePacket;
-import org.arios.net.packet.out.HintIcon;
-import org.arios.net.packet.out.InstancedLocationUpdate;
-import org.arios.net.packet.out.InteractionOption;
-import org.arios.net.packet.out.Interface;
-import org.arios.net.packet.out.InterfaceConfig;
-import org.arios.net.packet.out.LoginPacket;
-import org.arios.net.packet.out.Logout;
-import org.arios.net.packet.out.MinimapState;
-import org.arios.net.packet.out.MusicPacket;
-import org.arios.net.packet.out.PingPacket;
-import org.arios.net.packet.out.PositionedGraphic;
-import org.arios.net.packet.out.RepositionChild;
-import org.arios.net.packet.out.RunEnergy;
-import org.arios.net.packet.out.RunScriptPacket;
-import org.arios.net.packet.out.SetWalkOption;
-import org.arios.net.packet.out.SkillLevel;
-import org.arios.net.packet.out.AudioPacket;
-import org.arios.net.packet.out.StringPacket;
-import org.arios.net.packet.out.SystemUpdatePacket;
-import org.arios.net.packet.out.UpdateAreaPosition;
-import org.arios.net.packet.out.UpdateClanChat;
-import org.arios.net.packet.out.UpdateGroundItemAmount;
-import org.arios.net.packet.out.UpdateRandomFile;
-import org.arios.net.packet.out.UpdateSceneGraph;
-import org.arios.net.packet.out.WeightUpdate;
-import org.arios.net.packet.out.WindowsPane;
+import org.arios.net.packet.out.*;
 
 /**
  * The packet repository.
@@ -94,6 +50,8 @@ public final class PacketRepository {
      */
     static {
         OUTGOING_PACKETS.put(LoginPacket.class, new LoginPacket());
+        OUTGOING_PACKETS.put(InterfaceSet.class, new InterfaceSet());
+        OUTGOING_PACKETS.put(IPEncoder.class, new IPEncoder());
         OUTGOING_PACKETS.put(UpdateSceneGraph.class, new UpdateSceneGraph());
         OUTGOING_PACKETS.put(WindowsPane.class, new WindowsPane());
         OUTGOING_PACKETS.put(Interface.class, new Interface());
@@ -125,8 +83,8 @@ public final class PacketRepository {
         OUTGOING_PACKETS.put(PositionedGraphic.class, new PositionedGraphic());
         OUTGOING_PACKETS.put(SystemUpdatePacket.class, new SystemUpdatePacket());
         OUTGOING_PACKETS.put(CameraViewPacket.class, new CameraViewPacket());
-        OUTGOING_PACKETS.put(MusicPacket.class, new MusicPacket());
-        OUTGOING_PACKETS.put(AudioPacket.class, new AudioPacket());
+        //OUTGOING_PACKETS.put(MusicPacket.class, new MusicPacket());
+        /*OUTGOING_PACKETS.put(AudioPacket.class, new AudioPacket());
         OUTGOING_PACKETS.put(GrandExchangePacket.class, new GrandExchangePacket());
         OUTGOING_PACKETS.put(BuildDynamicScene.class, new BuildDynamicScene());
         OUTGOING_PACKETS.put(AnimateObjectPacket.class, new AnimateObjectPacket());
@@ -138,7 +96,7 @@ public final class PacketRepository {
         OUTGOING_PACKETS.put(WeightUpdate.class, new WeightUpdate());
         OUTGOING_PACKETS.put(UpdateRandomFile.class, new UpdateRandomFile());
         OUTGOING_PACKETS.put(InstancedLocationUpdate.class, new InstancedLocationUpdate());
-
+*/
         // TODO Packet 156 is Action Button 7 packet, not Report Abuse packet
         /*INCOMING_PACKETS.put(206, new ReportAbusePacket());
         INCOMING_PACKETS.put(32, new ClientFocusPacket());

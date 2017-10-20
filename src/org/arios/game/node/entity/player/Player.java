@@ -389,10 +389,9 @@ public class Player extends Entity {
         if (playerFlags.isUpdateSceneGraph()) {
             updateSceneGraph(false);
         }
-        //i meant it like im retarded.
-//        PlayerRenderer.render(this);
+      //  PlayerRenderer.render(this);
 //        NPCRenderer.render(this);
-//        MapChunkRenderer.render(this);
+      //  MapChunkRenderer.render(this);
     }
 
     @Override
@@ -409,26 +408,25 @@ public class Player extends Entity {
     @Override
     public boolean face(Entity entity) {
         if (entity == null) {
-            if (getUpdateMasks().unregisterSynced(FaceEntityFlag.getOrdinal())) {
-                return getUpdateMasks().register(new FaceEntityFlag(entity));
-            }
             return true;
         }
-        return getUpdateMasks().register(new FaceEntityFlag(entity), true);
+        getUpdateMasks().register(new FaceEntityFlag(entity));
+        return true;
     }
 
     @Override
     public boolean faceLocation(Location location) {
         if (location == null) {
-            getUpdateMasks().unregisterSynced(FaceLocationFlag.getOrdinal());
             return true;
         }
-        return getUpdateMasks().register(new FaceLocationFlag(location), true);
+        //getUpdateMasks().register(new FaceLocationFlag(location[0], location[1]));
+        return true;
     }
 
     @Override
     public boolean sendChat(String string) {
-        return getUpdateMasks().register(new ForceChatFlag(string));
+        getUpdateMasks().register(new ForceChatFlag(string));
+        return true;
     }
 
     @Override

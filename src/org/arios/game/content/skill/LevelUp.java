@@ -69,7 +69,7 @@ public final class LevelUp {
 	int interfaceId = SKILL_INTERFACES[slot];
 	int soundId = SOUND_EFFECTS[slot];
 	if (soundId > -1) {
-	    PacketRepository.send(MusicPacket.class, new MusicContext(player, soundId, true));
+	    //PacketRepository.send(MusicPacket.class, new MusicContext(player, soundId, true));
 	}
 	player.getPacketDispatch().sendGraphic(199);
 	player.getPacketDispatch().sendString("<col=00008B>Congratulations, you've just advanced a " + Skills.SKILL_NAME[slot] + " level!", interfaceId, 0);

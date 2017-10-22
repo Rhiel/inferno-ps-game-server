@@ -119,7 +119,29 @@ public final class LoginConfiguration {
         //player.getInteraction().setDefault();
         player.getPacketDispatch().sendRunEnergy();
         player.getEmotes().refreshListConfigs();
-       // player.getInterfaceManager().openDefaultTabs();
+
+        //player.getPacketDispatch().sendCS2Script(233, new Object[] { 3276804, 7085, 0, 0, 434, 1912, 0, 400, -1});
+        //player.getPacketDispatch().sendCS2Script(233, new Object[] { 3276805, 32817, 0, 100, 93, 179, 0, 800, 820});
+
+        //player.getPacketDispatch().sendCS2Script(2014, new Object[] { 0, 0, 0, 0, 0, 0});
+        //player.getPacketDispatch().sendCS2Script(2015, new Object[] { 0});
+
+        player.getPacketDispatch().sendInterface(165, 9, 320, true);
+        player.getPacketDispatch().sendInterface(165, 10, 399, true);
+        player.getPacketDispatch().sendInterface(165, 11, 149, true);
+        player.getPacketDispatch().sendInterface(165, 12, 387, true);
+        player.getPacketDispatch().sendInterface(165, 13, 541, true);
+        player.getPacketDispatch().sendInterface(165, 14, 218, true);
+        player.getPacketDispatch().sendInterface(165, 16, 429, true);
+        player.getPacketDispatch().sendInterface(165, 17, 432, true);
+        player.getPacketDispatch().sendInterface(165, 18, 182, true);
+        player.getPacketDispatch().sendInterface(165, 19, 261, true);
+        player.getPacketDispatch().sendInterface(165, 20, 216, true);
+        player.getPacketDispatch().sendInterface(165, 21, 239, true);
+        player.getPacketDispatch().sendInterface(165, 15, 7, true);
+        player.getPacketDispatch().sendInterface(165, 8, 593, true);
+
+        //player.getInterfaceManager().openDefaultTabs();
         player.getSpellBookManager().update(player);
         //player.getPacketDispatch().sendString("Friends List - World " + GameWorld.getSettings().getWorldId(), 550, 2);
         if (player.getAttributes().containsKey("spell:swap")) {
@@ -130,11 +152,13 @@ public final class LoginConfiguration {
        // player.getQuestRepository().update(player);
 
         player.setPlaying(true);
-        UpdateSequence.getRenderablePlayers().add(player);
-        //RegionManager.move(player);
+        //UpdateSequence.getRenderablePlayers().add(player);
+
+       // RegionManager.move(player);//this makes the cclient crash idk why ull see the error. just keep it disabled for now
 //		player.getMusicPlayer().init();
-        player.getUpdateMasks().register(new AppearanceFlag(player));
-      //  player.getStateManager().init();
+       // player.getUpdateMasks().register(new AppearanceFlag(player));
+        player.getPlayerFlags().setUpdateSceneGraph(true);
+        player.getStateManager().init();
         //if (!player.isArtificial() && TutorialSession.getExtension(player).getStage() >= TutorialSession.MAX_STAGE && player.getAttribute("login_type", LoginType.NORMAL_LOGIN) != LoginType.RECONNECT_TYPE) {
        //     sendLobbyScreen(player);
         //} else {

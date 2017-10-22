@@ -187,7 +187,7 @@ public final class PlayerRenderer {
             flags.add(new AppearanceFlag(updatable));
         }*/
         if (maskdata > 0x100) {
-            maskdata |= 0x2;
+            maskdata |= 0x4;
             composer.put((byte) (maskdata & 0xFF));
             composer.put((byte) (maskdata >> 8));
         } else {

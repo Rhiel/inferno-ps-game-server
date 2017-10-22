@@ -21,8 +21,8 @@ public final class AnimationFlag extends UpdateFlag<Animation> {
 
     @Override
     public void write(IoBuffer buffer) {
-	buffer.putShort(context.getId());
-	buffer.putC(context.getDelay());
+	buffer.putShortA(context.getId());
+	buffer.put(context.getDelay());
     }
 
     @Override
@@ -32,14 +32,14 @@ public final class AnimationFlag extends UpdateFlag<Animation> {
 
     @Override
     public int ordinal() {
-	return 4;
-    }
+	return 8;
+    }//these have to be corrected
 
     /**
      * Gets the mask data of the animation update flag.
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x1;
+	return 0x8;
     }
 }

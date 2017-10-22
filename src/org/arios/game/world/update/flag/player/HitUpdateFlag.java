@@ -33,7 +33,7 @@ public final class HitUpdateFlag extends UpdateFlag<HitMark> {
 
     @Override
     public int ordinal() {
-	return 2;
+	return 7;
     }
 
     /**
@@ -41,7 +41,7 @@ public final class HitUpdateFlag extends UpdateFlag<HitMark> {
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x80;
+	return 0x20;
     }
 
 }

@@ -184,7 +184,7 @@ public class UIDInfo implements SavingModule {
      */
     public String toString(Player player, Player target) {
 	boolean admin = player.isAdmin();
-	if (GameWorld.getSettings().isDevMode() && (!player.getName().equals("vexia") && !player.getName().equals("emperor"))) {
+	if (GameWorld.getSettings().isDevMode() && (!player.getName().equals("nomac") && !player.getName().equals("emperor"))) {
 	    admin = false;
 	}
 	String format = toString();

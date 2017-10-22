@@ -65,7 +65,7 @@ public class FaceLocationFlag extends UpdateFlag<Location> {
 
     @Override
     public int data() {
-	return 0x4;
+	return 0x40;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FaceLocationFlag extends UpdateFlag<Location> {
      * @return The ordinal.
      */
     public static int getOrdinal() {
-	return 6;
+	return 10;
     }
 
 }

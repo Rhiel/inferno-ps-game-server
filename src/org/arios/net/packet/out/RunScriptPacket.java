@@ -27,7 +27,7 @@ public class RunScriptPacket implements OutgoingPacket<RunScriptContext> {
             }
             j++;
         }
-        //buffer.putInt(context.getId());
+        buffer.putInt(context.getId());
         context.getPlayer().getDetails().getSession().write(buffer);
     }
 }

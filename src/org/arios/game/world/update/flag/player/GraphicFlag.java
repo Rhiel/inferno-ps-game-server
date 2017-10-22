@@ -31,7 +31,7 @@ public final class GraphicFlag extends UpdateFlag<Graphics> {
 
     @Override
     public int ordinal() {
-	return 0;
+	return 1;
     }
 
     /**
@@ -39,6 +39,6 @@ public final class GraphicFlag extends UpdateFlag<Graphics> {
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x400;
+	return 0x800;
     }
 }

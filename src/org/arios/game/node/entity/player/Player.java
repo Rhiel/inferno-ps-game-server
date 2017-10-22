@@ -391,7 +391,7 @@ public class Player extends Entity {
         }
       //  PlayerRenderer.render(this);
 //        NPCRenderer.render(this);
-      //  MapChunkRenderer.render(this);
+        MapChunkRenderer.render(this);
     }
 
     @Override

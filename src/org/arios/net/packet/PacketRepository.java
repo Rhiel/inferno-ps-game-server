@@ -70,19 +70,20 @@ public final class PacketRepository {
         OUTGOING_PACKETS.put(InterfaceConfig.class, new InterfaceConfig());
         OUTGOING_PACKETS.put(PingPacket.class, new PingPacket());
         OUTGOING_PACKETS.put(UpdateAreaPosition.class, new UpdateAreaPosition());
-        OUTGOING_PACKETS.put(ConstructObject.class, new ConstructObject());
-        OUTGOING_PACKETS.put(ClearObject.class, new ClearObject());
+       // OUTGOING_PACKETS.put(ConstructObject.class, new ConstructObject());
+        //OUTGOING_PACKETS.put(ClearObject.class, new ClearObject());
         OUTGOING_PACKETS.put(HintIcon.class, new HintIcon());
         OUTGOING_PACKETS.put(ClearMinimapFlag.class, new ClearMinimapFlag());
         OUTGOING_PACKETS.put(InteractionOption.class, new InteractionOption());
         OUTGOING_PACKETS.put(SetWalkOption.class, new SetWalkOption());
         OUTGOING_PACKETS.put(MinimapState.class, new MinimapState());
-        OUTGOING_PACKETS.put(ConstructGroundItem.class, new ConstructGroundItem());
-        OUTGOING_PACKETS.put(ClearGroundItem.class, new ClearGroundItem());
-        OUTGOING_PACKETS.put(RepositionChild.class, new RepositionChild());
-        OUTGOING_PACKETS.put(PositionedGraphic.class, new PositionedGraphic());
+       // OUTGOING_PACKETS.put(ConstructGroundItem.class, new ConstructGroundItem());
+        //OUTGOING_PACKETS.put(ClearGroundItem.class, new ClearGroundItem());
+        //OUTGOING_PACKETS.put(RepositionChild.class, new RepositionChild());
+        //OUTGOING_PACKETS.put(PositionedGraphic.class, new PositionedGraphic());
         OUTGOING_PACKETS.put(SystemUpdatePacket.class, new SystemUpdatePacket());
         OUTGOING_PACKETS.put(CameraViewPacket.class, new CameraViewPacket());
+        INCOMING_PACKETS.put(40, new PingPacketHandler()); // This aint ping
         //OUTGOING_PACKETS.put(MusicPacket.class, new MusicPacket());
         /*OUTGOING_PACKETS.put(AudioPacket.class, new AudioPacket());
         OUTGOING_PACKETS.put(GrandExchangePacket.class, new GrandExchangePacket());
@@ -100,7 +101,7 @@ public final class PacketRepository {
         // TODO Packet 156 is Action Button 7 packet, not Report Abuse packet
         /*INCOMING_PACKETS.put(206, new ReportAbusePacket());
         INCOMING_PACKETS.put(32, new ClientFocusPacket());
-        INCOMING_PACKETS.put(43, new PingPacketHandler()); // This aint ping
+
         // packet..
         INCOMING_PACKETS.put(46, new CommandPacket());
         INCOMING_PACKETS.put(56, new PingPacketHandler());

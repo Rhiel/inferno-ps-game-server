@@ -61,9 +61,9 @@ public final class LoginWriteEvent extends IoWriteEvent {
         Player player = session.getPlayer();
         buffer.put((byte) 0);
         buffer.putInt(0);
-        buffer.put((byte) player.getDetails().getRights().ordinal());
+        buffer.put((byte) player.getDetails().getRights().ordinal());//im not sending player index...
         buffer.put((byte) 1);
-        buffer.putShort((short) 1);
+        buffer.putShort((short) player.getIndex());
         buffer.put((byte) 1);
         buffer.flip();
         return buffer;

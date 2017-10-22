@@ -46,7 +46,7 @@ public final class ForceMovementFlag extends UpdateFlag<ForceMovement> {
 
     @Override
     public int ordinal() {
-	return 7;
+	return 6;
     }
 
     /**
@@ -54,7 +54,7 @@ public final class ForceMovementFlag extends UpdateFlag<ForceMovement> {
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x100;
+	return 0x200;
     }
 
 }

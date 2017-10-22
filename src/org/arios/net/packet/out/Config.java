@@ -17,10 +17,10 @@ public class Config implements OutgoingPacket<ConfigContext> {
         if (context.getValue() < Byte.MIN_VALUE || context.getValue() > Byte.MAX_VALUE) {
             buffer = new IoBuffer(9);
             buffer.putShort(context.getId());
-            buffer.putIntB(context.getValue());
+            buffer.putIntA(context.getValue());
         } else {
             buffer = new IoBuffer(185);
-            buffer.putC(context.getValue());
+            buffer.putS(context.getValue());
             buffer.putLEShortA(context.getId());
         }
         context.getPlayer().getDetails().getSession().write(buffer);

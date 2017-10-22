@@ -382,7 +382,7 @@ public final class RegionManager {
         RegionPlane plane = current.getPlanes()[z];
         viewport.updateViewport(entity);
         if (plane == viewport.getCurrentPlane()) {
-            entity.getZoneMonitor().updateLocation(entity.getWalkingQueue().getFootPrint());
+           // entity.getZoneMonitor().updateLocation(entity.getWalkingQueue().getFootPrint());
             return;
         }
         viewport.remove(entity);

@@ -64,8 +64,8 @@ public final class AppearanceFlag extends UpdateFlag<Player> {
         block.put(context.getProperties().getCombatLevel());
         block.putShort(context.getSkills().getTotalLevel()); //TODO CHECK THIS SHORT AND CLEAN UP ABOVE!
         block.put(0);//is hidden
-        buffer.put(block.toByteBuffer().position());
-        buffer.put(block);
+        buffer.putA(block.toByteBuffer().position());
+        buffer.putA(block);
     }
 
     @Override
@@ -84,7 +84,7 @@ public final class AppearanceFlag extends UpdateFlag<Player> {
      * @return The flag ordinal.
      */
     public static int getOrdinal() {
-        return 9;
+        return 2;
     }
 
     /**

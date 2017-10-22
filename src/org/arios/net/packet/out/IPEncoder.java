@@ -8,7 +8,7 @@ public class IPEncoder implements OutgoingPacket<IPContext> {
     @Override
     public void send(IPContext context) {
         IoBuffer buffer = new IoBuffer(193);
-        buffer.putInt(context.getHash());
+        buffer.putLEInt(context.getHash());
         context.getPlayer().getSession().write(buffer);
     }
 }

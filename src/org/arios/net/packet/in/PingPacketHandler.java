@@ -6,15 +6,19 @@ import org.arios.net.packet.IoBuffer;
 
 /**
  * Handles an incoming ping packet.
+ *
  * @author Emperor
  */
 public final class PingPacketHandler implements IncomingPacket {
 
     @Override
     public void decode(Player player, int opcode, IoBuffer buffer) {
-	if (player != null && player.getSession() != null) {
-	    player.getSession().setLastPing(System.currentTimeMillis());
-	}
+        if (player != null && player.getSession() != null) {
+            player.getSession().setLastPing(System.currentTimeMillis());
+            while(buffer.toByteBuffer().remaining() > 0) {
+                buffer.get();
+            }
+        }
     }
 
 }

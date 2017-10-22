@@ -25,7 +25,7 @@ public final class FaceEntityFlag extends UpdateFlag<Entity> {
 
     @Override
     public int data() {
-	return 0x20;
+	return 0x80;
     }
 
     @Override
@@ -38,7 +38,7 @@ public final class FaceEntityFlag extends UpdateFlag<Entity> {
      * @return The ordinal.
      */
     public static int getOrdinal() {
-	return 5;
+	return 0;
     }
 
 }

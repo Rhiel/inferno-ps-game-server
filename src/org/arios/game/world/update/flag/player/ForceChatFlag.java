@@ -29,7 +29,7 @@ public final class ForceChatFlag extends UpdateFlag<String> {
 
     @Override
     public int ordinal() {
-	return 3;
+	return 11;
     }
 
     /**
@@ -37,7 +37,7 @@ public final class ForceChatFlag extends UpdateFlag<String> {
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x10;
+	return 0x1;
     }
 
 }

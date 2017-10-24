@@ -3,21 +3,11 @@ package org.arios.game.world.update;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.arios.game.node.entity.Entity;
-import org.arios.game.node.entity.combat.ImpactHandler;
 import org.arios.game.node.entity.combat.ImpactHandler.Impact;
 import org.arios.game.node.entity.impl.Animator;
-import org.arios.game.node.entity.player.Player;
 import org.arios.game.world.update.flag.UpdateFlag;
-import org.arios.game.world.update.flag.context.HitMark;
-import org.arios.game.world.update.flag.npc.NPCHitFlag;
-import org.arios.game.world.update.flag.npc.NPCHitFlag1;
-import org.arios.game.world.update.flag.player.AppearanceFlag;
-import org.arios.game.world.update.flag.player.HitUpdateFlag;
-import org.arios.game.world.update.flag.player.HitUpdateFlag1;
-import org.arios.net.packet.IoBuffer;
 
 /**
  * Holds an entity's update masks.

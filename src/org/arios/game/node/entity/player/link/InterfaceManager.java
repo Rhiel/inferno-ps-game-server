@@ -312,16 +312,7 @@ public final class InterfaceManager {
      * Closes the chatbox interface.
      */
     public void closeChatbox() {
-        if (chatbox != null && chatbox.getId() != DEFAULT_CHATBOX) {
-            if (chatbox.close(player)) {
-                //openChatbox(DEFAULT_CHATBOX); //TODO THIS IS CHEAPHAX FIXME RYAN BELOW CODE IS CHEAP AF.
-                InterfaceContext context = chatbox.getDefinition().getContext();
-                context.setPlayer(player);
-                context.setWindowId(getWindowsPane());
-                PacketRepository.send(CloseInterface.class, context);
-                player.getPacketDispatch().sendRunScript(101, "");//closes runscript chatbox.
-            }
-        }
+        PacketRepository.send(CloseInterface.class, new InterfaceContext(player, 162, 546, 546, 162, false));
     }
 
     /**
@@ -493,38 +484,31 @@ public final class InterfaceManager {
         openTab(component.getDefinition().getContext().getComponentId() - (isResizable() ? 68 : 65), component);
     }
 
+    public void openChatbox(int interfaceId) {
+        player.getPacketDispatch().sendInterface(162, 546, interfaceId, false);
+    }
+
+    public void openChatbox(Component component) {
+        player.getPacketDispatch().sendInterface(162, 546, component.getId(), false);
+    }
+
     /**
      * Opens a chat box interface.
      *
      * @param componentId The component id.
      */
-    public void openChatbox(int componentId) {
-        openChatbox(new Component(componentId));
+    public void openChatbox(int componentId, int accessChild, int length, int CS2ID, Object[] script) {
+        player.getPacketDispatch().sendInterface(162, 546, componentId, false);
+        player.getPacketDispatch().sendCS2Script(CS2ID, script);
+        player.getPacketDispatch().sendAccessMask(1, accessChild, componentId, 0, length);
     }
 
-
-    /**
-     * Opens a chat box interface.
-     *
-     * @param component The component to open.
-     */
-    public void openChatbox(Component component) {
-        if (component.getId() == DEFAULT_CHATBOX) {
-            //PacketRepository.send(Interface.class, new InterfaceContext(player, WINDOWS_PANE, 120, 0, true));
-            //player.getPacketDispatch().sendInterfaceConfig(548, 121, false);
-            if (chatbox == null) {
-                chatbox = component;
-                chatbox.open(player);
-            }
-            chatbox = component;
-            //player.getConfigManager().set(334, 1);
-        } else {
-            chatbox = component;
-            //player.getPacketDispatch().sendInterfaceConfig(548, 121, true);
-            //chatbox.getDefinition().setContext(new InterfaceContext(null, 548, component.getId() == 389 ? 115 : 120, component.getId(), true));
-            //TODO FIGURE OUT WTF THIS CODE DOES ^? RYAN.
+    public void openRootChatbox() {
+        if (chatbox == null) {
+            chatbox = new Component(162);
             chatbox.open(player);
         }
+        chatbox = new Component(162);
     }
 
     /**

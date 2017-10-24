@@ -14,7 +14,7 @@ public final class CameraContext implements Context {
      * @author Emperor
      */
     public static enum CameraType {
-	POSITION(230), ROTATION(13), SET(228), SHAKE(107), RESET(39);
+	POSITION(230), ROTATION(13), SET(159), SHAKE(107), RESET(39);
 
 	/**
 	 * The opcode.

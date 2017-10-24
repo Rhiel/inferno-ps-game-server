@@ -645,7 +645,7 @@ public final class WizardTowerPlugin extends OptionHandler {
 		break;
 	    case 31:
 		Component c = new Component(306);
-		c.getDefinition().setContext(new InterfaceContext(null, 548, 120, 306, true));
+		//c.getDefinition().setContext(new InterfaceContext(null, 548, 120, 306, true));
 		player.getInterfaceManager().openChatbox(new Component(306));
 		int count = 2;
 		int shift = 75;

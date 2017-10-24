@@ -19,13 +19,15 @@ public class RunScriptPacket implements OutgoingPacket<RunScriptContext> {
         IoBuffer buffer = new IoBuffer(144, PacketHeader.SHORT);
         buffer.putString(string);
         int j = 0;
-        for (int i = (string.length() - 1); i >= 0; i--) {
-            if (string.charAt(i) == 's') {
-                buffer.putString((String) objects[j]);
-            } else {
-                buffer.putInt((Integer) objects[j]);
+        if(objects != null) {
+            for (int i = (string.length() - 1); i >= 0; i--) {
+                if (string.charAt(i) == 's') {
+                    buffer.putString((String) objects[j]);
+                } else {
+                    buffer.putInt((Integer) objects[j]);
+                }
+                j++;
             }
-            j++;
         }
         buffer.putInt(context.getId());
         context.getPlayer().getDetails().getSession().write(buffer);

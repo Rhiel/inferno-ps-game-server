@@ -105,7 +105,7 @@ public abstract class DialoguePlugin implements Plugin<Player> {
      */
     public boolean close() {
 	player.getInterfaceManager().closeChatbox();
-	player.getInterfaceManager().openChatbox(137);
+	//player.getInterfaceManager().openChatbox(137);
 	finished = true;
 	return true;
     }

@@ -23,7 +23,7 @@ public final class LoginInterfacePlugin extends ComponentPlugin {
 
     @Override
     public boolean handle(final Player player, Component component, int opcode, int button, int slot, int itemId) {
-	if (player.getLocks().isLocked("login")) {
+	if (player.getLocks().isLocked("login") || (button != 6)) {
 	    return true;
 	}
 	player.getLocks().lock("login", 2);

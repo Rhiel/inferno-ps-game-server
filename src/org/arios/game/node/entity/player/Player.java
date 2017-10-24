@@ -36,6 +36,7 @@ import org.arios.game.node.entity.player.info.RenderInfo;
 import org.arios.game.node.entity.player.info.Rights;
 import org.arios.game.node.entity.player.info.UIDInfo;
 import org.arios.game.node.entity.player.info.login.LoginConfiguration;
+import org.arios.game.node.entity.player.info.login.WelcomeScreen;
 import org.arios.game.node.entity.player.info.portal.DonatorType;
 import org.arios.game.node.entity.player.info.portal.Perks;
 import org.arios.game.node.entity.player.link.BankPinManager;
@@ -329,7 +330,7 @@ public class Player extends Entity {
             getDetails().getSession().setLastPing(System.currentTimeMillis() + 10_000L);
         }
         super.init();
-        LoginConfiguration.configureLobby(this);
+        WelcomeScreen.configureLobby(this);
     }
 
     @Override
@@ -377,10 +378,10 @@ public class Player extends Entity {
         super.tick();
         antiMacroHandler.pulse();
         hunterManager.pulse();
-        if (!artificial && (System.currentTimeMillis() - getSession().getLastPing()) > 10_000L) {
+       /* if (!artificial && (System.currentTimeMillis() - getSession().getLastPing()) > 10_000L) {
             details.getSession().disconnect();
             getSession().setLastPing(Long.MAX_VALUE);
-        }
+        }*///TODO:FIX
     }
 
     @Override
@@ -389,7 +390,7 @@ public class Player extends Entity {
         if (playerFlags.isUpdateSceneGraph()) {
             updateSceneGraph(false);
         }
-      //  PlayerRenderer.render(this);
+        PlayerRenderer.render(this);
 //        NPCRenderer.render(this);
         MapChunkRenderer.render(this);
     }

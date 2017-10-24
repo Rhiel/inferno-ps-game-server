@@ -10,14 +10,14 @@ import org.arios.net.packet.IoBuffer;
  * Handles the face coordinates update flag.
  * @author Emperor
  */
-public class FaceLocationFlag extends UpdateFlag<Location> {
+public class FaceLocationFlag extends UpdateFlag<Integer> {
 
     /**
      * Constructs a new {@code FaceLocationFlag} {@code Object}.
      * @param location The location to face.
      */
-    public FaceLocationFlag(Location location) {
-	super(location);
+    public FaceLocationFlag(Location locationFrom, Location locationTo) {
+		super((locationFrom != null && locationTo != null) ? (((int) (Math.atan2(locationFrom.getX() - locationTo.getX(), locationFrom.getY() - locationTo.getY()) * 2607.5945876176133)) & 0x3fff) : 0);
     }
 
     /**
@@ -59,8 +59,7 @@ public class FaceLocationFlag extends UpdateFlag<Location> {
 
     @Override
     public void write(IoBuffer buffer) {
-	buffer.putShortA((context.getX() << 1) + 1);
-	buffer.putShort((context.getY() << 1) + 1);
+		buffer.putLEShortA(context.intValue());
     }
 
     @Override

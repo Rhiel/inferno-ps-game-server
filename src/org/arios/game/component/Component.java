@@ -60,6 +60,7 @@ public class Component {
             PacketRepository.send(RunScriptPacket.class, definition.getCs2ScriptContext().setPlayer(player));
         }
         if (definition.getContext() != null) {
+            definition.getContext().setWindowId(player.getInterfaceManager().getWindowsPane());
             PacketRepository.send(Interface.class, definition.getContext().setPlayer(player));
         } else {
             // player.debug("No component definitions added - [id=" + id +

@@ -104,7 +104,7 @@ public final class UpdateSequence {
         }
         getRenderablePlayers().sync();
         RegionManager.pulse();
-        GroundItemManager.pulse();
+        //GroundItemManager.pulse();
     }
 
     /**

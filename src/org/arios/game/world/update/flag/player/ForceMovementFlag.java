@@ -9,16 +9,18 @@ import org.arios.net.packet.IoBuffer;
 
 /**
  * Handles the force movement player update flag.
+ *
  * @author Emperor
  */
 public final class ForceMovementFlag extends UpdateFlag<ForceMovement> {
 
     /**
      * Constructs a new {@code ForceMovementFlag} {@code Object}.
+     *
      * @param forceMovement The force movement data.
      */
     public ForceMovementFlag(ForceMovement forceMovement) {
-	super(forceMovement);
+        super(forceMovement);
     }
 
     @Override
@@ -27,34 +29,35 @@ public final class ForceMovementFlag extends UpdateFlag<ForceMovement> {
 
     @Override
     public void writeDynamic(IoBuffer buffer, Entity e) {
-	Location l = ((Player) e).getPlayerFlags().getLastSceneGraph();
-	buffer.putA(context.getStart().getSceneX(l))
-	// Start location
-		.put(context.getStart().getSceneY(l)).putC(context.getDestination().getSceneX(l))
-		// Destination location
-		.putA(context.getDestination().getSceneY(l)).putShort(context.getCommenceSpeed() * 30)// Commencing
-												      // speed
-		.putShortA((context.getCommenceSpeed() * 30) + (context.getPathSpeed() * 30 + 1)) // Path
-												  // speed
-		.putS(context.getDirection().toInteger());
+        Location l = ((Player) e).getPlayerFlags().getLastSceneGraph();
+        buffer.putA(context.getStart().getSceneX(l))
+                // Start location
+                .put(context.getStart().getSceneY(l)).putC(context.getDestination().getSceneX(l))
+                // Destination location
+                .putA(context.getDestination().getSceneY(l)).putShort(context.getCommenceSpeed() * 30)// Commencing
+                // speed
+                .putShortA((context.getCommenceSpeed() * 30) + (context.getPathSpeed() * 30 + 1)) // Path
+                // speed
+                .putS(context.getDirection().toInteger());
     }
 
     @Override
     public int data() {
-	return maskData();
+        return maskData();
     }
 
     @Override
     public int ordinal() {
-	return 6;
+        return 6;
     }
 
     /**
      * Gets the mask data.
+     *
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x200;
+        return 0x200;
     }
 
 }

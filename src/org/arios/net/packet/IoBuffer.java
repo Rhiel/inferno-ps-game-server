@@ -340,6 +340,12 @@ public class IoBuffer {
         }
     }
 
+    public void putReverse(byte[] data, int start, int offset) {
+        for (int i = offset + start; i >= start; i--) {
+            put(data[i]);
+        }
+    }
+
     /**
      * @param numBits
      * @param value

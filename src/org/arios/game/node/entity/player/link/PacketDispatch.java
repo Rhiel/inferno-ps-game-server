@@ -51,7 +51,7 @@ public final class PacketDispatch {
      * @param message The game message.
      */
     public void sendMessage(String message) {
-        if (message == null || TutorialSession.getExtension(player).getStage() < TutorialSession.MAX_STAGE) {
+        if (message == null) {
             return;
         }
         if (player.getAttribute("chat_filter") != null && !message.contains("<col=CC6600>") && !message.contains("<col=FFFF00>")) {

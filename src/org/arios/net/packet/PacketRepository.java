@@ -3,29 +3,7 @@ package org.arios.net.packet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.arios.net.packet.in.ActionButtonPacket;
-import org.arios.net.packet.in.CameraMovementPacket;
-import org.arios.net.packet.in.ChatPacket;
-import org.arios.net.packet.in.ChatSettingsPacket;
-import org.arios.net.packet.in.ClanPacketHandler;
-import org.arios.net.packet.in.ClientFocusPacket;
-import org.arios.net.packet.in.CommandPacket;
-import org.arios.net.packet.in.CommunicationPacket;
-import org.arios.net.packet.in.ExaminePacket;
-import org.arios.net.packet.in.IdlePacketHandler;
-import org.arios.net.packet.in.InteractionPacket;
-import org.arios.net.packet.in.InterfaceUseOnPacket;
-import org.arios.net.packet.in.ItemActionPacket;
-import org.arios.net.packet.in.ItemOnObjectPacket;
-import org.arios.net.packet.in.ItemUseOnPacket;
-import org.arios.net.packet.in.MouseClickPacket;
-import org.arios.net.packet.in.MusicPacketHandler;
-import org.arios.net.packet.in.PingPacketHandler;
-import org.arios.net.packet.in.RegionChangePacket;
-import org.arios.net.packet.in.ReportAbusePacket;
-import org.arios.net.packet.in.RunScriptPacketHandler;
-import org.arios.net.packet.in.SlotSwitchPacket;
-import org.arios.net.packet.in.WalkPacket;
+import org.arios.net.packet.in.*;
 import org.arios.net.packet.out.*;
 
 /**
@@ -62,28 +40,39 @@ public final class PacketRepository {
         OUTGOING_PACKETS.put(RunScriptPacket.class, new RunScriptPacket());
         OUTGOING_PACKETS.put(RunEnergy.class, new RunEnergy());
         OUTGOING_PACKETS.put(ContainerPacket.class, new ContainerPacket());
-        OUTGOING_PACKETS.put(StringPacket.class, new StringPacket());
-        OUTGOING_PACKETS.put(Logout.class, new Logout());
+      //  OUTGOING_PACKETS.put(StringPacket.class, new StringPacket());
+        //OUTGOING_PACKETS.put(Logout.class, new Logout());
         OUTGOING_PACKETS.put(CloseInterface.class, new CloseInterface());
-        OUTGOING_PACKETS.put(AnimateInterface.class, new AnimateInterface());
-        OUTGOING_PACKETS.put(DisplayModel.class, new DisplayModel());
+       // OUTGOING_PACKETS.put(AnimateInterface.class, new AnimateInterface());
+       // OUTGOING_PACKETS.put(DisplayModel.class, new DisplayModel());
         OUTGOING_PACKETS.put(InterfaceConfig.class, new InterfaceConfig());
-        OUTGOING_PACKETS.put(PingPacket.class, new PingPacket());
-        OUTGOING_PACKETS.put(UpdateAreaPosition.class, new UpdateAreaPosition());
+      //  OUTGOING_PACKETS.put(PingPacket.class, new PingPacket());
+      //  OUTGOING_PACKETS.put(UpdateAreaPosition.class, new UpdateAreaPosition());
        // OUTGOING_PACKETS.put(ConstructObject.class, new ConstructObject());
         //OUTGOING_PACKETS.put(ClearObject.class, new ClearObject());
-        OUTGOING_PACKETS.put(HintIcon.class, new HintIcon());
+        //OUTGOING_PACKETS.put(HintIcon.class, new HintIcon());
         OUTGOING_PACKETS.put(ClearMinimapFlag.class, new ClearMinimapFlag());
-        OUTGOING_PACKETS.put(InteractionOption.class, new InteractionOption());
-        OUTGOING_PACKETS.put(SetWalkOption.class, new SetWalkOption());
-        OUTGOING_PACKETS.put(MinimapState.class, new MinimapState());
+        //OUTGOING_PACKETS.put(InteractionOption.class, new InteractionOption());
+        //OUTGOING_PACKETS.put(SetWalkOption.class, new SetWalkOption());
+      //  OUTGOING_PACKETS.put(MinimapState.class, new MinimapState());
        // OUTGOING_PACKETS.put(ConstructGroundItem.class, new ConstructGroundItem());
         //OUTGOING_PACKETS.put(ClearGroundItem.class, new ClearGroundItem());
         //OUTGOING_PACKETS.put(RepositionChild.class, new RepositionChild());
         //OUTGOING_PACKETS.put(PositionedGraphic.class, new PositionedGraphic());
-        OUTGOING_PACKETS.put(SystemUpdatePacket.class, new SystemUpdatePacket());
+     //   OUTGOING_PACKETS.put(SystemUpdatePacket.class, new SystemUpdatePacket());
         OUTGOING_PACKETS.put(CameraViewPacket.class, new CameraViewPacket());
-        INCOMING_PACKETS.put(40, new PingPacketHandler()); // This aint ping
+
+       // INCOMING_PACKETS.put(40, new PingPacketHandler()); // This aint ping
+
+
+        INCOMING_PACKETS.put(151, new DisplayUpdatePacket());
+        INCOMING_PACKETS.put(99, new WalkPacket());
+        INCOMING_PACKETS.put(116, new WalkPacket());
+        INCOMING_PACKETS.put(153, new CommandPacket());
+        IncomingPacket packet = new ActionButtonPacket();
+        INCOMING_PACKETS.put(77, packet);
+        INCOMING_PACKETS.put(218, packet);
+        INCOMING_PACKETS.put(221, packet);
         //OUTGOING_PACKETS.put(MusicPacket.class, new MusicPacket());
         /*OUTGOING_PACKETS.put(AudioPacket.class, new AudioPacket());
         OUTGOING_PACKETS.put(GrandExchangePacket.class, new GrandExchangePacket());
@@ -108,8 +97,6 @@ public final class PacketRepository {
         INCOMING_PACKETS.put(104, new ChatPacket());
         INCOMING_PACKETS.put(183, new CameraMovementPacket());
         INCOMING_PACKETS.put(192, new MouseClickPacket());
-        INCOMING_PACKETS.put(74, new WalkPacket());
-        INCOMING_PACKETS.put(149, new WalkPacket());
         INCOMING_PACKETS.put(177, new WalkPacket());
         INCOMING_PACKETS.put(188, new ItemActionPacket());
         INCOMING_PACKETS.put(35, new IdlePacketHandler());

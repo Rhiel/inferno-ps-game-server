@@ -6,45 +6,45 @@ package org.arios.game.world.map;
  */
 public enum Direction {
 
-    /**
-     * The north-west direction.
-     */
-    NORTH_WEST(-1, 1, 7, 0x12c0108, 0x12c0120, 0x12c0138),
+	/**
+	 * The south-west direction.
+	 */
+	SOUTH_WEST(-1, -1, 6, 0x12c0108, 0x12c0102, 0x12c010e),//0
 
-    /**
-     * The north direction.
-     */
-    NORTH(0, 1, 0, 0x12c0120),
+	/**
+	 * The south direction.
+	 */
+	SOUTH(0, -1, 2, 0x12c0102),//1
 
-    /**
-     * The north-east direction.
-     */
-    NORTH_EAST(1, 1, 4, 0x12c0180, 0x12c0120, 0x12c01e0),
+	/**
+	 * The south-east direction.
+	 */
+	SOUTH_EAST(1, -1, 5, 0x12c0180, 0x12c0102, 0x12c0183),//2
 
-    /**
-     * The west direction.
-     */
-    WEST(-1, 0, 3, 0x12c0108),
+	/**
+	 * The west direction.
+	 */
+	WEST(-1, 0, 3, 0x12c0108),//3
 
-    /**
-     * The east direction.
-     */
-    EAST(1, 0, 1, 0x12c0180),
+	/**
+	 * The east direction.
+	 */
+	EAST(1, 0, 1, 0x12c0180),//4
 
-    /**
-     * The south-west direction.
-     */
-    SOUTH_WEST(-1, -1, 6, 0x12c0108, 0x12c0102, 0x12c010e),
+	/**
+	 * The north-west direction.
+	 */
+	NORTH_WEST(-1, 1, 7, 0x12c0108, 0x12c0120, 0x12c0138),//5
 
-    /**
-     * The south direction.
-     */
-    SOUTH(0, -1, 2, 0x12c0102),
+	/**
+	 * The north direction.
+	 */
+	NORTH(0, 1, 0, 0x12c0120),//6
 
-    /**
-     * The south-east direction.
-     */
-    SOUTH_EAST(1, -1, 5, 0x12c0180, 0x12c0102, 0x12c0183);
+	/**
+	 * The north-east direction.
+	 */
+	NORTH_EAST(1, 1, 4, 0x12c0180, 0x12c0120, 0x12c01e0);//7
 
     /**
      * The amounts of steps on the x-axis.

@@ -20,7 +20,7 @@ public final class FaceEntityFlag extends UpdateFlag<Entity> {
 
     @Override
     public void write(IoBuffer buffer) {
-	buffer.putShortA(context == null ? -1 : context.getClientIndex());
+	buffer.putLEShort(context == null ? -1 : context.getClientIndex());
     }
 
     @Override

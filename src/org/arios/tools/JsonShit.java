@@ -16,6 +16,7 @@ public class JsonShit implements Runnable {
     public static void main(String[] args) {
         JsonShit shit = new JsonShit();
         shit.run();
+        shit.done();
     }
 
 
@@ -29,7 +30,6 @@ public class JsonShit implements Runnable {
         }
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(reader);
-        System.out.println(element);
         if(element.isJsonArray()) {
             for(JsonElement e : element.getAsJsonArray()) {
                 JsonObject o = e.getAsJsonObject();

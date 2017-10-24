@@ -24,7 +24,7 @@ public class ChatFlag extends UpdateFlag<ChatMessage> {
 
     @Override
     public void write(IoBuffer buffer) {
-        byte[] chatStr = new byte[256];
+        /*byte[] chatStr = new byte[256];
         chatStr[0] = (byte) context.getText().length();
         int offset = 1 + StringUtils.encryptPlayerChat(chatStr, 0, 1, context.getText().length(), context.getText().getBytes());
         buffer.putLEShortA(context.getEffects()); // 0x8000 does something
@@ -32,7 +32,15 @@ public class ChatFlag extends UpdateFlag<ChatMessage> {
         // something extra.
         buffer.put((byte) (context.getPlayer().getIronmanManager().isIronman() ? 0 : Rights.getChatIcon(context.getPlayer())));
         buffer.putS(offset + 1);
-        buffer.putReverseA(chatStr, 0, offset);
+        buffer.putReverseA(chatStr, 0, offset);*/
+        byte[] chatStr = new byte[256];
+        chatStr[0] = (byte) context.getText().length();
+        int offset = 1 + StringUtils.encryptPlayerChat(chatStr, 0, 1, context.getText().length(), context.getText().getBytes());
+        buffer.putLEShort(context.getEffects());
+        buffer.put(context.getPlayer().getDetails().getRights().ordinal());
+        buffer.putA(0);
+        buffer.putC(offset);
+        buffer.putReverse(chatStr, 0, offset);
     }
 
     @Override

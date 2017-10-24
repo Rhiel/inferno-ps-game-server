@@ -35,6 +35,7 @@ public final class AppearanceFlag extends UpdateFlag<Player> {
         block.put(settings); //settings hash.
         block.put(appearance.getSkullIcon()); //Skull icon
         block.put(appearance.getHeadIcon()); //Head icon
+
         int npcId = appearance.getNpcId();
         if (npcId == -1) {
             int[] parts = appearance.getBodyParts();
@@ -49,10 +50,12 @@ public final class AppearanceFlag extends UpdateFlag<Player> {
         } else {
             block.put(255).put(255).putShort(npcId);
         }
+
         final BodyPart[] colors = new BodyPart[] {appearance.getHair(), appearance.getTorso(), appearance.getLegs(), appearance.getFeet(), appearance.getSkin()};
         for (int i = 0; i < colors.length; i++) {//colours
             block.put(colors[i].getColor());
         }
+
         block.putShort(appearance.getStandAnimation());
         block.putShort(appearance.getStandTurnAnimation());
         block.putShort(appearance.getWalkAnimation());

@@ -36,7 +36,6 @@ public final class LoginWriteEvent extends IoWriteEvent {
         Response response = (Response) context;
         ByteBuffer buffer = ByteBuffer.allocate(500);
         buffer.put((byte) response.opcode());
-        System.out.println(response.opcode());
         switch (response.opcode()) {
             case 2:
                 buffer.put(getWorldResponse(session));
@@ -62,7 +61,7 @@ public final class LoginWriteEvent extends IoWriteEvent {
         buffer.put((byte) 0);
         buffer.putInt(0);
         buffer.put((byte) player.getDetails().getRights().ordinal());//im not sending player index...
-        buffer.put((byte) 1);
+        buffer.put((byte) 0);
         buffer.putShort((short) player.getIndex());
         buffer.put((byte) 1);
         buffer.flip();

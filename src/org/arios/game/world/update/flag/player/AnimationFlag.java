@@ -6,40 +6,43 @@ import org.arios.net.packet.IoBuffer;
 
 /**
  * Handles the animation update flag.
+ *
  * @author Emperor
  */
 public final class AnimationFlag extends UpdateFlag<Animation> {
 
     /**
      * Constructs a new {@code AnimationFlag} {@code Object}.
-     * @param id The animation id.
+     *
+     * @param id    The animation id.
      * @param delay The animation delay.
      */
     public AnimationFlag(Animation context) {
-	super(context);
+        super(context);
     }
 
     @Override
     public void write(IoBuffer buffer) {
-	buffer.putShortA(context.getId());
-	buffer.put(context.getDelay());
+        buffer.putShortA(context.getId());
+        buffer.put(context.getDelay());
     }
 
     @Override
     public int data() {
-	return maskData();
+        return maskData();
     }
 
     @Override
     public int ordinal() {
-	return 8;
-    }//these have to be corrected
+        return 8;
+    }
 
     /**
      * Gets the mask data of the animation update flag.
+     *
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x8;
+        return 0x8;
     }
 }

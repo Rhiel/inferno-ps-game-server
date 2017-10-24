@@ -166,6 +166,7 @@ public final class LoginReadEvent extends IoReadEvent {
                 return;
             }
         }
+
         ISAACCipher inCipher = new ISAACCipher(xtea);
         for (int i = 0; i < 4; i++) {
             xtea[i] += 50;

@@ -130,6 +130,9 @@ public final class PlayerParser {
 		case 43:
 		    player.getIronmanManager().parse(buffer);
 		    break;
+			case 44:
+				System.out.println(buffer.remaining() + ", playerparser");
+				break;
 		default:
 		    System.err.println("[Player parsing] Unhandled opcode: " + opcode + " for " + player.getName() + " - [log=" + Arrays.toString(opcodeLog) + "].");
 		    break;

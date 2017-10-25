@@ -78,6 +78,8 @@ public final class LoginConfiguration {
         player.getUpdateMasks().register(new AppearanceFlag(player));
         player.getPlayerFlags().setUpdateSceneGraph(true);
         player.getStateManager().init();
+        player.getInventory().add(new Item(5733));
+        player.toggleDebug();
     }
 
     /**

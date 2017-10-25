@@ -65,7 +65,7 @@ public final class GameInterface extends ComponentPlugin {
 			switch (button) {
 				case WORLD_ORB:
 					switch (opcode) {
-						case 215://548 window
+						case 77://548 window
 							player.getInterfaceManager().openOverlay(new Component(595));//same 595
 							break;
 						case 85://fullscreen

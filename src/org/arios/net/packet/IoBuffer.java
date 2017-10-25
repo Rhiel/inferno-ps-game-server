@@ -150,6 +150,11 @@ public class IoBuffer {
         return this;
     }
 
+    public IoBuffer putN(int val) {
+        buf.put((byte) (0 - val));
+        return this;
+    }
+
     /**
      * @param val
      * @return

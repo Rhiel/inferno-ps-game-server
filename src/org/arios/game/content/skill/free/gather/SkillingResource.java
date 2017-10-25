@@ -94,7 +94,7 @@ public enum SkillingResource {
     /**
      * Yew tree (Woodcutting).
      */
-    YEW(1309, 60, 0.8, 100 | 162 << 16, 175.0, 1515, 40, "yew", null, 7402, Skills.WOODCUTTING), YEW_1(8513, 60, 0.8, 100 | 162 << 16, 175.0, 1515, 40, "yew", null, 7402, Skills.WOODCUTTING, true),
+    YEW(1309, 60, 0.8, 100 | 162 << 16, 175.0, 1515, 40, "yew", null, 7402, Skills.WOODCUTTING), YEW_1(8513, 60, 0.8, 100 | 162 << 16, 175.0, 1515, 40, "yew", null, 7402, Skills.WOODCUTTING, true), YEW_2(1753, 60, 0.1, 100 | 162 << 16, 175.0, 1515, 40, "yew", null, 7402, Skills.WOODCUTTING),
 
     /**
      * Magic tree (Woodcutting).

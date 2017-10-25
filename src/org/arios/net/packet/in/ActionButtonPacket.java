@@ -144,6 +144,35 @@ public class ActionButtonPacket implements IncomingPacket {
                 slot = buffer.getShort();
                 itemId = buffer.getLEShortA();
                 break;*/
+            case 80:
+                slot = buffer.getShortA();
+                data = buffer.getIntA();
+                itemId = buffer.getLEShort();
+                componentId = (data >> 16) & 0xFFFF;
+                buttonId = data & 0xFFFF;
+                System.out.println(slot + ", " + itemId + ", " + buttonId);
+                break;
+            case 0:
+                slot = buffer.getLEShort();
+                itemId = buffer.getLEShortA();
+                data = buffer.getLEInt();
+                componentId = (data >> 16) & 0xFFFF;
+                buttonId = data & 0xFFFF;
+                break;
+            case 93:
+                itemId = buffer.getLEShort();
+                slot = buffer.getLEShortA();
+                data = buffer.getIntA();
+                componentId = (data >> 16) & 0xFFFF;
+                buttonId = data & 0xFFFF;
+                break;
+            case 171:
+                data = buffer.getLEInt();
+                componentId = (data >> 16) & 0xFFFF;
+                buttonId = data & 0xFFFF;
+                itemId = buffer.getLEShortA();
+                slot = buffer.getLEShort();
+                break;
             case 218:
                 itemId = buffer.getShort();
                 data = buffer.getLEInt();
@@ -151,6 +180,13 @@ public class ActionButtonPacket implements IncomingPacket {
                 componentId = (data >> 16) & 0xFFFF;
                 buttonId = data & 0xFFFF;
                 break;
+            /*case 250:
+                itemId = buffer.getShort();
+                data = buffer.getLEInt();
+                slot = buffer.getShort();
+                componentId = (data >> 16) & 0xFFFF;
+                buttonId = data & 0xFFFF;
+                break;*/
             case 221:
                 data = buffer.getInt();
                 componentId = (data >> 16) & 0xFFFF;
@@ -162,7 +198,6 @@ public class ActionButtonPacket implements IncomingPacket {
                 buttonId = data & 0xFFFF;
                 buffer.getShort();
                 slot = buffer.getShort();
-                System.out.println(componentId + ", " + buttonId + ", " + slot);
                 if (componentId == 49) {
                     if (player.getDialogueInterpreter().getDialogue() == null && player.getDialogueInterpreter().getDialogueStage() == null) {
                         player.getInterfaceManager().closeChatbox();
@@ -259,19 +294,19 @@ public class ActionButtonPacket implements IncomingPacket {
         }
         int index = 0;
         switch (opcode) {
-            case 233: // First option
+            case 77: // First option
                 index = 0;
                 break;
             case 218: // Second option (wield/wear)
                 index = 1;
                 break;
-            case 57: // Third option
+            case 0: // Third option
                 index = 2;
                 break;
-            case 20: // Fourth option
+            case 93: // Fourth option
                 index = 3;
                 break;
-            case 60: // Fifth option (drop/destroy)
+            case 80: // Fifth option (drop/destroy)
                 index = 4;
                 break;
         }

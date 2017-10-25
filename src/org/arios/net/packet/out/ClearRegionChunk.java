@@ -18,7 +18,7 @@ public final class ClearRegionChunk implements OutgoingPacket<ClearChunkContext>
         int x = context.getChunk().getCurrentBase().getSceneX(l);
         int y = context.getChunk().getCurrentBase().getSceneY(l);
         if (x >= 0 && y >= 0 && x < 96 && y < 96) {
-            IoBuffer buffer = new IoBuffer(126).putA(y).putA(x);
+            IoBuffer buffer = new IoBuffer(126).putA(x).putA(y);
             context.getPlayer().getSession().write(buffer);
         }
     }

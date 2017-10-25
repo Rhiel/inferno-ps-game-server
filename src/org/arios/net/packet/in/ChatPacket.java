@@ -37,6 +37,7 @@ public class ChatPacket implements IncomingPacket {
     @Override
     public void decode(final Player player, int opcode, IoBuffer buffer) {
         try {
+            buffer.get();
             final int effects = buffer.getShort();
             final int numChars = buffer.getSmart();
             final String message = StringUtils.decryptPlayerChat(buffer, numChars);

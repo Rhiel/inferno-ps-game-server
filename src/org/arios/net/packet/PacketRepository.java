@@ -3,6 +3,7 @@ package org.arios.net.packet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.arios.game.interaction.UseWithHandler;
 import org.arios.net.packet.in.*;
 import org.arios.net.packet.out.*;
 
@@ -40,12 +41,14 @@ public final class PacketRepository {
         OUTGOING_PACKETS.put(RunScriptPacket.class, new RunScriptPacket());
         OUTGOING_PACKETS.put(RunEnergy.class, new RunEnergy());
         OUTGOING_PACKETS.put(ContainerPacket.class, new ContainerPacket());
-      //  OUTGOING_PACKETS.put(StringPacket.class, new StringPacket());
+        OUTGOING_PACKETS.put(StringPacket.class, new StringPacket());
         //OUTGOING_PACKETS.put(Logout.class, new Logout());
         OUTGOING_PACKETS.put(CloseInterface.class, new CloseInterface());
+        OUTGOING_PACKETS.put(ConstructObject.class, new ConstructObject());
+        OUTGOING_PACKETS.put(ClearObject.class, new ClearObject());
        // OUTGOING_PACKETS.put(AnimateInterface.class, new AnimateInterface());
        // OUTGOING_PACKETS.put(DisplayModel.class, new DisplayModel());
-        OUTGOING_PACKETS.put(InterfaceConfig.class, new InterfaceConfig());
+        //OUTGOING_PACKETS.put(InterfaceConfig.class, new InterfaceConfig());
       //  OUTGOING_PACKETS.put(PingPacket.class, new PingPacket());
       //  OUTGOING_PACKETS.put(UpdateAreaPosition.class, new UpdateAreaPosition());
        // OUTGOING_PACKETS.put(ConstructObject.class, new ConstructObject());
@@ -61,6 +64,9 @@ public final class PacketRepository {
         //OUTGOING_PACKETS.put(PositionedGraphic.class, new PositionedGraphic());
      //   OUTGOING_PACKETS.put(SystemUpdatePacket.class, new SystemUpdatePacket());
         OUTGOING_PACKETS.put(CameraViewPacket.class, new CameraViewPacket());
+        OUTGOING_PACKETS.put(ConstructGroundItem.class, new ConstructGroundItem());
+        OUTGOING_PACKETS.put(UpdateAreaPosition.class, new UpdateAreaPosition());
+        OUTGOING_PACKETS.put(ClearGroundItem.class, new ClearGroundItem());
 
        // INCOMING_PACKETS.put(40, new PingPacketHandler()); // This aint ping
 
@@ -69,10 +75,26 @@ public final class PacketRepository {
         INCOMING_PACKETS.put(99, new WalkPacket());
         INCOMING_PACKETS.put(116, new WalkPacket());
         INCOMING_PACKETS.put(153, new CommandPacket());
+        INCOMING_PACKETS.put(158, new ExaminePacket());
+        OUTGOING_PACKETS.put(ClearRegionChunk.class, new ClearRegionChunk());
         IncomingPacket packet = new ActionButtonPacket();
         INCOMING_PACKETS.put(77, packet);
         INCOMING_PACKETS.put(218, packet);
         INCOMING_PACKETS.put(221, packet);
+        INCOMING_PACKETS.put(171, packet);
+        INCOMING_PACKETS.put(93, packet);
+        INCOMING_PACKETS.put(0, packet);
+        INCOMING_PACKETS.put(80, packet);
+
+        INCOMING_PACKETS.put(82, new ChatPacket());
+
+        packet = new InteractionPacket();
+        INCOMING_PACKETS.put(186, packet);
+        INCOMING_PACKETS.put(160, packet);
+
+
+        INCOMING_PACKETS.put(213, new ItemActionPacket());
+
         //OUTGOING_PACKETS.put(MusicPacket.class, new MusicPacket());
         /*OUTGOING_PACKETS.put(AudioPacket.class, new AudioPacket());
         OUTGOING_PACKETS.put(GrandExchangePacket.class, new GrandExchangePacket());

@@ -24,7 +24,7 @@ public final class UpdateAreaPosition implements OutgoingPacket<AreaPositionCont
     public static IoBuffer getChunkUpdateBuffer(Player player, Location base) {
         int x = base.getSceneX(player.getPlayerFlags().getLastSceneGraph());
         int y = base.getSceneY(player.getPlayerFlags().getLastSceneGraph());
-        return new IoBuffer(104).putA(y).putS(x);
+        return new IoBuffer(104, PacketHeader.SHORT).putA(y).putS(x);
     }
 
     /**
@@ -37,7 +37,7 @@ public final class UpdateAreaPosition implements OutgoingPacket<AreaPositionCont
     public static IoBuffer getBuffer(Player player, Location base) {
         int x = base.getSceneX(player.getPlayerFlags().getLastSceneGraph());
         int y = base.getSceneY(player.getPlayerFlags().getLastSceneGraph());
-        return new IoBuffer(109).put(x).put(y);
+        return new IoBuffer(109).put(y).put(x);
     }
 
     @Override

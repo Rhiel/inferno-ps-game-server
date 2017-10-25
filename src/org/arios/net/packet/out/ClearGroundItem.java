@@ -9,27 +9,33 @@ import org.arios.net.packet.context.BuildItemContext;
 
 /**
  * Represents the outgoing packet of clearing ground items.
+ *
  * @author Emperor
  */
 public final class ClearGroundItem implements OutgoingPacket<BuildItemContext> {
 
     /**
      * Writes the packet.
+     *
      * @param buffer The buffer.
-     * @param item The item.
+     * @param item   The item.
      */
     public static IoBuffer write(IoBuffer buffer, Item item) {
-	Location l = item.getLocation();
-	buffer.put(134);
-	buffer.put((l.getChunkOffsetX() << 4) | (l.getChunkOffsetY() & 0x7)).putLEShortA(item.getId());
-	return buffer;
+        Location l = item.getLocation();
+        buffer.put(195);
+        buffer.putA((l.getChunkOffsetX() << 4) | (l.getChunkOffsetY() & 0x7)).putShort(item.getId());
+        return buffer;
     }
 
     @Override
     public void send(BuildItemContext context) {
-	Player player = context.getPlayer();
-	Item item = context.getItem();
-	IoBuffer buffer = write(UpdateAreaPosition.getBuffer(player, item.getLocation().getChunkBase()), item);
-	player.getSession().write(buffer);
+        Player player = context.getPlayer();
+        Item item = context.getItem();
+        Location l = item.getLocation();
+        IoBuffer buffer = write(UpdateAreaPosition.getBuffer(player, item.getLocation().getChunkBase()), item);
+        IoBuffer itemBuf = new IoBuffer(195);
+        itemBuf.putA((l.getChunkOffsetX() << 4) | (l.getChunkOffsetY() & 0x7)).putShort(item.getId());
+        player.getSession().write(buffer);
+        player.getSession().write(itemBuf);
     }
 }

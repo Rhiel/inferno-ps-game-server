@@ -24,24 +24,26 @@ import org.arios.net.packet.out.ClearMinimapFlag;
 
 /**
  * Handles the incoming interaction packets.
+ *
  * @author Emperor
  */
 public final class InteractionPacket implements IncomingPacket {
 
     @Override
     public void decode(Player player, int opcode, IoBuffer buffer) {
-	if (player == null) {
-	    return;
-	}
-	if (buffer.opcode() != 105) {
-	    player = getPlayer(player);
-	}
-	if (player.getLocks().isInteractionLocked() || !player.getInterfaceManager().close()) {
-	    return;
-	}
-	player.getInterfaceManager().closeChatbox();
-	switch (buffer.opcode()) {
-	case 182: // NPC action 1
+        if (player == null) {
+            return;
+        }
+        if (buffer.opcode() != 105) {
+            player = getPlayer(player);
+        }
+        if (player.getLocks().isInteractionLocked() || !player.getInterfaceManager().close()) {
+            return;
+        }
+        player.getInterfaceManager().closeChatbox();
+        int x = 0, y = 0;
+        switch (buffer.opcode()) {
+    /*case 182: // NPC action 1
 	    int index = buffer.getShortA();
 	    handleNPCInteraction(player, 0, index);
 	    break;
@@ -122,200 +124,213 @@ public final class InteractionPacket implements IncomingPacket {
 	case 105: // Player action 8
 	    index = buffer.getShort();
 	    handlePlayerInteraction(player, 7, index);
-	    break;
-	case 85: // Ground item action 1
-	    int itemId = buffer.getLEShort();
-	    y = buffer.getLEShort();
-	    x = buffer.getShort();
-	    handleGroundItemInteraction(player, 2, itemId, Location.create(x, y, player.getLocation().getZ()));
-	    break;
-	case 169: // Ground item action 2
+	    break;*/
+                case 160: // Object action 1
+                int objectId = buffer.getShortA();
+                x = buffer.getLEShort();
+                buffer.get();//unknown (boolean - clicking/typing)
+                y = buffer.getShortA();
+                handleObjectInteraction(player, 0, x, y, objectId);
+                break;
+            case 186: // Ground item action 1
+                y = buffer.getShortA();
+                int itemId = buffer.getShort();
+                x = buffer.getShortA();
+                handleGroundItemInteraction(player, 2, itemId, Location.create(x, y, player.getLocation().getZ()));
+                break;
+	/*case 169: // Ground item action 2
 	    x = buffer.getLEShort();
 	    y = buffer.getShort();
 	    itemId = buffer.getLEShortA();
 	    handleGroundItemInteraction(player, 3, itemId, Location.create(x, y, player.getLocation().getZ()));
-	    break;
-	}
+	    break;*/
+        }
     }
 
     /**
      * Handles the NPC interaction.
-     * @param player the player.
+     *
+     * @param player         the player.
      * @param optionIndexthe option index.
-     * @param index the index.
+     * @param index          the index.
      */
     private static void handleNPCInteraction(Player player, int optionIndex, final int index) {
-	if (index < 1 || index > ServerConstants.MAX_NPCS) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    return;
-	}
-	final NPC npc = Repository.getNpcs().get(index);
-	if (npc == null) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    return;
-	}
-	if (player.getAttribute("removenpc", false)) {
-	    npc.clear();
-	    player.getPacketDispatch().sendMessage("Removed npc=" + npc.toString());
-	    return;
-	}
-	NPC shown = npc.getShownNPC(player);
-	final Option option = shown.getInteraction().get(optionIndex);
-	if (option == null) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    Interaction.handleInvalidInteraction(player, npc, Option.NULL);
-	    return;
-	}
-	player.debug("NPC Interacting with \"" + shown.getUsername() + "\" [index=" + index + ", renderable=" + npc.isRenderable() + "]");
-	player.debug("option=" + option.getName() + ", slot=" + option.getIndex() + ", id=" + shown.getId() + " original=" + npc.getId() + ", location=" + npc.getLocation() + ".");
-	handleAIPLegion(player, 0, optionIndex, index);
-	npc.getInteraction().handle(player, option);
+        if (index < 1 || index > ServerConstants.MAX_NPCS) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            return;
+        }
+        final NPC npc = Repository.getNpcs().get(index);
+        if (npc == null) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            return;
+        }
+        if (player.getAttribute("removenpc", false)) {
+            npc.clear();
+            player.getPacketDispatch().sendMessage("Removed npc=" + npc.toString());
+            return;
+        }
+        NPC shown = npc.getShownNPC(player);
+        final Option option = shown.getInteraction().get(optionIndex);
+        if (option == null) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            Interaction.handleInvalidInteraction(player, npc, Option.NULL);
+            return;
+        }
+        player.debug("NPC Interacting with \"" + shown.getUsername() + "\" [index=" + index + ", renderable=" + npc.isRenderable() + "]");
+        player.debug("option=" + option.getName() + ", slot=" + option.getIndex() + ", id=" + shown.getId() + " original=" + npc.getId() + ", location=" + npc.getLocation() + ".");
+        handleAIPLegion(player, 0, optionIndex, index);
+        npc.getInteraction().handle(player, option);
     }
 
     /**
      * Handles object interaction
-     * @param player The interacting player.
+     *
+     * @param player      The interacting player.
      * @param optionIndex The option index.
-     * @param x The x-coordinate of the object.
-     * @param y The y-coordinate of the object.
-     * @param objectId The object id.
+     * @param x           The x-coordinate of the object.
+     * @param y           The y-coordinate of the object.
+     * @param objectId    The object id.
      */
     private static void handleObjectInteraction(final Player player, int optionIndex, int x, int y, int objectId) {
-	GameObject object = RegionManager.getObject(player.getLocation().getZ(), x, y);
-	if (objectId == 29735) {// plate safety.
-	    player.getPulseManager().run(new MovementPulse(player, Location.create(x, y, player.getLocation().getZ())) {
-		@Override
-		public boolean pulse() {
-		    player.getDialogueInterpreter().sendDialogue("There appears to be a tunnel behind the poster.");
-		    player.getDialogueInterpreter().addAction(new DialogueAction() {
+        GameObject object = RegionManager.getObject(player.getLocation().getZ(), x, y);
+        if (objectId == 29735) {// plate safety.
+            player.getPulseManager().run(new MovementPulse(player, Location.create(x, y, player.getLocation().getZ())) {
+                @Override
+                public boolean pulse() {
+                    player.getDialogueInterpreter().sendDialogue("There appears to be a tunnel behind the poster.");
+                    player.getDialogueInterpreter().addAction(new DialogueAction() {
 
-			@Override
-			public void handle(Player player, int buttonId) {
-			    player.teleport(new Location(3140, 4230, 2));
-			}
+                        @Override
+                        public void handle(Player player, int buttonId) {
+                            player.teleport(new Location(3140, 4230, 2));
+                        }
 
-		    });
-		    return true;
-		}
-	    }, "movement");
-	    return;
-	}
-	if (object == null || object.getId() != objectId) {
-	    player.debug("GameObject(" + objectId + ") interaction was " + object + " at location " + x + ", " + y + ".");
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    Interaction.handleInvalidInteraction(player, object, Option.NULL);
-	    return;
-	}
-	if (!object.isActive()) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    Interaction.handleInvalidInteraction(player, object, Option.NULL);
-	    return;
-	}
-	object = object.getChild(player);
-	Option option = object.getInteraction().get(optionIndex);
-	if (option == null) {
-	    player.debug("Invalid option" + object + ", original: " + objectId + ".");
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    Interaction.handleInvalidInteraction(player, object, Option.NULL);
-	    return;
-	}
-	player.debug(object + ", original=" + objectId + ", option=" + option.getName() + "");
-	player.debug("dir=" + object.getDirection());
-	if (option.getHandler() != null) {
-	    player.debug("Object handler: " + option.getHandler().getClass().getSimpleName());
-	}
-	handleAIPLegion(player, 1, optionIndex, x, y, objectId);
-	object.getInteraction().handle(player, option);
+                    });
+                    return true;
+                }
+            }, "movement");
+            return;
+        }
+        if (object == null || object.getId() != objectId) {
+            player.debug("GameObject(" + objectId + ") interaction was " + object + " at location " + x + ", " + y + ".");
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            Interaction.handleInvalidInteraction(player, object, Option.NULL);
+            return;
+        }
+        if (!object.isActive()) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            Interaction.handleInvalidInteraction(player, object, Option.NULL);
+            return;
+        }
+        object = object.getChild(player);
+        Option option = object.getInteraction().get(optionIndex);
+        if (option == null) {
+            player.debug("Invalid option" + object + ", original: " + objectId + ".");
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            Interaction.handleInvalidInteraction(player, object, Option.NULL);
+            return;
+        }
+        player.debug(object + ", original=" + objectId + ", option=" + option.getName() + "");
+        player.debug("dir=" + object.getDirection());
+        if (option.getHandler() != null) {
+            player.debug("Object handler: " + option.getHandler().getClass().getSimpleName());
+        }
+        handleAIPLegion(player, 1, optionIndex, x, y, objectId);
+        object.getInteraction().handle(player, option);
     }
 
     /**
      * Handles player interaction.
-     * @param playerThe player interacting.
+     *
+     * @param playerThe   player interacting.
      * @param optionIndex The option index.
-     * @param index The target index.
+     * @param index       The target index.
      */
     private static void handlePlayerInteraction(Player player, int optionIndex, int index) {
-	if (index < 1 || index > ServerConstants.MAX_PLAYERS) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    return;
-	}
-	final Player target = Repository.getPlayers().get(index);
-	if (target == null || !target.isActive()) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    return;
-	}
-	final Option option = player.getInteraction().get(optionIndex);
-	if (option == null) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    return;
-	}
-	handleAIPLegion(player, 2, optionIndex, index);
-	target.getInteraction().handle(player, option);
+        if (index < 1 || index > ServerConstants.MAX_PLAYERS) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            return;
+        }
+        final Player target = Repository.getPlayers().get(index);
+        if (target == null || !target.isActive()) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            return;
+        }
+        final Option option = player.getInteraction().get(optionIndex);
+        if (option == null) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            return;
+        }
+        handleAIPLegion(player, 2, optionIndex, index);
+        target.getInteraction().handle(player, option);
     }
 
     /**
      * Handles the ground item interaction.
-     * @param player The player.
-     * @param index The index of the action.
-     * @param itemId The item id.
+     *
+     * @param player      The player.
+     * @param index       The index of the action.
+     * @param itemId      The item id.
      * @param locationThe location of the item.
      */
     private static void handleGroundItemInteraction(final Player player, int index, int itemId, Location location) {
-	final GroundItem item = GroundItemManager.get(itemId, location, player);
-	if (item == null) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    return;
-	}
-	final Option option = item.getInteraction().get(index);
-	if (option == null) {
-	    PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
-	    Interaction.handleInvalidInteraction(player, item, Option.NULL);
-	    return;
-	}
-	item.getInteraction().handle(player, option);
+        final GroundItem item = GroundItemManager.get(itemId, location, player);
+        if (item == null) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            return;
+        }
+        final Option option = item.getInteraction().get(index);
+        if (option == null) {
+            PacketRepository.send(ClearMinimapFlag.class, new PlayerContext(player));
+            Interaction.handleInvalidInteraction(player, item, Option.NULL);
+            return;
+        }
+        item.getInteraction().handle(player, option);
     }
 
     /**
      * Handles the AIPlayer legion.
+     *
      * @param player The player.
-     * @param type The interaction type.
-     * @param args The arguments.
+     * @param type   The interaction type.
+     * @param args   The arguments.
      */
     private static void handleAIPLegion(Player player, int type, int... args) {
-	if (player.isArtificial()) {
-	    List<AIPlayer> legion = player.getAttribute("aip_legion");
-	    if (legion != null) {
-		for (AIPlayer aip : legion) {
-		    if (aip != player) {
-			switch (type) {
-			case 0:
-			    handleNPCInteraction(aip, args[0], args[1]);
-			    break;
-			case 1:
-			    handleObjectInteraction(aip, args[0], args[1], args[2], args[3]);
-			    break;
-			case 2:
-			    handlePlayerInteraction(aip, args[0], args[1]);
-			    break;
-			}
-		    }
-		}
-	    }
-	}
+        if (player.isArtificial()) {
+            List<AIPlayer> legion = player.getAttribute("aip_legion");
+            if (legion != null) {
+                for (AIPlayer aip : legion) {
+                    if (aip != player) {
+                        switch (type) {
+                            case 0:
+                                handleNPCInteraction(aip, args[0], args[1]);
+                                break;
+                            case 1:
+                                handleObjectInteraction(aip, args[0], args[1], args[2], args[3]);
+                                break;
+                            case 2:
+                                handlePlayerInteraction(aip, args[0], args[1]);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Gets the player instance (used for AIP controlling).
+     *
      * @param player The player.
      * @return The player instance, or the AIP when the player is controlling an
      * AIP.
      */
     private static Player getPlayer(Player player) {
-	AIPlayer aip = player.getAttribute("aip_select");
-	if (aip != null && aip.getLocation().withinDistance(player.getLocation())) {
-	    return aip;
-	}
-	return player;
+        AIPlayer aip = player.getAttribute("aip_select");
+        if (aip != null && aip.getLocation().withinDistance(player.getLocation())) {
+            return aip;
+        }
+        return player;
     }
 
 }

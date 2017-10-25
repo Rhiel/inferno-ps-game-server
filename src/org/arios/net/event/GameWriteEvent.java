@@ -35,6 +35,7 @@ public final class GameWriteEvent extends IoWriteEvent {
             throw new RuntimeException("Critical networking error: The byte buffer requested was null.");
         }
         if (buffer.opcode() != -1) {
+            System.out.println(buffer.opcode() + ", " + buffer.readableBytes());
             int packetLength = buf.remaining() + 4;
             ByteBuffer response = ByteBuffer.allocate(packetLength);
             response.put((byte) (buffer.opcode() + session.getIsaacPair().getOutput().getNextValue()));

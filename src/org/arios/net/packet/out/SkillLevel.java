@@ -21,9 +21,9 @@ public final class SkillLevel implements OutgoingPacket<SkillContext> {
         } else if (context.getSkillId() == Skills.HITPOINTS) {
             buffer.put(skills.getLifepoints());
         } else {
-            buffer.put(skills.getLevel(context.getSkillId(), true));
+            buffer.put(skills.getLevel(context.getSkillId()));
         }
-        buffer.put(context.getSkillId()).putIntA((int) skills.getExperience(context.getSkillId()));
+        buffer.put(context.getSkillId()).putIntB((int) skills.getExperience(context.getSkillId()));
         context.getPlayer().getDetails().getSession().write(buffer);
     }
 

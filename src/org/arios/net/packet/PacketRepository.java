@@ -63,10 +63,13 @@ public final class PacketRepository {
         //OUTGOING_PACKETS.put(RepositionChild.class, new RepositionChild());
         //OUTGOING_PACKETS.put(PositionedGraphic.class, new PositionedGraphic());
      //   OUTGOING_PACKETS.put(SystemUpdatePacket.class, new SystemUpdatePacket());
+        OUTGOING_PACKETS.put(InteractionOption.class, new InteractionOption());
         OUTGOING_PACKETS.put(CameraViewPacket.class, new CameraViewPacket());
         OUTGOING_PACKETS.put(ConstructGroundItem.class, new ConstructGroundItem());
         OUTGOING_PACKETS.put(UpdateAreaPosition.class, new UpdateAreaPosition());
         OUTGOING_PACKETS.put(ClearGroundItem.class, new ClearGroundItem());
+
+        OUTGOING_PACKETS.put(ContactPackets.class, new ContactPackets());
 
        // INCOMING_PACKETS.put(40, new PingPacketHandler()); // This aint ping
 
@@ -75,9 +78,11 @@ public final class PacketRepository {
         INCOMING_PACKETS.put(99, new WalkPacket());
         INCOMING_PACKETS.put(116, new WalkPacket());
         INCOMING_PACKETS.put(153, new CommandPacket());
-        INCOMING_PACKETS.put(158, new ExaminePacket());
+        IncomingPacket packet = new ExaminePacket();
+        INCOMING_PACKETS.put(158, packet);
+        INCOMING_PACKETS.put(204, packet);
         OUTGOING_PACKETS.put(ClearRegionChunk.class, new ClearRegionChunk());
-        IncomingPacket packet = new ActionButtonPacket();
+        packet = new ActionButtonPacket();
         INCOMING_PACKETS.put(77, packet);
         INCOMING_PACKETS.put(218, packet);
         INCOMING_PACKETS.put(221, packet);
@@ -91,6 +96,8 @@ public final class PacketRepository {
         packet = new InteractionPacket();
         INCOMING_PACKETS.put(186, packet);
         INCOMING_PACKETS.put(160, packet);
+        INCOMING_PACKETS.put(130, packet);
+        INCOMING_PACKETS.put(86, packet);
 
 
         INCOMING_PACKETS.put(213, new ItemActionPacket());

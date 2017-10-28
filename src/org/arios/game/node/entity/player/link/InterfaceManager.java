@@ -488,9 +488,9 @@ public final class InterfaceManager {
         player.getPacketDispatch().sendInterface(162, 546, interfaceId, false);
     }
 
-    public void openChatbox(Component component) {
+   /* public void openChatbox(Component component) {
         player.getPacketDispatch().sendInterface(162, 546, component.getId(), false);
-    }
+    }*/
 
     /**
      * Opens a chat box interface.
@@ -501,6 +501,25 @@ public final class InterfaceManager {
         player.getPacketDispatch().sendInterface(162, 546, componentId, false);
         player.getPacketDispatch().sendCS2Script(CS2ID, script);
         player.getPacketDispatch().sendAccessMask(1, accessChild, componentId, 0, length);
+    }
+
+    public void openChatbox(Component component) {
+        if (component.getId() == DEFAULT_CHATBOX) {
+            //PacketRepository.send(Interface.class, new InterfaceContext(player, WINDOWS_PANE, 120, 0, true));
+            //player.getPacketDispatch().sendInterfaceConfig(548, 121, false);
+            if (chatbox == null) {
+                chatbox = component;
+                chatbox.open(player);
+            }
+            chatbox = component;
+            //player.getConfigManager().set(334, 1);
+        } else {
+            chatbox = component;
+            //player.getPacketDispatch().sendInterfaceConfig(548, 121, true);
+            //chatbox.getDefinition().setContext(new InterfaceContext(null, 548, component.getId() == 389 ? 115 : 120, component.getId(), true));
+            //TODO FIGURE OUT WTF THIS CODE DOES ^? RYAN.
+            chatbox.open(player);
+        }
     }
 
     public void openRootChatbox() {

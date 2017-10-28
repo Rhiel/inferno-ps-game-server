@@ -104,7 +104,7 @@ public final class PlayerParser {
 		    player.getMusicPlayer().parse(buffer);
 		    break;
 		case 35:
-		    player.getFamiliarManager().parse(buffer);
+		   // player.getFamiliarManager().parse(buffer);
 		    break;
 		case 36:
 		    player.getBarcrawlManager().parse(buffer);
@@ -130,9 +130,6 @@ public final class PlayerParser {
 		case 43:
 		    player.getIronmanManager().parse(buffer);
 		    break;
-			case 44:
-				System.out.println(buffer.remaining() + ", playerparser");
-				break;
 		default:
 		    System.err.println("[Player parsing] Unhandled opcode: " + opcode + " for " + player.getName() + " - [log=" + Arrays.toString(opcodeLog) + "].");
 		    break;
@@ -188,7 +185,7 @@ public final class PlayerParser {
 	player.getSettings().save(buffer.put((byte) 6));
 
 	// Emotes
-	player.getEmotes().save(buffer.put((byte) 44));
+	player.getEmotes().save(buffer.put((byte) 7));
 
 	// Attributes
 	if (!player.getGameAttributes().getSavedAttributes().isEmpty()) {
@@ -241,7 +238,7 @@ public final class PlayerParser {
 	player.getMusicPlayer().save(buffer.put((byte) 34));
 
 	// Familiar/pet data
-	player.getFamiliarManager().save(buffer.put((byte) 35));
+	//player.getFamiliarManager().save(buffer.put((byte) 35));
 
 	// Barcrawl miniquest.
 	player.getBarcrawlManager().save(buffer.put((byte) 36));

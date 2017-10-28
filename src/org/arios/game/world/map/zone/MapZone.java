@@ -2,7 +2,6 @@ package org.arios.game.world.map.zone;
 
 import java.util.Iterator;
 
-import org.arios.game.content.skill.member.summoning.familiar.Familiar;
 import org.arios.game.interaction.Option;
 import org.arios.game.node.Node;
 import org.arios.game.node.entity.Entity;
@@ -73,11 +72,6 @@ public abstract class MapZone implements Zone {
 		p.getPacketDispatch().sendMessage("You need to be a member to enter this area.");
 		p.getWalkingQueue().walkBack();
 		return false;
-	    }
-	} else if (e instanceof NPC) {
-	    NPC npc = (NPC) e;
-	    if (e instanceof Familiar && isRestricted(ZoneRestriction.FOLLOWERS.getFlag())) {
-		npc.setHidden(true);
 	    }
 	}
 	return true;

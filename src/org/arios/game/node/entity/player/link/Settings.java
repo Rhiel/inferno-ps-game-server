@@ -119,6 +119,8 @@ public final class Settings {
      */
     private int attackStyleIndex = 0;
 
+    public transient boolean largeSceneView;
+
     /**
      * Constructs a new {@code Settings} {@code Object}.
      *
@@ -706,6 +708,14 @@ public final class Settings {
      */
     public void setAttackStyleIndex(int attackStyleIndex) {
         this.attackStyleIndex = attackStyleIndex;
+    }
+
+    public boolean hasLargeSceneView() {
+        return largeSceneView;
+    }
+
+    public void setLargeSceneView(boolean largeSceneView) {
+        this.largeSceneView = largeSceneView;
     }
 
 }

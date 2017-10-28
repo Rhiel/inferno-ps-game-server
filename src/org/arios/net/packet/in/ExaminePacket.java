@@ -22,8 +22,8 @@ public final class ExaminePacket implements IncomingPacket {
     public void decode(Player player, int opcode, IoBuffer buffer) {
         String name;
         switch (buffer.opcode()) {
-            case 88: // Object examine
-                int id = buffer.getShortA();
+            case 204: // Object examine
+                int id = buffer.getShort();
                 if (id < 0 || id > Cache.getObjectDefinitionsSize()) {
                     break;
                 }

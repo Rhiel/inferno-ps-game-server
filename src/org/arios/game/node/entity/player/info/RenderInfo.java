@@ -9,6 +9,7 @@ import org.arios.game.node.entity.npc.NPC;
 import org.arios.game.node.entity.player.Player;
 import org.arios.game.world.map.Location;
 import org.arios.game.world.repository.Repository;
+import org.arios.net.Constants;
 import org.arios.net.packet.IoBuffer;
 
 /**
@@ -18,15 +19,21 @@ import org.arios.net.packet.IoBuffer;
  */
 public final class RenderInfo {
 
-    /**
-     * The player.
-     */
-    private final Player player;
+    private Player player;
 
-    /**
-     * The list of local players.
-     */
-    private List<Player> localPlayers = new LinkedList<Player>();
+    public byte[] slotFlags;
+
+    public Player[] localPlayers;
+    public int[] localPlayersIndexes;
+    public int localPlayersIndexesCount;
+
+    public int[] outPlayersIndexes;
+    public int outPlayersIndexesCount;
+
+    public int[] regionHashes;
+
+    public byte[][] cachedAppearencesHashes;
+    public int totalRenderDataSentLength;
 
     /**
      * The list of local NPCs.
@@ -64,12 +71,29 @@ public final class RenderInfo {
     private boolean preparedAppearance;
 
     /**
+     * The amount of local players added this tick.
+     */
+    public int localAddedPlayers;
+
+    /**
+     * The maximum amount of local players being added per tick. This is to
+     * decrease time it takes to load crowded places (such as home).
+     */
+    private static final int MAX_PLAYER_ADD = 15;
+
+    /**
      * Constructs a new {@code RenderInfo} {@code Object}.
      *
      * @param player The player.
      */
     public RenderInfo(Player player) {
         this.player = player;
+        slotFlags = new byte[2048];
+        localPlayers = new Player[2048];
+        localPlayersIndexes = new int[ServerConstants.MAX_PLAYERS];
+        outPlayersIndexes = new int[2048];
+        regionHashes = new int[2048];
+        cachedAppearencesHashes = new byte[ServerConstants.MAX_PLAYERS][];
     }
 
     /**
@@ -145,66 +169,12 @@ public final class RenderInfo {
     }
 
     /**
-     * Gets the localPlayers.
-     *
-     * @return The localPlayers.
-     */
-    public List<Player> getLocalPlayers() {
-        return localPlayers;
-    }
-
-    /**
-     * Sets the localPlayers.
-     *
-     * @param localPlayers The localPlayers to set.
-     */
-    public void setLocalPlayers(List<Player> localPlayers) {
-        this.localPlayers = localPlayers;
-    }
-
-    /**
      * Gets the appearanceStamps.
      *
      * @return The appearanceStamps.
      */
     public long[] getAppearanceStamps() {
         return appearanceStamps;
-    }
-
-    /**
-     * Gets the maskUpdateCount.
-     *
-     * @return The maskUpdateCount.
-     */
-    public int getMaskUpdateCount() {
-        return maskUpdateCount;
-    }
-
-    /**
-     * Sets the maskUpdateCount.
-     *
-     * @param maskUpdateCount The maskUpdateCount to set.
-     */
-    public void setMaskUpdateCount(int maskUpdateCount) {
-        this.maskUpdateCount = maskUpdateCount;
-    }
-
-    /**
-     * Gets the maskUpdates.
-     *
-     * @return The maskUpdates.
-     */
-    public Entity[] getMaskUpdates() {
-        return maskUpdates;
-    }
-
-    /**
-     * Sets the maskUpdates.
-     *
-     * @param maskUpdates The maskUpdates to set.
-     */
-    public void setMaskUpdates(Entity[] maskUpdates) {
-        this.maskUpdates = maskUpdates;
     }
 
     /**
@@ -226,54 +196,34 @@ public final class RenderInfo {
     }
 
     /**
-     * Holds the players' hash locations.
-     */
-    public final int[] hashLocations = new int[2048];
-
-    /**
-     * The amount of local players.
-     */
-    public int localsCount = 0;
-
-    /**
-     * The amount of global players.
-     */
-    public int globalsCount = 0;
-
-    /**
-     * The local player indexes.
-     */
-    public final short[] locals = new short[2048];
-
-    /**
-     * The global player indexes.
-     */
-    public final short[] globals = new short[2048];
-
-    /**
-     * The local players.
-     */
-    public final boolean[] isLocal = new boolean[2048];
-
-    /**
      * The skipped player indexes.
      */
     public final byte[] skips = new byte[2048];
 
-    public void enterWorld(IoBuffer packet) {
-        int myindex = player.getIndex();
-        locals[localsCount++] = (short) myindex;
-        isLocal[myindex] = true;
-        hashLocations[myindex] = 0;
-        packet.setBitAccess();
-        packet.putBits(30, player.getLocation().toPositionPacked());
-        for (short index = 1; index < 2048; index++) {
-            if (index == myindex) {
+    public void enterWorld(IoBuffer stream) {
+        stream.setBitAccess();
+        stream.putBits(30, player.getLocation().toPositionPacked());
+        localPlayers[player.getIndex()] = player;
+        localPlayersIndexes[localPlayersIndexesCount++] = player.getIndex();
+        for (int playerIndex = 1; playerIndex < 2048; playerIndex++) {
+            if (playerIndex == player.getIndex())
                 continue;
-            }
-            globals[globalsCount++] = index;
-            packet.putBits(18, 0);
+            Player player = Repository.getPlayers().get(playerIndex);
+            stream.putBits(18, regionHashes[playerIndex] = player == null ? 0 : player.getLocation().toRegionPacked());
+            outPlayersIndexes[outPlayersIndexesCount++] = playerIndex;
+
         }
-        packet.setByteAccess();
+        stream.setByteAccess();
     }
+
+    private boolean needsRemove(Player p) {
+        // can't just do this or you'll get chat from other dungeons
+        return p != player && (!p.isActive() || !(player.getLocation().withinDistance(p.getLocation(), player.getSettings().hasLargeSceneView() ? 126 : 14)));
+    }
+
+    private boolean needsAdd(Player p) {
+        return p != null && p.getSettings().isRunToggled() && (player.getLocation().withinDistance(p.getLocation(), player.getSettings().hasLargeSceneView() ? 126 : 14)
+                 && localAddedPlayers < MAX_PLAYER_ADD);
+    }
+
 }

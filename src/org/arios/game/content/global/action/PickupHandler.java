@@ -55,17 +55,17 @@ public final class PickupHandler {
             return true;
         }
         if (item.isActive() && player.getInventory().add(add)) {
-            if (!RegionManager.isTeleportPermitted(item.getLocation())) {
-                player.animate(Animation.create(535));
-            }
-            if (item instanceof GroundSpawn && item.getId() == 401 && player.getZoneMonitor().isInZone("karamja") && !player.getAchievementDiaryManager().hasCompletedTask(DiaryType.KARAMJA, 0, 7)) {
+            /*if (!RegionManager.isTeleportPermitted(item.getLocation())) {
+                //player.animate(Animation.create(535));
+            }*/
+           /* if (item instanceof GroundSpawn && item.getId() == 401 && player.getZoneMonitor().isInZone("karamja") && !player.getAchievementDiaryManager().hasCompletedTask(DiaryType.KARAMJA, 0, 7)) {
                 int seaweed = player.getAttribute("seaweed", 0);
                 seaweed++;
                 player.setAttribute("seaweed", seaweed);
-                player.getAchievementDiaryManager().updateTask(player, DiaryType.KARAMJA, 0, 7, seaweed == 5);
-            }
+                //player.getAchievementDiaryManager().updateTask(player, DiaryType.KARAMJA, 0, 7, seaweed == 5);
+            }*/
             GroundItemManager.destroy(item);
-            player.getAudioManager().send(new Audio(2582, 10, 1));
+            //player.getAudioManager().send(new Audio(2582, 10, 1));
         }
         return true;
     }

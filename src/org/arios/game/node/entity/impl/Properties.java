@@ -206,12 +206,6 @@ public final class Properties {
      * @return The combat level.
      */
     public int getCurrentCombatLevel() {
-	if (entity instanceof Player) {
-	    Player player = (Player) entity;
-	    if (player.getFamiliarManager().isUsingSummoning() || !player.getSkullManager().isWilderness()) {
-		return player.getFamiliarManager().getSummoningCombatLevel() + combatLevel;
-	    }
-	}
 	return combatLevel;
     }
 

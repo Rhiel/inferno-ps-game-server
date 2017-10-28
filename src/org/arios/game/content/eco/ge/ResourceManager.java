@@ -42,7 +42,6 @@ import org.arios.game.content.skill.member.herblore.FinishedPotion;
 import org.arios.game.content.skill.member.herblore.GrindingItem;
 import org.arios.game.content.skill.member.herblore.Herbs;
 import org.arios.game.content.skill.member.herblore.UnfinishedPotion;
-import org.arios.game.content.skill.member.summoning.SummoningPouch;
 import org.arios.game.node.item.Item;
 import org.arios.game.world.GameWorld;
 import org.arios.parser.item.ItemConfiguration;
@@ -400,13 +399,6 @@ public final class ResourceManager {
 	    }
 	    if (!handledResources.contains(id = f.getBase().getId())) {
 		handledResources.add(id);
-	    }
-	}
-	for (SummoningPouch s : SummoningPouch.values()) {
-	    for (Item item : s.getItems()) {
-		if (!handledResources.contains(id = item.getId())) {
-		    handledResources.add(id);
-		}
 	    }
 	}
 	for (int itemId : handledResources) {

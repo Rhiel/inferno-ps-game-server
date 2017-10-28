@@ -19,7 +19,6 @@ import org.arios.game.content.skill.member.construction.HouseManager;
 import org.arios.game.content.skill.member.farming.FarmingManager;
 import org.arios.game.content.skill.member.hunter.HunterManager;
 import org.arios.game.content.skill.member.slayer.SlayerManager;
-import org.arios.game.content.skill.member.summoning.familiar.FamiliarManager;
 import org.arios.game.interaction.Interaction;
 import org.arios.game.node.entity.Entity;
 import org.arios.game.node.entity.combat.BattleState;
@@ -206,11 +205,6 @@ public class Player extends Entity {
     private final GrandExchange grandExchange = new GrandExchange(this);
 
     /**
-     * The familiar manager.
-     */
-    private final FamiliarManager familiarManager = new FamiliarManager(this);
-
-    /**
      * The config manager.
      */
     private final ConfigurationManager configManager = new ConfigurationManager(this);
@@ -360,9 +354,6 @@ public class Player extends Entity {
                 }
             }
         }
-        if (familiarManager.hasFamiliar()) {
-            familiarManager.getFamiliar().clear();
-        }
         interfaceManager.close();
         interfaceManager.closeSingleTab();
         super.clear();
@@ -391,7 +382,7 @@ public class Player extends Entity {
             updateSceneGraph(false);
         }
         PlayerRenderer.render(this);
-//        NPCRenderer.render(this);
+        //NPCRenderer.render(this);
         MapChunkRenderer.render(this);
     }
 
@@ -518,7 +509,6 @@ public class Player extends Entity {
             if (gravestone) {
                 graveManager.create(ticks, items);
             }
-            familiarManager.dismiss();
         }
         skullManager.setSkulled(false);
         removeAttribute("combat-time");
@@ -645,7 +635,7 @@ public class Player extends Entity {
         playerFlags.setUpdateSceneGraph(false);
         playerFlags.setLastViewport(new RegionChunk[Viewport.CHUNK_SIZE][Viewport.CHUNK_SIZE]);
         renderInfo.getLocalNpcs().clear();
-        renderInfo.getLocalPlayers().clear();
+        //renderInfo.getLocalPlayers().clear();
         renderInfo.setLastLocation(null);
         renderInfo.setOnFirstCycle(true);
         for (int i = 0; i < renderInfo.getAppearanceStamps().length; i++) {
@@ -1020,13 +1010,6 @@ public class Player extends Entity {
      */
     public GrandExchange getGrandExchange() {
         return grandExchange;
-    }
-
-    /**
-     * @return the familiarManager.
-     */
-    public FamiliarManager getFamiliarManager() {
-        return familiarManager;
     }
 
     /**

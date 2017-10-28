@@ -40,11 +40,12 @@ public final class InteractionPacket implements IncomingPacket {
         if (player.getLocks().isInteractionLocked() || !player.getInterfaceManager().close()) {
             return;
         }
-        player.getInterfaceManager().closeChatbox();
+        //TODO: Possible chatbox closing ?
         int x = 0, y = 0;
+        int objectId = 0;
         switch (buffer.opcode()) {
     /*case 182: // NPC action 1
-	    int index = buffer.getShortA();
+        int index = buffer.getShortA();
 	    handleNPCInteraction(player, 0, index);
 	    break;
 	case 197: // NPC action 2
@@ -125,11 +126,25 @@ public final class InteractionPacket implements IncomingPacket {
 	    index = buffer.getShort();
 	    handlePlayerInteraction(player, 7, index);
 	    break;*/
-                case 160: // Object action 1
-                int objectId = buffer.getShortA();
+            case 160: // Object action 1
+                objectId = buffer.getShortA();
                 x = buffer.getLEShort();
                 buffer.get();//unknown (boolean - clicking/typing)
                 y = buffer.getShortA();
+                handleObjectInteraction(player, 0, x, y, objectId);
+                break;
+            case 130: // Object action 2
+                y = buffer.getLEShortA();
+                buffer.getS();//unknown (boolean - clicking/typing)
+                objectId = buffer.getShort();
+                x = buffer.getLEShort();
+                handleObjectInteraction(player, 0, x, y, objectId);
+                break;
+            case 86: // Object action 2
+                y = buffer.getLEShort();
+                objectId = buffer.getLEShortA();
+                buffer.getC();//unknown (boolean - clicking/typing)
+                x = buffer.getLEShortA();
                 handleObjectInteraction(player, 0, x, y, objectId);
                 break;
             case 186: // Ground item action 1

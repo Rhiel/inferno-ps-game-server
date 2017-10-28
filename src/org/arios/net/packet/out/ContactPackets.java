@@ -11,42 +11,56 @@ import org.arios.tools.StringUtils;
 
 /**
  * Handles the contact packet sending.
+ *
  * @author Emperor
  */
 public final class ContactPackets implements OutgoingPacket<ContactContext> {
 
     @Override
     public void send(ContactContext context) {
-	IoBuffer buffer = null;
-	Player player = context.getPlayer();
-	switch (context.getType()) {
-	case ContactContext.UPDATE_STATE_TYPE:
-	    buffer = new IoBuffer(137).put(WorldCommunicator.getState().value());
-	    break;
-	case ContactContext.IGNORE_LIST_TYPE:
-	    buffer = new IoBuffer(81, PacketHeader.SHORT);
-	    for (String string : player.getCommunication().getBlocked()) {
-		buffer.putLong(StringUtils.stringToLong(string));
-	    }
-	    break;
-	case ContactContext.UPDATE_FRIEND_TYPE:
-	    buffer = new IoBuffer(191, PacketHeader.BYTE);
-	    buffer.putLong(StringUtils.stringToLong(context.getName()));
-	    buffer.putShort(context.getWorldId());
-	    Contact c = player.getCommunication().getContacts().get(context.getName());
-	    if (c != null) {
-		buffer.put((byte) c.getRank().getValue());
-	    } else {
-		buffer.put((byte) 0);
-	    }
-	    if (context.isOnline()) {
-		buffer.putString("World " + context.getWorldId());
-	    }
-	    break;
-	}
-	if (buffer != null) {
-	    player.getSession().write(buffer);
-	}
+        IoBuffer buffer = null;
+        Player player = context.getPlayer();
+        switch (context.getType()) {
+            case ContactContext.UPDATE_STATE_TYPE:
+                buffer = new IoBuffer(58);//.put(WorldCommunicator.getState().value());
+                break;
+            case ContactContext.IGNORE_LIST_TYPE:
+                buffer = new IoBuffer(86, PacketHeader.SHORT);
+                for (String string : player.getCommunication().getBlocked()) {
+                    buffer.put(0);
+                    buffer.putString(string);
+                    buffer.putString("");
+                    buffer.putString("");
+                }
+                break;
+            case ContactContext.UPDATE_FRIEND_TYPE:
+                buffer = new IoBuffer(18, PacketHeader.BYTE);
+                buffer.put(0);
+                buffer.putString(context.getName());
+                buffer.putString("");
+                buffer.putShort(context.getWorldId());
+                buffer.put(0);
+                buffer.put(0);
+                buffer.putString("");
+                buffer.put(0);
+                buffer.putInt(0);
+                buffer.putString("");
+                /*buffer.putLong(StringUtils.stringToLong(context.getName()));
+                buffer.putShort(context.getWorldId());
+                Contact c = player.getCommunication().getContacts().get(context.getName());
+                if (c != null) {
+                    buffer.put((byte) c.getRank().getValue());
+                } else {
+                    buffer.put((byte) 0);
+                }
+                if (context.isOnline()) {
+                    buffer.putString("World " + context.getWorldId());
+                }*/
+                break;
+        }
+        if (buffer != null) {
+            player.getSession().write(buffer);
+        }
     }
 
 }

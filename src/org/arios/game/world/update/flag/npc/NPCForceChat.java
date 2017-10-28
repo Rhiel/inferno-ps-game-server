@@ -29,7 +29,7 @@ public final class NPCForceChat extends UpdateFlag<String> {
 
     @Override
     public int ordinal() {
-	return 1;
+	return 5;
     }
 
     /**
@@ -37,6 +37,6 @@ public final class NPCForceChat extends UpdateFlag<String> {
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x10;
+	return 0x2;
     }
 }

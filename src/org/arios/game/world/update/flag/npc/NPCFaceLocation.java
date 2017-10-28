@@ -20,7 +20,7 @@ public final class NPCFaceLocation extends UpdateFlag<Location> {
 
     @Override
     public void write(IoBuffer buffer) {
-	buffer.putShortA((context.getX() << 1) + 1).putLEShortA((context.getY() << 1) + 1);
+	buffer.putLEShort((context.getX() << 1) + 1).putLEShortA((context.getY() << 1) + 1);
     }
 
     @Override
@@ -38,7 +38,7 @@ public final class NPCFaceLocation extends UpdateFlag<Location> {
      * @return The ordinal.
      */
     public static int getOrdinal() {
-	return 2;
+	return 3;
     }
 
 }

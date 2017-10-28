@@ -48,10 +48,6 @@ public final class TzhaarCityPlugin extends OptionHandler {
 		player.getProperties().setTeleportLocation(LOCATIONS[1]);
 		break;
 	    case 9356:
-		if (player.getFamiliarManager().hasFamiliar()) {
-		    player.getPacketDispatch().sendMessage("You can't enter this with a follower.");
-		    break;
-		}
 		ActivityManager.start(player, "fight caves", false);
 		break;
 	    }

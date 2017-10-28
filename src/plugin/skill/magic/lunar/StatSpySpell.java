@@ -44,7 +44,7 @@ public final class StatSpySpell extends MagicSpell {
     /**
      * Represents the array of skills.
      */
-    private static int[][] SKILLS = { { Skills.ATTACK, 1, 2 }, { Skills.HITPOINTS, 5, 6 }, { Skills.MINING, 9, 10 }, { Skills.STRENGTH, 13, 14 }, { Skills.AGILITY, 17, 18 }, { Skills.SMITHING, 21, 22 }, { Skills.DEFENCE, 25, 26 }, { Skills.HERBLORE, 29, 30 }, { Skills.FISHING, 33, 34 }, { Skills.RANGE, 37, 38 }, { Skills.THIEVING, 41, 42 }, { Skills.COOKING, 45, 46 }, { Skills.PRAYER, 49, 50 }, { Skills.CRAFTING, 53, 54 }, { Skills.FIREMAKING, 57, 58 }, { Skills.MAGIC, 61, 62 }, { Skills.FLETCHING, 65, 66 }, { Skills.WOODCUTTING, 69, 70 }, { Skills.RUNECRAFTING, 73, 74 }, { Skills.SLAYER, 77, 78 }, { Skills.FARMING, 81, 82 }, { Skills.CONSTRUCTION, 85, 86 }, { Skills.HUNTER, 89, 90 }, { Skills.SUMMONING, 93, 94 } };
+    private static int[][] SKILLS = { { Skills.ATTACK, 1, 2 }, { Skills.HITPOINTS, 5, 6 }, { Skills.MINING, 9, 10 }, { Skills.STRENGTH, 13, 14 }, { Skills.AGILITY, 17, 18 }, { Skills.SMITHING, 21, 22 }, { Skills.DEFENCE, 25, 26 }, { Skills.HERBLORE, 29, 30 }, { Skills.FISHING, 33, 34 }, { Skills.RANGE, 37, 38 }, { Skills.THIEVING, 41, 42 }, { Skills.COOKING, 45, 46 }, { Skills.PRAYER, 49, 50 }, { Skills.CRAFTING, 53, 54 }, { Skills.FIREMAKING, 57, 58 }, { Skills.MAGIC, 61, 62 }, { Skills.FLETCHING, 65, 66 }, { Skills.WOODCUTTING, 69, 70 }, { Skills.RUNECRAFTING, 73, 74 }, { Skills.SLAYER, 77, 78 }, { Skills.FARMING, 81, 82 }, { Skills.CONSTRUCTION, 85, 86 }, { Skills.HUNTER, 89, 90 }};
 
     /**
      * Constructs a new {@code CureOtherSpell} {@code Object}.

@@ -9,8 +9,6 @@ import org.arios.ServerConstants;
 import org.arios.game.container.impl.EquipmentContainer;
 import org.arios.game.content.global.tutorial.TutorialSession;
 import org.arios.game.content.skill.Skills;
-import org.arios.game.content.skill.member.summoning.familiar.Familiar;
-import org.arios.game.content.skill.member.summoning.pet.Pet;
 import org.arios.game.node.entity.Entity;
 import org.arios.game.node.entity.npc.NPC;
 import org.arios.game.node.entity.player.Player;
@@ -137,18 +135,14 @@ public final class ImpactHandler {
      * @return The impact object created.
      */
     public Impact handleImpact(Entity source, int hit, final CombatStyle style, final BattleState state, HitsplatType type, boolean secondary) {
-	boolean fam = source instanceof Familiar;
-	if (fam) {
-	    source = ((Familiar) source).getOwner();
-	}
 	if (disabledTicks > GameWorld.getTicks()) {
 	    return null;
 	}
-	if (entity instanceof Player && TutorialSession.getExtension((Player) entity).getStage() < TutorialSession.MAX_STAGE) {
+	/*if (entity instanceof Player && TutorialSession.getExtension((Player) entity).getStage() < TutorialSession.MAX_STAGE) {
 	    Impact impact = new Impact(source, 0, style, HitsplatType.MISS);
 	    impactQueue.add(impact);
 	    return impact;
-	}
+	}*/
 	hit -= entity.getSkills().hit(hit);
 	if (type == null || type == HitsplatType.NORMAL) {
 	    if (hit == 0) {
@@ -167,12 +161,7 @@ public final class ImpactHandler {
 	    impactLog.put(source, hit + value);
 	}
 	if (style != null && style.getSwingHandler() != null && source instanceof Player) {
-	    Player player = source.asPlayer();
-	    if (fam && player.getFamiliarManager().hasFamiliar() && !(player.getFamiliarManager().getFamiliar() instanceof Pet)) {
-		source.setAttribute("fam-exp", true);
-	    }
 	    style.getSwingHandler().addExperience(source, entity, state);
-	    source.removeAttribute("fam-exp");
 	}
 	boolean dead = false;
 	if (entity.getSkills().getLifepoints() < 1) {

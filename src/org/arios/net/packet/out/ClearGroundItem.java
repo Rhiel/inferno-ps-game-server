@@ -32,7 +32,7 @@ public final class ClearGroundItem implements OutgoingPacket<BuildItemContext> {
         Player player = context.getPlayer();
         Item item = context.getItem();
         Location l = item.getLocation();
-        IoBuffer buffer = write(UpdateAreaPosition.getBuffer(player, item.getLocation().getChunkBase()), item);
+        IoBuffer buffer = UpdateAreaPosition.getBuffer(player, item.getLocation().getChunkBase());
         IoBuffer itemBuf = new IoBuffer(195);
         itemBuf.putA((l.getChunkOffsetX() << 4) | (l.getChunkOffsetY() & 0x7)).putShort(item.getId());
         player.getSession().write(buffer);

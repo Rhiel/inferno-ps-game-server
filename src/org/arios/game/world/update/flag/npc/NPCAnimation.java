@@ -20,7 +20,7 @@ public final class NPCAnimation extends UpdateFlag<Animation> {
 
     @Override
     public void write(IoBuffer buffer) {
-	buffer.putLEShortA(context.getId()).put(context.getDelay());
+	buffer.putShort(context.getId()).putA(context.getDelay());
     }
 
     @Override
@@ -30,7 +30,7 @@ public final class NPCAnimation extends UpdateFlag<Animation> {
 
     @Override
     public int ordinal() {
-	return 6;
+	return 2;
     }
 
     /**

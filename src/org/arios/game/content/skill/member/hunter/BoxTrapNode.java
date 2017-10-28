@@ -30,9 +30,6 @@ public final class BoxTrapNode extends TrapNode {
 
     @Override
     public boolean canCatch(TrapWrapper wrapper, final NPC npc) {
-	if (wrapper.getPlayer().getSkills().getStaticLevel(Skills.SUMMONING) < summoningLevel) {
-	    return false;
-	}
 	return super.canCatch(wrapper, npc);
     }
 }

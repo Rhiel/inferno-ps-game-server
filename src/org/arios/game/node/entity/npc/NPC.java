@@ -5,7 +5,6 @@ import org.arios.game.content.global.shop.Shop;
 import org.arios.game.content.skill.Skills;
 import org.arios.game.content.skill.member.slayer.Task;
 import org.arios.game.content.skill.member.slayer.Tasks;
-import org.arios.game.content.skill.member.summoning.familiar.Familiar;
 import org.arios.game.interaction.Interaction;
 import org.arios.game.interaction.MovementPulse;
 import org.arios.game.node.entity.Entity;
@@ -256,9 +255,6 @@ public class NPC extends Entity {
 	getSkills().setStaticLevel(Skills.MAGIC, definition.getConfiguration(NPCConfiguration.MAGIC_LEVEL, defaultLevel));
 	getSkills().setStaticLevel(Skills.HITPOINTS, definition.getConfiguration(NPCConfiguration.LIFEPOINTS, defaultLevel));
 	int lp = getSkills().getMaximumLifepoints();
-	if (this instanceof Familiar) {
-	    lp = getAttribute("hp", lp);
-	}
 	getSkills().setLevel(Skills.HITPOINTS, lp);
 	aggressive = definition.getConfiguration(NPCConfiguration.AGGRESSIVE, aggressive);
 	Animation anim = null;

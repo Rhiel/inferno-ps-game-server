@@ -30,7 +30,7 @@ public final class NPCGraphic extends UpdateFlag<Graphics> {
 
     @Override
     public int ordinal() {
-	return 5;
+	return 0;
     }
 
     /**
@@ -38,7 +38,7 @@ public final class NPCGraphic extends UpdateFlag<Graphics> {
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x80;
+	return 0x4;
     }
 
 }

@@ -86,7 +86,7 @@ public class GertrudesCat extends Quest {
 	setStage(100);
 	setState(QuestState.COMPLETED);
 	player.getInventory().add(kitten);
-	player.getFamiliarManager().summon(kitten, true);
+	//player.getFamiliarManager().summon(kitten, true);
 	final Item cake = new Item(1897);
 	final Item stew = new Item(2003);
 	if (!player.getInventory().add(cake)) {

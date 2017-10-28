@@ -92,7 +92,8 @@ public final class LoginConfiguration {
         PacketRepository.send(CloseInterface.class, new InterfaceContext(player, 165, 28, 28, 50, false));
         player.getInterfaceManager().openWindowsPane(new Component(player.getInterfaceManager().isResizable() ? 161 : 548));
         InterfaceSetManager.sendSets(player, player.getDetails().getClientInfo().getWindowMode() + 2);
-        player.getInterfaceManager().openRootChatbox();
+        //player.getInterfaceManager().openRootChatbox();
+        player.getConfigManager().set(1055, 147972);
         //player.getPacketDispatch().sendCS2Script(1080, new Object[] { "jj" });
         //player.getInterfaceManager().openDefaultTabs();
         config(player);

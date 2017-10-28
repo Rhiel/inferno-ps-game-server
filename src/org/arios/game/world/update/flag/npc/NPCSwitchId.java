@@ -19,12 +19,12 @@ public final class NPCSwitchId extends UpdateFlag<Integer> {
 
     @Override
     public void write(IoBuffer buffer) {
-	buffer.putLEShortA(context);
+	buffer.putShortA(context);
     }
 
     @Override
     public int data() {
-	return 0x4;
+	return 0x1;
     }
 
     @Override
@@ -37,7 +37,7 @@ public final class NPCSwitchId extends UpdateFlag<Integer> {
      * @return The ordinal.
      */
     public static int getOrdinal() {
-	return 3;
+	return 1;
     }
 
 }

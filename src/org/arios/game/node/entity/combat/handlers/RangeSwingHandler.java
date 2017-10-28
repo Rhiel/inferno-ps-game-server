@@ -7,7 +7,6 @@ import org.arios.game.container.impl.EquipmentContainer;
 import org.arios.game.content.global.tutorial.TutorialSession;
 import org.arios.game.content.global.tutorial.TutorialStage;
 import org.arios.game.content.skill.Skills;
-import org.arios.game.content.skill.member.summoning.familiar.Familiar;
 import org.arios.game.node.entity.Entity;
 import org.arios.game.node.entity.combat.BattleState;
 import org.arios.game.node.entity.combat.CombatStyle;

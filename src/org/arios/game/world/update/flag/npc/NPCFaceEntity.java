@@ -25,7 +25,7 @@ public final class NPCFaceEntity extends UpdateFlag<Entity> {
 
     @Override
     public int data() {
-	return 0x40;
+	return 0x10;
     }
 
     @Override

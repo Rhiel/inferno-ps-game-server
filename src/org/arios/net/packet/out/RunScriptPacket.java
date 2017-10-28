@@ -18,15 +18,13 @@ public class RunScriptPacket implements OutgoingPacket<RunScriptContext> {
         Object[] objects = context.getObjects();
         IoBuffer buffer = new IoBuffer(144, PacketHeader.SHORT);
         buffer.putString(string);
-        int j = 0;
         if(objects != null) {
-            for (int i = (string.length() - 1); i >= 0; i--) {
-                if (string.charAt(i) == 's') {
-                    buffer.putString((String) objects[j]);
+            for (int index = objects.length - 1; index >= 0; index--) {
+                if (string.charAt(index) == 's') {
+                    buffer.putString((String) objects[index]);
                 } else {
-                    buffer.putInt((Integer) objects[j]);
+                    buffer.putInt((Integer) objects[index]);
                 }
-                j++;
             }
         }
         buffer.putInt(context.getId());

@@ -480,9 +480,6 @@ public final class BankingPlugin extends OptionHandler {
 		    });
 		    p.getDialogueInterpreter().sendInput(false, "Enter the amount.");
 		    break;
-		case 180:// B.O.B (deposit box)
-		    p.getFamiliarManager().dumpBob();
-		    break;
 		}
 		break;
 	    }

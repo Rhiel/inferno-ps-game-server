@@ -5,6 +5,7 @@ import org.arios.net.packet.Context;
 
 /**
  * Represents a default context of a packet.
+ *
  * @author 'Vexia
  */
 public class DefaultContext implements Context {
@@ -19,38 +20,39 @@ public class DefaultContext implements Context {
 
     /**
      * Constructs a new {@code DefaultContext.java} {@code Object}.
-     * @param player the player.
+     *
+     * @param player  the player.
      * @param objects the objects.
      */
     public DefaultContext(Player player, Object... objects) {
-	this.player = player;
-	this.objects = objects;
+        this.player = player;
+        this.objects = objects;
     }
 
     @Override
     public Player getPlayer() {
-	return player;
+        return player;
     }
 
     /**
      * @return the objects.
      */
     public Object[] getObjects() {
-	return objects;
+        return objects;
     }
 
     /**
      * @param player the player to set.
      */
     public void setPlayer(Player player) {
-	this.player = player;
+        this.player = player;
     }
 
     /**
      * @param objects the objects to set.
      */
     public void setObjects(Object[] objects) {
-	this.objects = objects;
+        this.objects = objects;
     }
 
 }

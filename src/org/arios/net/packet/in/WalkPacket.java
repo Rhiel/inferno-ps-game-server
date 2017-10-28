@@ -32,7 +32,7 @@ public final class WalkPacket implements IncomingPacket {
 //		player.getProperties().setSpell(null);
        // player.getInterfaceManager().close();
       //  player.getInterfaceManager().closeChatbox();
-        if(opcode == 99) {
+        //if(opcode == 99) {
             int remaining = buffer.get();
             boolean running = buffer.getA() == 1;
             int x = buffer.getLEShortA();
@@ -47,7 +47,7 @@ public final class WalkPacket implements IncomingPacket {
                     return true;
                 }
             }, "movement");
-        }
+        //}
         if (opcode == 116) {
             buffer.get(); // The x-coordinate of where we clicked on the minimap.
             buffer.get(); // The y-coordinate of where we clicked on the minimap.
@@ -60,9 +60,9 @@ public final class WalkPacket implements IncomingPacket {
             buffer.get(); // Always 89
             buffer.get();
             buffer.get();
-            buffer.getShort();
-            buffer.getShort();
-            buffer.get();
+            //buffer.getShort();
+            //buffer.getShort();
+            //buffer.get();
         }
     }
 

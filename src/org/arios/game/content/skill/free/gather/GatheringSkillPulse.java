@@ -276,7 +276,7 @@ public final class GatheringSkillPulse extends SkillPulse<GameObject> {
      */
     private boolean checkReward() {
         int skill = mining ? Skills.MINING : Skills.WOODCUTTING;
-        int level = 1 + player.getSkills().getLevel(skill) + player.getFamiliarManager().getBoost(skill);
+        int level = 1 + player.getSkills().getLevel(skill);
         double hostRatio = Math.random() * (100.0 * resource.getRate());
         double clientRatio = Math.random() * ((level - resource.getLevel()) * (1.0 + tool.getRatio()));
         return hostRatio < clientRatio;

@@ -13,36 +13,62 @@ public final class NPCHitFlag extends UpdateFlag<HitMark> {
 
     /**
      * Constructs a new {@code NPCHitFlag} {@code Object}.
+     *
      * @param context The hit mark.
      */
     public NPCHitFlag(HitMark context) {
-	super(context);
+        super(context);
     }
 
     @Override
-    public void write(IoBuffer buffer) {
-	Entity e = context.getEntity();
-	int max = e.getSkills().getMaximumLifepoints();
-	int ratio = max > 0 ? (e.getSkills().getLifepoints() * 30 / max) : 0;
-	buffer.putA(context.getDamage()).putC(context.getType()).putC(ratio);
+    public void write(IoBuffer outgoing) {
+        Entity e = context.getEntity();
+        outgoing.putA(1); //Amount of hits.
+        if (e != null) {
+            outgoing.putSmart(32767);
+        }
+        int type = context.getType();
+        if (type != 9) {
+            if (context.getDamage() < 1) {
+                type = 8;
+            } else if (context.getDamage() >= e.getSkills().getLifepoints()) {
+                type += 10;
+            }
+            outgoing.putSmart(type);
+        } else {
+            outgoing.putSmart(type);
+        }
+        outgoing.putSmart(context.getDamage());
+        if (e != null) {
+            outgoing.putSmart(19);//5
+            outgoing.putSmart(context.getDamage());
+        }
+        outgoing.putSmart(0);
+        outgoing.putA(0);
+        outgoing.putSmart(0);
+        outgoing.putSmart(0);
+        outgoing.putSmart(0);
+        outgoing.putA(0);
+        outgoing.putC(0);
     }
 
     @Override
     public int data() {
-	return maskData();
+        return maskData();
     }
 
     @Override
     public int ordinal() {
-	return 0;
+        return 6;
     }
 
     /**
      * Gets the mask data.
+     *
      * @return The mask data.
      */
     public static int maskData() {
-	return 0x1;
+        return 0x40;
     }
 
 }

@@ -67,7 +67,6 @@ public class WolfWhistle extends Quest {
 	player.getPacketDispatch().sendString("275 gold charms.", 277, 12);
 	player.getPacketDispatch().sendString("You have completed the Wolf whistle Quest!", 277, 2);
 	player.getPacketDispatch().sendItemZoomOnInterface(12047, 230, 277, 3);
-	player.getSkills().addExperience(Skills.SUMMONING, 276);
 	player.getInventory().add(new Item(12158, 275), player);
 	player.removeAttribute("searched-body");
 	player.getQuestRepository().update(player);

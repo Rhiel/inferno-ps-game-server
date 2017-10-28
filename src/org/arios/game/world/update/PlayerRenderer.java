@@ -4,12 +4,17 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 
+import org.arios.cache.misc.buffer.ByteBufferUtils;
+import org.arios.game.node.entity.impl.WalkingQueue;
 import org.arios.game.node.entity.player.Player;
 import org.arios.game.node.entity.player.info.RenderInfo;
+import org.arios.game.world.map.Direction;
 import org.arios.game.world.map.Location;
 import org.arios.game.world.map.RegionManager;
+import org.arios.game.world.map.RunningDirection;
 import org.arios.game.world.repository.Repository;
 import org.arios.game.world.update.flag.UpdateFlag;
+import org.arios.game.world.update.flag.player.AppearanceFlag;
 import org.arios.net.packet.IoBuffer;
 import org.arios.net.packet.PacketHeader;
 
@@ -26,166 +31,143 @@ public final class PlayerRenderer {
      * @param player The player.
      */
     public static void render(Player player) {
-        if (player.getPlayerFlags().isUpdateSceneGraph()) {
-            player.updateSceneGraph(false);
-        }
-        IoBuffer buffer = new IoBuffer(83, PacketHeader.SHORT);
-        IoBuffer flags = new IoBuffer();
+        IoBuffer stream = new IoBuffer(83, PacketHeader.SHORT);
+        IoBuffer updateBlockData = new IoBuffer();
         RenderInfo info = player.getRenderInfo();
-        int skipCount = -1;
-        buffer.setBitAccess();
-        for (int i = 0; i < info.localsCount; i++) {
-            int index = info.locals[i];
-            LocalUpdateStage stage = LocalUpdateStage.getStage(player, Repository.getPlayers().get(index));
-            if (stage == null) {
-                skipCount++;
-            } else {
-                putSkip(skipCount, buffer);
-                skipCount = -1;
-                updateLocalPlayer(player, Repository.getPlayers().get(index), buffer, stage, flags, index);
-            }
+        processLocalPlayers(stream, updateBlockData, true, player);
+        processLocalPlayers(stream, updateBlockData, false, player);
+        processOutsidePlayers(stream, updateBlockData, true, player);
+        processOutsidePlayers(stream, updateBlockData, false, player);
+        stream.put(updateBlockData);
+        player.getDetails().getSession().write(stream);
+        info.totalRenderDataSentLength = 0;
+        info.localPlayersIndexesCount = 0;
+        info.outPlayersIndexesCount = 0;
+        for (int playerIndex = 1; playerIndex < 2048; playerIndex++) {
+            info.slotFlags[playerIndex] >>= 1;
+            player = info.localPlayers[playerIndex];
+            if (player == null)
+                info.outPlayersIndexes[info.outPlayersIndexesCount++] = playerIndex;
+            else
+                info.localPlayersIndexes[info.localPlayersIndexesCount++] = playerIndex;
         }
-        putSkip(skipCount, buffer);
-        skipCount = -1;
-        buffer.setByteAccess();
-        buffer.setBitAccess();
-        for (int i = 0; i < info.globalsCount; i++) {
-            int index = info.globals[i];
-            GlobalUpdateStage stage = GlobalUpdateStage.getStage(player, Repository.getPlayers().get(index));
-            if (stage == null) {
-                skipCount++;
-            } else {
-                putSkip(skipCount, buffer);
-                skipCount = -1;
-                updateGlobalPlayer(player, Repository.getPlayers().get(index), buffer, stage, flags);
-            }
-        }
-        putSkip(skipCount, buffer);
-        skipCount = -1;
-        buffer.setByteAccess();
-        buffer.put(flags);
-        player.getDetails().getSession().write(buffer);
     }
 
-    private static void updateLocalPlayer(Player player, Player p,
-                                          IoBuffer buffer, LocalUpdateStage stage,
-                                          IoBuffer flagBased, int index) {
-        buffer.putBits(1, 1);
-        buffer.putBits(1, stage.ordinal() == 0 ? 0 : (p.getUpdateMasks().isUpdateRequired() ? 1 : 0));
-        buffer.putBits(2, stage.ordinal() % 4);
-        switch (stage) {
-            case REMOVE_PLAYER:
-                if (p != null) {
-                    if (p.getProperties().isTeleporting()) {
-                        updateGlobalPlayer(player, p, buffer, GlobalUpdateStage.TELEPORTED, flagBased);
-                    } else if (p.getLocation().getZ() != p.getRenderInfo().getLastLocation().getZ()) {
-                        updateGlobalPlayer(player, p, buffer, GlobalUpdateStage.HEIGHT_UPDATED, flagBased);
+    private static void processLocalPlayers(IoBuffer stream, IoBuffer updateBlockData, boolean nsn0, Player player) {
+        stream.setBitAccess();
+        int skip = 0;//what exactly you trying to do/, this format is hard to read, i am used to eclipse but let me try
+        RenderInfo info = player.getRenderInfo();
+        for (int i = 0; i < info.localPlayersIndexesCount; i++) {
+            int playerIndex = info.localPlayersIndexes[i];
+            if (nsn0 ? (0x1 & info.slotFlags[playerIndex]) != 0 : (0x1 & info.slotFlags[playerIndex]) == 0)
+                continue;
+            if (skip > 0) {
+                skip--;
+                info.slotFlags[playerIndex] = (byte) (info.slotFlags[playerIndex] | 2);
+                continue;
+            }//brb breakfast 10 mins
+            Player p = info.localPlayers[playerIndex];
+            if (needsRemove(p, player)) {
+                stream.putBits(1, 1); // needs update
+                stream.putBits(1, 0); // no masks update needeed
+                stream.putBits(2, 0); // request remove
+                info.regionHashes[playerIndex] = p.getRenderInfo().getLastLocation() == null
+                        ? p.getLocation().toRegionPacked() : p.getRenderInfo().getLastLocation().toRegionPacked();
+                int hash = p.getLocation().toRegionPacked();
+                if (hash == info.regionHashes[playerIndex])// this one is hard to debug in, do u wanna see the client error? its buffer mismatch, but ok, naw ur good xD
+                    stream.putBits(1, 0);
+                else {
+                    stream.putBits(1, 1);
+                    updateRegionHash(stream, info.regionHashes[playerIndex], hash);//done
+                    info.regionHashes[playerIndex] = hash;
+                }
+                info.localPlayers[playerIndex] = null;
+            } else {
+                if (p != null && p.getUpdateMasks().isUpdateRequired()) {
+                    writeMasks(p, p, updateBlockData, true);
+                }
+                if (p.getProperties().isTeleporting()) {
+                    stream.putBits(1, 1); // needs update
+                    stream.putBits(1, (p.getUpdateMasks().isUpdateRequired() ? 1 : 0));
+                    stream.putBits(2, 3);
+                    int xOffset = p.getLocation().getX() - p.getRenderInfo().getLastLocation().getX();
+                    int yOffset = p.getLocation().getY() - p.getRenderInfo().getLastLocation().getY();
+                    int planeOffset = p.getLocation().getZ()
+                            - p.getRenderInfo().getLastLocation().getZ();
+                    if (Math.abs(p.getLocation().getX() - p.getRenderInfo().getLastLocation().getX()) <= 14 //14 for safe
+                            && Math.abs(p.getLocation().getY() - p.getRenderInfo().getLastLocation().getY()) <= 14) { //14 for safe
+                        stream.putBits(1, 0);
+                        if (xOffset < 0) // viewport used to be 15 now 16
+                            xOffset += 32;
+                        if (yOffset < 0)
+                            yOffset += 32;
+                        stream.putBits(12, yOffset + (xOffset << 5)
+                                + (planeOffset << 10));
                     } else {
-                        buffer.putBits(1, 0);
+                        stream.putBits(1, 1);
+                        stream.putBits(30, (yOffset & 0x3fff)
+                                + ((xOffset & 0x3fff) << 14)
+                                + ((planeOffset & 0x3) << 28));
                     }
-                } else {
-                    buffer.putBits(1, 0);
+                } else if (p.getWalkingQueue().getWalkDir() != -1) {
+                    boolean running;
+                    int opcode;
+                    WalkingQueue queue = p.getWalkingQueue();
+                    if (queue.getRunDir() != -1) {
+                        running = true;
+                        opcode = queue.getRunDir();
+                    } else {
+                        running = false;
+                        opcode = queue.getWalkDir();
+                    }
+                    stream.putBits(1, 1);
+                    Direction d = Direction.values()[queue.getWalkDir()];
+                    if ((d.getStepX() == 0 && d.getStepY() == 0)) {
+                        stream.putBits(1, 1); //quick fix
+                        stream.putBits(2, 0);
+                        if (!p.getUpdateMasks().isUpdateRequired()) //hasnt been sent yet
+                            writeMasks(p, p, updateBlockData, false);
+                    } else {
+                        stream.putBits(1, (p.getUpdateMasks().isUpdateRequired() ? 1 : 0));
+                        stream.putBits(2, running ? 2 : 1);
+                        stream.putBits(running ? 4 : 3, opcode);
+                    }
+                } else if (p.getUpdateMasks().isUpdateRequired()) {
+                    stream.putBits(1, 1); // needs update
+                    stream.putBits(1, 1);
+                    stream.putBits(2, 0);
+                } else { // skip
+                    stream.putBits(1, 0); // no update needed
+                    for (int i2 = i + 1; i2 < info.localPlayersIndexesCount; i2++) {
+                        int p2Index = info.localPlayersIndexes[i2];
+                        if (nsn0 ? (0x1 & info.slotFlags[p2Index]) != 0
+                                : (0x1 & info.slotFlags[p2Index]) == 0)
+                            continue;
+                        Player p2 = info.localPlayers[p2Index];
+                        if (needsRemove(p2, player)
+                                || p2.getProperties().isTeleporting()
+                                || p2.getWalkingQueue().getWalkDir() != -1
+                                || (p2.getUpdateMasks().isUpdateRequired()
+                                || (!p.getUpdateMasks().isUpdateRequired())))
+                            break;
+                        skip++;
+                    }
+                    skipPlayers(stream, skip);
+                    info.slotFlags[playerIndex] = (byte) (info.slotFlags[playerIndex] | 2);
                 }
-                player.getRenderInfo().getLocalPlayers().remove(p);
-                break;
-            case WALKING:
-                buffer.putBits(3, p.getWalkingQueue().getWalkDir());
-                if(player.getInterfaceManager().getOverlay() != null && player.getInterfaceManager().getOverlay().getId() == 595)
-                    player.getPacketDispatch().sendCS2Script(1749, new Object[]{player.getLocation().toPositionPacked()});
-                break;
-            case RUNNING:
-                buffer.putBits(4, p.getWalkingQueue().getRunDir());
-                if(player.getInterfaceManager().getOverlay() != null && player.getInterfaceManager().getOverlay().getId() == 595)
-                    player.getPacketDispatch().sendCS2Script(1749, new Object[]{player.getLocation().toPositionPacked()});
-                break;
-            case TELEPORTED:
-                Location delta = Location.getDelta(p.getRenderInfo().getLastLocation(), p.getLocation());
-                int deltaX = delta.getX() < 0 ? -delta.getX() : delta.getX();
-                int deltaY = delta.getY() < 0 ? -delta.getY() : delta.getY();
-                if (deltaX <= 15 && deltaY <= 15) {
-                    buffer.putBits(1, 0);
-                    int deltaZ = delta.getZ() < 0 ? -delta.getZ() : delta.getZ();
-                    deltaX = delta.getX() < 0 ? delta.getX() + 32 : delta.getX();
-                    deltaY = delta.getY() < 0 ? delta.getY() + 32 : delta.getY();
-                    deltaZ = delta.getZ();
-                    buffer.putBits(12, (deltaY & 0x1f) | ((deltaX & 0x1f) << 5) | ((deltaZ & 0x3) << 10));
-                } else {
-                    buffer.putBits(1, 1);
-                    buffer.putBits(30, (delta.getY() & 0x3fff) | ((delta.getX() & 0x3fff) << 14) | ((delta.getZ() & 0x3) << 28));
-                }
-                break;
-            case NO_UPDATE:
-                break;
-            default:
-                break;
-        }
-        if (p != null && stage != LocalUpdateStage.REMOVE_PLAYER
-                && p.getUpdateMasks().isUpdateRequired()) {
-            writeMasks(player, p, flagBased, false);
-        }
-    }
 
-    private static void updateGlobalPlayer(Player player, Player p, IoBuffer buffer, GlobalUpdateStage stage, IoBuffer flagBased) {
-        buffer.putBits(1, 1);
-        buffer.putBits(2, stage.ordinal());
-        switch (stage) {
-            case ADD_PLAYER:
-                if (p.getRenderInfo().getLastLocation() != null && p.getLocation().getZ() != p.getRenderInfo().getLastLocation().getZ()) {				updateGlobalPlayer(player, p, buffer, GlobalUpdateStage.HEIGHT_UPDATED, flagBased);
-                } else {
-                    updateGlobalPlayer(player, p, buffer, GlobalUpdateStage.TELEPORTED, flagBased);
-                    //buffer.putBits(1, 0);
-                }
-                buffer.putBits(13, p.getLocation().getX() - (p.getLocation().getRegionX() << 6)); //6
-                buffer.putBits(13, p.getLocation().getY() - (p.getLocation().getRegionY() << 6)); //6
-                buffer.putBits(1, 1);
-                player.getRenderInfo().getLocalPlayers().add(p);
-                writeMasks(player, p, flagBased, true);
-                break;
-            case HEIGHT_UPDATED:
-                int z = p.getLocation().getZ() - p.getRenderInfo().getLastLocation().getZ();
-                buffer.putBits(2, z);
-                break;
-            case TELEPORTED:
-                buffer.putBits(18, (p.getLocation().getZ() << 16)
-                        | (((p.getLocation().getRegionX() >> 3) & 0xFF) << 8)
-                        | ((p.getLocation().getRegionY() >> 3) & 0xFF));
-                break;
-            case MAP_REGION_DIRECTION:
-                break;
-            default:
-                break;
-        }
-    }
-
-    private static void putSkip(int skipCount, IoBuffer packet) {
-        if (skipCount > -1) {
-            packet.putBits(1, 0);
-            if (skipCount == 0) {
-                packet.putBits(2, 0);
-            } else if (skipCount < 32) {
-                packet.putBits(2, 1);
-                packet.putBits(5, skipCount);
-            } else if (skipCount < 256) {
-                packet.putBits(2, 2);
-                packet.putBits(8, skipCount);
-            } else if (skipCount < 2048) {
-                packet.putBits(2, 3);
-                packet.putBits(11, skipCount);
             }
         }
+        stream.setByteAccess();
     }
 
     private static void writeMasks(Player writingFor, Player updatable, IoBuffer composer, boolean forceSync) {
         int maskdata = 0;
         PriorityQueue<UpdateFlag> flags = new PriorityQueue<UpdateFlag>(updatable.getUpdateMasks().flagQueue);
-        for (UpdateFlag flag : flags) {
+        for (UpdateFlag flag : flags) {// you have some order is wrong, it sends less data, this is how im doing it.
             System.out.println(flag.getClass().getName());
             maskdata |= flag.data();
-        }
-        /*if (forceSync && (maskdata & 0x40) == 0) {
-            maskdata |= 0x40;
-            flags.add(new AppearanceFlag(updatable));
-        }*/
+        }//tried disabling the update plags? no
         if (maskdata > 0x100) {
             maskdata |= 0x4;
             composer.put((byte) (maskdata & 0xFF));
@@ -194,7 +176,165 @@ public final class PlayerRenderer {
             composer.put((byte) maskdata);
         }
         while (!flags.isEmpty()) {
-            flags.poll().write(composer);
+            flags.poll().write(composer);//didnt get that far yet
         }
     }
+
+    private static void updateRegionHash(IoBuffer stream, int lastRegionHash, int currentRegionHash) {
+        int lastRegionX = lastRegionHash >> 8;
+        int lastRegionY = 0xff & lastRegionHash;
+        int lastPlane = lastRegionHash >> 16;
+        int currentRegionX = currentRegionHash >> 8;
+        int currentRegionY = 0xff & currentRegionHash;
+        int currentPlane = currentRegionHash >> 16;
+        int planeOffset = currentPlane - lastPlane;
+        if (lastRegionX == currentRegionX && lastRegionY == currentRegionY) {
+            stream.putBits(2, 1);
+            stream.putBits(2, planeOffset);
+        } else if (Math.abs(currentRegionX - lastRegionX) <= 1 && Math.abs(currentRegionY - lastRegionY) <= 1) {
+            int opcode;
+            int dx = currentRegionX - lastRegionX;
+            int dy = currentRegionY - lastRegionY;
+            if (dx == -1 && dy == -1)
+                opcode = 0;
+            else if (dx == 1 && dy == -1)
+                opcode = 2;
+            else if (dx == -1 && dy == 1)
+                opcode = 5;
+            else if (dx == 1 && dy == 1)
+                opcode = 7;
+            else if (dy == -1)
+                opcode = 1;
+            else if (dx == -1)
+                opcode = 3;
+            else if (dx == 1)
+                opcode = 4;
+            else
+                opcode = 6;
+            stream.putBits(2, 2);
+            stream.putBits(5, (planeOffset << 3) + (opcode & 0x7));
+        } else {
+            int xOffset = currentRegionX - lastRegionX;
+            int yOffset = currentRegionY - lastRegionY;
+            stream.putBits(2, 3);
+            stream.putBits(18, (yOffset & 0xff) + ((xOffset & 0xff) << 8) + (planeOffset << 16));
+        }
+    }
+
+    private static void processOutsidePlayers(IoBuffer stream, IoBuffer updateBlockData, boolean nsn2, Player player) {
+        stream.setBitAccess();
+        int skip = 0;
+        RenderInfo info = player.getRenderInfo();
+        info.localAddedPlayers = 0;
+        for (int i = 0; i < info.outPlayersIndexesCount; i++) {
+            int playerIndex = info.outPlayersIndexes[i];
+            if (nsn2 ? (0x1 & info.slotFlags[playerIndex]) == 0
+                    : (0x1 & info.slotFlags[playerIndex]) != 0)
+                continue;
+            if (skip > 0) {
+                skip--;
+                info.slotFlags[playerIndex] = (byte) (info.slotFlags[playerIndex] | 2);
+                continue;
+            }
+            Player p = Repository.getPlayers().get(playerIndex);
+            if (needsAdd(p, player)) {//why da hell it read as two then sec
+                System.out.println("Adding player index: " + p.getIndex() + " to client name: " + player.getName(true) + ", index: " + player.getIndex());
+                stream.putBits(1, 1);
+                stream.putBits(2, 0); // request add
+                int hash = p.getLocation().toRegionPacked();
+                if (hash == info.regionHashes[playerIndex])
+                    stream.putBits(1, 0);//it looks identical..i know ;/
+                else {
+                    stream.putBits(1, 1);
+                    updateRegionHash(stream, info.regionHashes[playerIndex], hash);
+                    info.regionHashes[playerIndex] = hash;
+                }//its 6? it changed in osrs, oh, ok i think you are sending the same player index
+                stream.putBits(13, p.getLocation().getXInRegion());
+                stream.putBits(13, p.getLocation().getYInRegion());
+                //   if (p != null && p.getUpdateMasks().isUpdateRequired()) {
+                //      writeMasks(p, p, updateBlockData, true);
+                //  }could u try?
+                // stream.putBits(1, 1); this part doesn't exist on the clie
+                stream.setByteAccess();
+                stream.putString("Test!");
+                stream.setBitAccess();
+                info.localAddedPlayers++;
+                info.localPlayers[p.getIndex()] = p;
+                info.slotFlags[playerIndex] = (byte) (info.slotFlags[playerIndex] | 2);
+            } else {
+                int hash = p == null ? info.regionHashes[playerIndex] : p.getLocation().toRegionPacked();
+                if (p != null && hash != info.regionHashes[playerIndex]) {
+                    stream.putBits(1, 1);
+                    updateRegionHash(stream, info.regionHashes[playerIndex], hash);
+                    info.regionHashes[playerIndex] = hash;
+                } else {
+                    stream.putBits(1, 0); // no update needed
+                    for (int i2 = i + 1; i2 < info.outPlayersIndexesCount; i2++) {
+                        int p2Index = info.outPlayersIndexes[i2];
+                        if (nsn2 ? (0x1 & info.slotFlags[p2Index]) == 0
+                                : (0x1 & info.slotFlags[p2Index]) != 0)
+                            continue;
+                        Player p2 = Repository.getPlayers().get(p2Index);
+                        if (needsAdd(p2, player)
+                                || (p2 != null && p2.getLocation().toRegionPacked() != info.regionHashes[p2Index]))
+                            break;
+                        skip++;
+                    }
+                    skipPlayers(stream, skip);
+                    info.slotFlags[playerIndex] = (byte) (info.slotFlags[playerIndex] | 2);
+                }//try
+            }
+        }
+        stream.setByteAccess();
+    }
+
+    private static void skipPlayers(IoBuffer stream, int amount) {
+        stream.putBits(2, amount == 0 ? 0 : amount > 255 ? 3 : (amount > 31 ? 2 : 1));
+        if (amount > 0)
+            stream.putBits(amount > 255 ? 11 : (amount > 31 ? 8 : 5), amount);
+    }
+
+    private static boolean needsRemove(Player p, Player player) {
+        return (!p.isPlaying() || !player.getLocation().withinDistance(p.getLocation(), 14));
+    }
+
+    private static boolean needsAdd(Player p, Player player) {
+        return p != null && p.isPlaying() && player.getLocation().withinDistance(p.getLocation(), 14) && player.getRenderInfo().localAddedPlayers < MAX_PLAYER_ADD;
+    }
+
+    private static int MAX_PLAYER_ADD = 15;
+
+    public static final byte[] DIRECTION_DELTA_X = new byte[]{-1, 0, 1, -1,
+            1, -1, 0, 1};
+    public static final byte[] DIRECTION_DELTA_Y = new byte[]{1, 1, 1, 0, 0,
+            -1, -1, -1};
+
+    public static int getPlayerWalkingDirection(int dx, int dy) {
+        if (dx == -1 && dy == -1) {
+            return 0;
+        }
+        if (dx == 0 && dy == -1) {
+            return 1;
+        }
+        if (dx == 1 && dy == -1) {
+            return 2;
+        }
+        if (dx == -1 && dy == 0) {
+            return 3;
+        }
+        if (dx == 1 && dy == 0) {
+            return 4;
+        }
+        if (dx == -1 && dy == 1) {
+            return 5;
+        }
+        if (dx == 0 && dy == 1) {
+            return 6;
+        }
+        if (dx == 1 && dy == 1) {
+            return 7;
+        }
+        return -1;
+    }
+
 }

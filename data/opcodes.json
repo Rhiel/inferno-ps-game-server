@@ -347,7 +347,7 @@
   },
   {
     "opcode": 86,
-    "size": 0
+    "size": 7
   },
   {
     "opcode": 87,
@@ -524,7 +524,7 @@
   },
   {
     "opcode": 130,
-    "size": 0
+    "size": 7
   },
   {
     "opcode": 131,
@@ -822,7 +822,7 @@
   },
   {
     "opcode": 204,
-    "size": 0
+    "size": 2
   },
   {
     "opcode": 205,

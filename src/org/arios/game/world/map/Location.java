@@ -306,6 +306,15 @@ public final class Location extends Node {
         return create(getRegionX() << 3, getRegionY() << 3, z);
     }
 
+
+    public int getXInRegion() {
+        return x & 0x3F;
+    }
+
+    public int getYInRegion() {
+        return y & 0x3F;
+    }
+
     /**
      * Gets the region x-coordinate.
      *

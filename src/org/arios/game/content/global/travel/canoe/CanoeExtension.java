@@ -249,10 +249,6 @@ public final class CanoeExtension {
      */
     public final void travel(final CanoeStation station) {
 	player.getInterfaceManager().close();
-	if (player.getFamiliarManager().hasFamiliar()) {
-	    player.getPacketDispatch().sendMessage("You can't take a follower on a canoe.");
-	    return;
-	}
 	player.lock(18);
 	GameWorld.submit(new Pulse(1) {
 	    int count = 0;

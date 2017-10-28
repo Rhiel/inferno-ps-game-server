@@ -6,7 +6,6 @@ import org.arios.game.node.entity.state.impl.DiseaseStatePulse;
 import org.arios.game.node.entity.state.impl.DoubleExperiencePulse;
 import org.arios.game.node.entity.state.impl.FireResistantPulse;
 import org.arios.game.node.entity.state.impl.FrozenStatePulse;
-import org.arios.game.node.entity.state.impl.IncubatorStatePulse;
 import org.arios.game.node.entity.state.impl.PoisonStatePulse;
 import org.arios.game.node.entity.state.impl.SkullStatePulse;
 import org.arios.game.node.entity.state.impl.StunStatePulse;
@@ -57,11 +56,6 @@ public enum EntityState {
      * The entity is under fire resistant.
      */
     FIRE_RESISTANT(new FireResistantPulse(null, 0, 0)),
-
-    /**
-     * The entity is incubating an egg.
-     */
-    INCUBATION(new IncubatorStatePulse()),
 
     /**
      * The entity is under teleblock.

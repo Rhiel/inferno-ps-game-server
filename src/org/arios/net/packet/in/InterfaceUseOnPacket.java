@@ -2,7 +2,6 @@ package org.arios.net.packet.in;
 
 import org.arios.ServerConstants;
 import org.arios.game.content.skill.free.magic.MagicSpell;
-import org.arios.game.content.skill.member.summoning.familiar.FamiliarSpecial;
 import org.arios.game.interaction.MovementPulse;
 import org.arios.game.node.entity.combat.CombatSwingHandler;
 import org.arios.game.node.entity.npc.NPC;
@@ -103,21 +102,6 @@ public class InterfaceUseOnPacket implements IncomingPacket {
                     case 430:
                         MagicSpell.castSpell(player, SpellBook.LUNAR, componentId, target);
                         break;
-                    case 662:
-                        switch (componentId) {
-                            case 67:
-                            case 69:
-                            case 119:
-                            case 121:
-                            default:
-                                if (!player.getFamiliarManager().hasFamiliar()) {
-                                    player.getPacketDispatch().sendMessage("You don't have a familiar.");
-                                } else {
-                                    player.getFamiliarManager().getFamiliar().executeSpecialMove(new FamiliarSpecial(target));
-                                }
-                                break;
-                        }
-                        break;
                     default:
                         player.debug("Option usage [inter=" + interfaceId + ", child=" + componentId + ", target=" + target + "].");
                 }
@@ -147,14 +131,6 @@ public class InterfaceUseOnPacket implements IncomingPacket {
                         break;
                     case 192:
                         MagicSpell.castSpell(player, SpellBook.MODERN, componentId, object);
-                        break;
-                    case 662:
-                        switch (componentId) {
-                            case 137:
-                            default:
-                                player.getFamiliarManager().getFamiliar().executeSpecialMove(new FamiliarSpecial(object));
-                                break;
-                        }
                         break;
                 }
                 break;
@@ -187,22 +163,6 @@ public class InterfaceUseOnPacket implements IncomingPacket {
                     case 193:
                         MagicSpell.castSpell(player, SpellBook.ANCIENT, componentId, npc);
                         break;
-                    case 662:
-                        switch (componentId) {
-                            case 67:
-                            case 69:
-                            case 177:
-                            case 121:
-                            case 119:
-                            default:
-                                if (!player.getFamiliarManager().hasFamiliar()) {
-                                    player.getPacketDispatch().sendMessage("You don't have a familiar.");
-                                } else {
-                                    player.getFamiliarManager().getFamiliar().executeSpecialMove(new FamiliarSpecial(npc));
-                                }
-                                break;
-                        }
-                        break;
                     default:
                         player.debug("Option usage [inter=" + interfaceId + ", child=" + componentId + ", target=" + npc + "].");
                 }
@@ -232,13 +192,6 @@ public class InterfaceUseOnPacket implements IncomingPacket {
                             break;
                         }
                         MagicSpell.castSpell(player, SpellBook.MODERN, componentId, item);
-                        break;
-                    case 662:
-                        if (player.getFamiliarManager().hasFamiliar()) {
-                            player.getFamiliarManager().getFamiliar().executeSpecialMove(new FamiliarSpecial(item, interfaceId, componentId, item));
-                        } else {
-                            player.getPacketDispatch().sendMessage("You don't have a follower.");
-                        }
                         break;
                     default:
                         player.debug("Option usage [inter=" + interfaceId + ", child=" + componentId + ", target=" + item + "].");

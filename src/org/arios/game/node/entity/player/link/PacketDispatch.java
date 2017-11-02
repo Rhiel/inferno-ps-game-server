@@ -7,6 +7,8 @@ import org.arios.game.system.task.Pulse;
 import org.arios.game.world.GameWorld;
 import org.arios.game.world.map.Location;
 import org.arios.game.world.map.RegionManager;
+import org.arios.game.world.repository.Repository;
+import org.arios.game.world.update.PlayerRenderer;
 import org.arios.game.world.update.flag.chunk.AnimateObjectUpdateFlag;
 import org.arios.game.world.update.flag.context.Animation;
 import org.arios.game.world.update.flag.context.Graphics;

@@ -105,7 +105,7 @@ public final class InterfaceContext implements Context {
      * @return The componentId.
      */
     public int getComponentId() {
-        return getPlayer().getInterfaceManager().isResizable() ? fullscreenComponentId : componentId;
+        return /*getPlayer().getInterfaceManager().isResizable() ? fullscreenComponentId : */componentId;
     }
 
     public int getFixedComponentId() {

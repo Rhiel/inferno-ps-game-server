@@ -26,4 +26,9 @@ public class JS5EventProducer implements EventProducer {
 	return new JS5WriteEvent(session, context);
     }
 
+    @Override
+    public IoWriteEvent produceWriter(IoSession session, Object context1, Object context2) {
+        return null;
+    }
+
 }

@@ -86,9 +86,12 @@ public final class GameReadEvent extends IoReadEvent {
             buffer.get(data);
             IoBuffer buf = new IoBuffer(opcode, null, ByteBuffer.wrap(data));
             IncomingPacket packet = PacketRepository.getIncoming(opcode);
+            if(opcode != 40 || opcode != 212)
+            //System.out.println(opcode);
             if (packet == null) {
                 if (GameWorld.getSettings().isDevMode()) {
-                    SystemLogger.log("Unhandled packet [opcode=" + opcode + ", previous=" + last + ", size=" + size + ", header=" + header + "]");
+                    //if(opcode != 40 || opcode != 212)
+                        //SystemLogger.log("Unhandled packet [opcode=" + opcode + ", previous=" + last + ", size=" + size + ", header=" + header + "]");
                 }
                 continue;
             }

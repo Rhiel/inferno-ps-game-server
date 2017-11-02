@@ -74,9 +74,8 @@ public final class LoginConfiguration {
         player.setPlaying(true);
         UpdateSequence.getRenderablePlayers().add(player);
         RegionManager.move(player);
+        player.getPacketDispatch().sendRunScript(5015, "");
 //		player.getMusicPlayer().init();
-        player.getUpdateMasks().register(new AppearanceFlag(player));
-        player.getPlayerFlags().setUpdateSceneGraph(true);
         player.getStateManager().init();
         player.getInventory().add(new Item(5733));
         player.toggleDebug();

@@ -25,4 +25,9 @@ public final class MSHSEventProducer implements EventProducer {
 	return new MSHSWriteEvent(session, context);
     }
 
+    @Override
+    public IoWriteEvent produceWriter(IoSession session, Object context1, Object context2) {
+        return null;
+    }
+
 }

@@ -5,6 +5,7 @@ import org.arios.game.node.item.Item;
 
 /**
  * Represents the multiple fletching types(log types)
+ *
  * @author 'Vexia
  */
 public enum FletchType {
@@ -12,12 +13,13 @@ public enum FletchType {
 
     /**
      * Constructs a new {@code FletchType} {@code Object}.
-     * @param log the log.
+     *
+     * @param log   the log.
      * @param items the item.s
      */
     FletchType(final Item log, final FletchItem... items) {
-	this.log = log;
-	this.items = items;
+        this.log = log;
+        this.items = items;
     }
 
     /**
@@ -32,39 +34,43 @@ public enum FletchType {
 
     /**
      * Gets the items.
+     *
      * @return The items.
      */
     public FletchItem[] getItems() {
-	return items;
+        return items;
     }
 
     /**
      * Gets the log.
+     *
      * @return The log.
      */
     public Item getLog() {
-	return log;
+        return log;
     }
 
     /**
      * Method used to get the component based on type.
+     *
      * @return the component.
      */
     public Component getComponent() {
-	return items.length > 1 ? new Component(301 + items.length) : new Component(309);
+        return items.length > 1 ? new Component(301 + items.length) : new Component(309);
     }
 
     /**
      * Method used to get the <code>FletchType</code> based on the log item.
+     *
      * @param item the item.
      * @return the fletch type.
      */
     public static FletchType forItem(final Item item) {
-	for (FletchType type : FletchType.values()) {
-	    if (type.getLog().getId() == item.getId()) {
-		return type;
-	    }
-	}
-	return null;
+        for (FletchType type : FletchType.values()) {
+            if (type.getLog().getId() == item.getId()) {
+                return type;
+            }
+        }
+        return null;
     }
 }

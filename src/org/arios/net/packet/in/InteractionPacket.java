@@ -1,5 +1,6 @@
 package org.arios.net.packet.in;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.arios.ServerConstants;
@@ -138,7 +139,7 @@ public final class InteractionPacket implements IncomingPacket {
                 buffer.getS();//unknown (boolean - clicking/typing)
                 objectId = buffer.getShort();
                 x = buffer.getLEShort();
-                handleObjectInteraction(player, 0, x, y, objectId);
+                handleObjectInteraction(player, 1, x, y, objectId);
                 break;
             case 86: // Object action 2
                 y = buffer.getLEShort();

@@ -24,4 +24,6 @@ public interface EventProducer {
      */
     IoWriteEvent produceWriter(IoSession session, Object context);
 
+    IoWriteEvent produceWriter(IoSession session, Object context1, Object context2);
+
 }

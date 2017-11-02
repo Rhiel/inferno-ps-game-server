@@ -54,7 +54,7 @@ public final class LeatherCraftDialogue extends DialoguePlugin {
     @Override
     public boolean open(Object... args) {
 	Component component = new Component(304);
-	component.getDefinition().setContext(new InterfaceContext(null, 548, 120, 304, true));
+	component.getDefinition().setContext(new InterfaceContext(null, 548, 120, 304, 304, true));
 	type = (String) args[0];
 	if (type.equals("hard")) {
 	    player.getInterfaceManager().openChatbox(309);

@@ -21,6 +21,8 @@ public final class UpdateMasks {
      */
     private int maskData = 0;
 
+    public int getMaskData() { return maskData; }
+
     /**
      * The update masks array.
      */

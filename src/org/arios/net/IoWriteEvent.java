@@ -16,22 +16,42 @@ public abstract class IoWriteEvent implements Runnable {
     /**
      * The buffer.
      */
-    private final Object context;
+    private final Object context1;
+
+    /**
+     * The buffer.
+     */
+    private final Object context2;
 
     /**
      * Constructs a new {@code IoWriteEvent}.
      * @param session The session.
-     * @param context The write event context.
+     * @param context The write event context1.
      */
     public IoWriteEvent(IoSession session, Object context) {
 	this.session = session;
-	this.context = context;
+	this.context1 = context;
+	this.context2 = null;
+    }
+
+    /**
+     * Constructs a new {@code IoWriteEvent}.
+     * @param session The session.
+     * @param context The write event context1.
+     */
+    public IoWriteEvent(IoSession session, Object context1, Object context2) {
+        this.session = session;
+        this.context1 = context1;
+        this.context2 = context2;
     }
 
     @Override
     public void run() {
 	try {
-	    write(session, context);
+	    if(context2 == null)
+	        write(session, context1);
+	    else
+	        write(session, context1, context2);
 	} catch (Throwable t) {
 	    if (!(t instanceof CancelledKeyException)) {
 		t.printStackTrace();
@@ -43,8 +63,17 @@ public abstract class IoWriteEvent implements Runnable {
     /**
      * Writes the data.
      * @param session The session.
-     * @param context The write event context.
+     * @param context The write event context1.
      */
     public abstract void write(IoSession session, Object context);
+
+    /**
+     * Writes the data.
+     * @param session The session.
+     * @param context The write event context1.
+     */
+    public void write(IoSession session, Object context1, Object context2) {
+
+    }
 
 }

@@ -127,7 +127,7 @@ public final class Appearance implements SavingModule {
     /**
      * Sets the rendering animations.
      *
-     * @param player The player.
+     *
      */
     public void setAnimations() {
         if (npcId == -1) {
@@ -187,7 +187,7 @@ public final class Appearance implements SavingModule {
     /**
      * Method used to set the animations.
      *
-     * @param animation the animation.
+     * @param anim the animation.
      */
     public void setAnimations(Animation anim) {
         int id = anim.getId();
@@ -258,10 +258,10 @@ public final class Appearance implements SavingModule {
      * @param player The player.
      */
     public void prepareBodyData(Player player) {
-        if (player.getRenderInfo().preparedAppearance()) {
+        /*if (player.getRenderInfo().preparedAppearance()) {//TODO: Add check here
             return;
         }
-        player.getRenderInfo().setPreparedAppearance(true);
+        player.getRenderInfo().setPreparedAppearance(true);*/
         Item chest = player.getEquipment().get(EquipmentContainer.SLOT_CHEST);
         Item shield = player.getEquipment().get(EquipmentContainer.SLOT_SHIELD);
         Item legs = player.getEquipment().get(EquipmentContainer.SLOT_LEGS);

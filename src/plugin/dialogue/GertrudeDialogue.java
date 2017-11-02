@@ -366,7 +366,7 @@ public final class GertrudeDialogue extends DialoguePlugin {
 		stage = 906;
 		final Item kitten = getKitten();
 		player.getInventory().add(kitten);
-		player.getFamiliarManager().summon(kitten, true);
+		//player.getFamiliarManager().summon(kitten, true);
 	    }
 	    break;
 	case 906:

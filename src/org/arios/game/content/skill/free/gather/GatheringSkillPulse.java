@@ -182,7 +182,7 @@ public final class GatheringSkillPulse extends SkillPulse<GameObject> {
                         }
                     }
                 }
-                if (mining && player.getInventory().freeSlots() != 0 && player.getAchievementDiaryManager().getDiary(DiaryType.VARROCK).getLevel() != -1 && player.getAchievementDiaryManager().checkMiningReward(reward) && RandomFunction.random(100) <= 10) {
+                if (mining && player.getInventory().freeSlots() != 0 && player.getAchievementDiaryManager().getDiary(DiaryType.VARROCK).getLevel() != -1 /*&& player.getAchievementDiaryManager().checkMiningReward(reward)*/ && RandomFunction.random(100) <= 10) {
                     player.getInventory().add(new Item(reward, 2));
                     player.sendMessage("Through the power of the varrock armour you receive double the reward.");
                 } else {

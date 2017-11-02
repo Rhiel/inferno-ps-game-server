@@ -46,7 +46,6 @@ public final class BankContainer extends Container {
 
     /**
      * Construct a new {@code BankContainer} {@code Object}.
-     *
      * @param player The player reference.
      */
     public BankContainer(Player player) {
@@ -62,38 +61,25 @@ public final class BankContainer extends Container {
         if (open) {
             return;
         }
-        if (player.getIronmanManager().checkRestriction(IronmanMode.ULTIMATE)) {
-            return;
-        }
         if (!player.getBankPinManager().isUnlocked()) {
             player.getBankPinManager().openType(1);
             return;
         }
+        player.getConfigManager().set(867, 48304248);
+        player.getPacketDispatch().sendCS2Script(917, new Object[] { -1, -2147483648 });
+        player.getPacketDispatch().sendAccessMask(1181438, 3, 15, 0, 27);
+        player.getPacketDispatch().sendAccessMask(1054, 12, 15, 0, 27);
         super.refresh();
         player.getInventory().getListeners().add(listener);
         player.getInventory().refresh();
-        player.getInterfaceManager().openComponent(12).setCloseEvent(new CloseEvent() {
-            @Override
-            public boolean close(Player player, Component c) {
-                BankContainer.this.close();
-                return true; // Return true so the component gets
-                // removed.
-            }
+        player.getInterfaceManager().openComponent(12).setCloseEvent((player, c) -> {
+            BankContainer.this.close();
+            return true; //Return true so the component gets removed.
         });
         player.getInterfaceManager().openSingleTab(new Component(15));
         open = true;
         shift();
-    }
-
-
-    @Override
-    public long save(ByteBuffer buffer) {
-        buffer.putInt(50);
-        buffer.put((byte) 11);
-        for (int i = 0; i < 11; i++) {
-            buffer.putShort((short) 0);
-        }
-        return super.save(buffer);
+        add(new Item(4151));
     }
 
     /**
@@ -103,13 +89,12 @@ public final class BankContainer extends Container {
         open = false;
         player.getInventory().getListeners().remove(listener);
         player.getInterfaceManager().closeSingleTab();
-        // TODO: Add anything else for banking.
+        //TODO: Add anything else for banking.
     }
 
     /**
      * Adds an item to the bank container.
-     *
-     * @param slot   The item slot.
+     * @param slot The item slot.
      * @param amount The amount.
      */
     public void addItem(int slot, int amount) {
@@ -148,10 +133,8 @@ public final class BankContainer extends Container {
     }
 
     /**
-     * Takes a item from the bank container and adds one to the inventory
-     * container.
-     *
-     * @param slot   The slot.
+     * Takes a item from the bank container and adds one to the inventory container.
+     * @param slot The slot.
      * @param amount The amount.
      */
     public void takeItem(int slot, int amount) {
@@ -163,7 +146,7 @@ public final class BankContainer extends Container {
             return;
         }
         if (amount > item.getAmount()) {
-            amount = item.getAmount(); // It always stacks in the bank.
+            amount = item.getAmount(); //It always stacks in the bank.
         }
         item = new Item(item.getId(), amount, item.getCharge());
         int noteId = item.getDefinition().getNoteId();
@@ -188,7 +171,6 @@ public final class BankContainer extends Container {
 
     /**
      * Checks if the item can be added.
-     *
      * @param item the item.
      * @return {@code True} if so.
      */
@@ -198,7 +180,6 @@ public final class BankContainer extends Container {
 
     /**
      * If items have to be noted.
-     *
      * @return If items have to be noted {@code true}.
      */
     public boolean isNoteItems() {
@@ -207,7 +188,6 @@ public final class BankContainer extends Container {
 
     /**
      * Set if items have to be noted.
-     *
      * @param noteItems If items have to be noted {@code true}.
      */
     public void setNoteItems(boolean noteItems) {
@@ -216,7 +196,6 @@ public final class BankContainer extends Container {
 
     /**
      * Listens to the bank container.
-     *
      * @author Emperor
      */
     private static class BankListener implements ContainerListener {
@@ -228,7 +207,6 @@ public final class BankContainer extends Container {
 
         /**
          * Construct a new {@code BankListener} {@code Object}.
-         *
          * @param player The player reference.
          */
         public BankListener(Player player) {
@@ -238,18 +216,18 @@ public final class BankContainer extends Container {
         @Override
         public void update(Container c, ContainerEvent event) {
             if (c instanceof BankContainer) {
-                PacketRepository.send(ContainerPacket.class, new ContainerContext(player, 12, 89, 90, event.getItems(), false, event.getSlots()));
+                PacketRepository.send(ContainerPacket.class, new ContainerContext(player, -1, 64207, 95, event.getItems(), false, event.getSlots()));
             } else {
-                PacketRepository.send(ContainerPacket.class, new ContainerContext(player, 15, 0, 0, event.getItems(), false, event.getSlots()));
+                PacketRepository.send(ContainerPacket.class, new ContainerContext(player, -1, 64209, 93, event.getItems(), false, event.getSlots()));
             }
         }
 
         @Override
         public void refresh(Container c) {
             if (c instanceof BankContainer) {
-                PacketRepository.send(ContainerPacket.class, new ContainerContext(player, 12, 89, 90, c.toArray(), c.capacity(), false));
+                PacketRepository.send(ContainerPacket.class, new ContainerContext(player, -1, 64207, 95, c.toArray(), c.capacity(), false));
             } else {
-                PacketRepository.send(ContainerPacket.class, new ContainerContext(player, 15, 0, 0, c.toArray(), 28, false));
+                PacketRepository.send(ContainerPacket.class, new ContainerContext(player, -1, 64209, 93, c.toArray(), 28, false));
             }
         }
     }

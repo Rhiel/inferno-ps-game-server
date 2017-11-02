@@ -373,28 +373,66 @@ public class Player extends Entity {
             details.getSession().disconnect();
             getSession().setLastPing(Long.MAX_VALUE);
         }*///TODO:FIX
+        if (getProperties().isTeleporting()) {
+            getRenderInfo().resetViewingDistance();
+        }
+
+        if (!hasLastKnownPosition() || playerFlags.isUpdateSceneGraph()) {
+            playerFlags.setUpdateSceneGraph(true);
+
+            Location position = getLocation();
+            setLastPosition(position);
+            getRenderInfo().setPosition(position);
+        }
     }
 
     @Override
     public void update() {
         super.update();
-        if (playerFlags.isUpdateSceneGraph()) {
+        if (playerFlags.isUpdateSceneGraph())
             updateSceneGraph(false);
-        }
-        PlayerRenderer.render(this);
-        //NPCRenderer.render(this);
+        else
+            PlayerRenderer.sendUpdate(this);
         MapChunkRenderer.render(this);
+        //NPCRenderer.render(this);
     }
 
     @Override
     public void reset() {
         super.reset();
         playerFlags.setUpdateSceneGraph(false);
-        renderInfo.updateInformation();
+        renderInfo.refresh();
         if (getSkills().isLifepointsUpdate()) {
             PacketRepository.send(SkillLevel.class, new SkillContext(this, Skills.HITPOINTS));
             getSkills().setLifepointsUpdate(false);
         }
+    }
+
+    /*
+	 * Checks if this player has ever known a sector.
+	 *
+	 * @return {@code true} if so, {@code false} if not.
+	 */
+    public boolean hasLastKnownPosition() {
+        return lastPosition != null;
+    }
+
+    protected Location lastPosition = getLocation();
+
+    /**
+     * Sets the entity's last position
+     * @param position The position to set
+     */
+    public void setLastPosition(Location position) {
+        this.lastPosition = position;
+    }
+
+    /**
+     * Gets the entity's last position
+     * @return The last position
+     */
+    public Location getLastPosition() {
+        return lastPosition;
     }
 
     @Override
@@ -636,11 +674,7 @@ public class Player extends Entity {
         playerFlags.setLastViewport(new RegionChunk[Viewport.CHUNK_SIZE][Viewport.CHUNK_SIZE]);
         renderInfo.getLocalNpcs().clear();
         //renderInfo.getLocalPlayers().clear();
-        renderInfo.setLastLocation(null);
-        renderInfo.setOnFirstCycle(true);
-        for (int i = 0; i < renderInfo.getAppearanceStamps().length; i++) {
-            renderInfo.getAppearanceStamps()[i] = 0;
-        }
+        renderInfo.setPosition(null);
     }
 
     /**

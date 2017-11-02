@@ -9,10 +9,14 @@ import org.arios.game.node.entity.player.Player;
 import org.arios.game.node.entity.player.link.diary.AchievementDiary;
 import org.arios.game.node.entity.player.link.diary.DiaryType;
 import org.arios.game.world.GameWorld;
+import org.arios.net.packet.PacketRepository;
+import org.arios.net.packet.context.AccessMaskContext;
+import org.arios.net.packet.out.AccessMask;
 import org.arios.plugin.Plugin;
 
 /**
  * Handles the quest tab action buttons.
+ *
  * @author Emperor
  * @author Vexia
  */
@@ -20,55 +24,98 @@ public class QuestTabInterface extends ComponentPlugin {
 
     @Override
     public Plugin<Object> newInstance(Object arg) throws Throwable {
-	ComponentDefinition.put(274, this); // Quests
-	ComponentDefinition.put(259, this); // Achievement diary
-	return this;
+        ComponentDefinition.put(399, this); //Quests
+        ComponentDefinition.put(259, this); //Achievement diary
+        ComponentDefinition.put(76, this); //Minigames
+        ComponentDefinition.put(245, this); //Favour
+        return this;
     }
 
     @Override
     public boolean handle(Player p, Component component, int opcode, int button, int slot, int itemId) {
-	if (TutorialSession.getExtension(p).getStage() < TutorialSession.MAX_STAGE) {
-	    return true;
-	}
-	p.getPulseManager().clear();
-	switch (component.getId()) {
-	case 274:
-	    if (!GameWorld.isEconomyWorld()) {
-		p.getSavedData().getSpawnData().handleButton(p, button);
-	    }
-	    switch (button) {
-	    case 11:
-		p.getPacketDispatch().sendString("Global", 259, 15);
-		p.getAchievementDiaryManager().openTab();
-		return true;
-	    case 10:
-		break;
-	    default:
-		if (GameWorld.isEconomyWorld()) {
-		    Quest quest = p.getQuestRepository().getQuestIndex(button);
-		    if (quest != null) {
-			p.getInterfaceManager().open(new Component(275));
-			quest.update();
-			return true;
-		    }
-		}
-		return false;
-	    }
-	    break;
-	case 259:
-	    switch (button) {
-	    case 10:
-		p.getInterfaceManager().openTab(2, new Component(274));
-		return true;
-	    default:
-		AchievementDiary diary = p.getAchievementDiaryManager().getDiary(DiaryType.forChild(button));
-		if (diary != null) {
-		    diary.open(p);
-		}
-		return true;
-	    }
-	}
-	return true;
+        p.getPulseManager().clear();
+        switch (component.getId()) {
+            case 399://quest
+                switch (button) {
+                    case 1:
+                        p.getAchievementDiaryManager().openTab();
+                        return true;
+                    case 2:
+                        p.getInterfaceManager().openTab(new Component(76));
+                        return true;
+                    case 3:
+                        p.getInterfaceManager().openTab(new Component(245));
+                        return true;
+                    case 7:
+                    case 8:
+                        Quest quest = p.getQuestRepository().getQuestIndex(button == 8 ? slot + 19 : slot);
+                        if (quest != null) {
+                            p.getInterfaceManager().open(new Component(275));
+                            quest.update();
+                            p.getDialogueInterpreter().close();
+                            return true;
+                        }
+                        return true;
+                }
+                return false;
+            case 259://diary
+                switch (button) {
+                    case 1:
+                        p.getInterfaceManager().openTab(new Component(399));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 7, 399, 0, 18));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 8, 399, 0, 110));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 9, 399, 0, 12));
+                        return true;
+                    case 2:
+                        p.getInterfaceManager().openTab(new Component(76));
+                        return true;
+                    case 3:
+                        p.getInterfaceManager().openTab(new Component(245));
+                        return true;
+                    default:
+                        AchievementDiary diary = p.getAchievementDiaryManager().getDiary(DiaryType.forChild(button));
+                        if (diary != null) {
+                            diary.open(p);
+                        }
+                        return true;
+                }
+            case 76:
+                switch (button) {
+                    case 3:
+                        p.getInterfaceManager().openTab(new Component(399));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 7, 399, 0, 18));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 8, 399, 0, 110));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 9, 399, 0, 12));
+                        return true;
+                    case 4:
+                        p.getAchievementDiaryManager().openTab();
+                        return true;
+                    case 5:
+                        p.getInterfaceManager().openTab(new Component(245));
+                        return true;
+                }
+                break;
+            case 245:
+                switch (button) {
+                    case 2:
+                        p.getInterfaceManager().openTab(new Component(399));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 7, 399, 0, 18));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 8, 399, 0, 110));
+                        PacketRepository.send(AccessMask.class, new AccessMaskContext(p, 2, 9, 399, 0, 12));
+                        return true;
+                    case 3:
+                        p.getAchievementDiaryManager().openTab();
+                        return true;
+                    case 4:
+                        p.getInterfaceManager().openTab(new Component(76));
+                        return true;
+                    case 23:
+                        p.getInterfaceManager().openComponent(243);
+                        return true;
+                }
+                break;
+        }
+        return true;
     }
 
 }

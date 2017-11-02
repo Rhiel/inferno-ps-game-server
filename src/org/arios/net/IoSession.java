@@ -124,6 +124,10 @@ public class IoSession {
 	write(context, false);
     }
 
+    public void write(Object context1, Object context2) {
+        write(context1, context2, false);
+    }
+
     /**
      * Fires a write event created using the current event producer.
      * @param context The event context.
@@ -142,6 +146,26 @@ public class IoSession {
 	    return;
 	}
 	service.execute(producer.produceWriter(this, context));
+    }
+
+    /**
+     * Fires a write event created using the current event producer.
+     * @param context The event context.
+     * @param instant If the event should be instantly executed on this thread.
+     */
+    public void write(Object context1, Object context2, boolean instant) {
+        if (context1 == null || context2 == null) {
+            throw new IllegalStateException("Invalid writing context!");
+        }
+        if (!(context1 instanceof Response) && !(context2 instanceof Response) && producer instanceof LoginEventProducer) {
+            // new Throwable().printStackTrace();
+            return;
+        }
+        if (instant) {
+            producer.produceWriter(this, context1, context2).run();
+            return;
+        }
+        service.execute(producer.produceWriter(this, context1, context2));
     }
 
     /**

@@ -27,10 +27,10 @@ public final class DisplayModel implements OutgoingPacket<DisplayModelContext> {
                 break;
             case ITEM:
                 int value = context.getAmount() > 0 ? context.getAmount() : context.getZoom();
-                buffer = new IoBuffer(168);
+                buffer = new IoBuffer(20);
+                buffer.putLEInt(context.getInterfaceId() << 16 | context.getChildId());
                 buffer.putLEShort(context.getNodeId());
                 buffer.putLEInt(value);
-                buffer.putInt(context.getInterfaceId() << 16 | context.getChildId());
                 break;
             case MODEL:
                 buffer = new IoBuffer(67);

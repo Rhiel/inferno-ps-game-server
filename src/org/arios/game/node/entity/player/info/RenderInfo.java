@@ -1,229 +1,351 @@
 package org.arios.game.node.entity.player.info;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.arios.ServerConstants;
-import org.arios.game.node.entity.Entity;
 import org.arios.game.node.entity.npc.NPC;
 import org.arios.game.node.entity.player.Player;
 import org.arios.game.world.map.Location;
 import org.arios.game.world.repository.Repository;
-import org.arios.net.Constants;
 import org.arios.net.packet.IoBuffer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Holds a player's render information.
- *
- * @author Emperor
+ * @author Kyle Friz
+ * @since  Aug 29, 2015
  */
-public final class RenderInfo {
-
-    private Player player;
-
-    public byte[] slotFlags;
-
-    public Player[] localPlayers;
-    public int[] localPlayersIndexes;
-    public int localPlayersIndexesCount;
-
-    public int[] outPlayersIndexes;
-    public int outPlayersIndexesCount;
-
-    public int[] regionHashes;
-
-    public byte[][] cachedAppearencesHashes;
-    public int totalRenderDataSentLength;
+public class RenderInfo {
 
     /**
-     * The list of local NPCs.
+     * The player that owns this viewport
      */
-    private List<NPC> localNpcs = new LinkedList<NPC>();
+    private final Player player;
 
     /**
-     * The appearance time stamps (in millisecond).
+     * The base position of this viewport
      */
-    private final long[] appearanceStamps = new long[ServerConstants.MAX_PLAYERS];
+    private Location position;
 
     /**
-     * The entities requiring a mask update.
+     * The player's list of local npcs.
      */
-    private Entity[] maskUpdates = new Entity[256];
+    private final List<NPC> localNpcs = new ArrayList<>();
 
     /**
-     * The mask update count.
+     * The player's list of local players.
      */
-    private int maskUpdateCount;
+    private final Player[] localPlayers = new Player[2048];
 
     /**
-     * The last location of this player.
+     * Represents an array of players' indices within the current player's view
      */
-    private Location lastLocation;
+    private final int[] localPlayersIndexes = new int[2048];
 
     /**
-     * If the player has just logged in.
+     * Represents the amount of local players within the current player's view
      */
-    private boolean onFirstCycle = true;
+    private int localPlayersIndexesCount = 0;
 
     /**
-     * If the player has prepared appearance data this cycle.
+     * Represents an array of players outside the current player's view
      */
-    private boolean preparedAppearance;
+    private final int[] outPlayersIndexes = new int[2048];
 
     /**
-     * The amount of local players added this tick.
+     * Represents an the amount of players outside the current player's view
      */
-    public int localAddedPlayers;
+    private int outPlayersIndexesCount = 0;
 
     /**
-     * The maximum amount of local players being added per tick. This is to
-     * decrease time it takes to load crowded places (such as home).
+     * Represents an array of region hashes
      */
-    private static final int MAX_PLAYER_ADD = 15;
+    private final int[] regionHashes = new int[2048];
 
     /**
-     * Constructs a new {@code RenderInfo} {@code Object}.
-     *
-     * @param player The player.
+     * Represents an array
      */
+    private final byte[] slotFlags = new byte[2048];
+
+    /**
+     * Represents the movement types of all active players
+     */
+    private final byte[] movementTypes = new byte[2048];
+
+    /**
+     * Represents the amount of players added in the current tick
+     */
+    private int localAddedPlayers = 0;
+
+    /**
+     * Represents if the player has a large scene radius
+     */
+    private final boolean largeScene = false;
+
+    /**
+     * The current maximum viewing distance of this player.
+     */
+    private int viewingDistance = 1;
+
+    /**
+     * A flag which indicates there are npcs that couldn't be added.
+     */
+    private boolean excessiveNpcs = false;
+
+    /**
+     * A flag which indicates there are players that couldn't be added.
+     */
+    private boolean excessivePlayers = false;
+
+    /**
+     * A flag which indicates if the viewport has been initialized.
+     */
+    private boolean initialized = false;
+
     public RenderInfo(Player player) {
         this.player = player;
-        slotFlags = new byte[2048];
-        localPlayers = new Player[2048];
-        localPlayersIndexes = new int[ServerConstants.MAX_PLAYERS];
-        outPlayersIndexes = new int[2048];
-        regionHashes = new int[2048];
-        cachedAppearencesHashes = new byte[ServerConstants.MAX_PLAYERS][];
+        this.setPosition(player.getLocation());
+    }
+
+    public synchronized void initialize(IoBuffer builder) {
+        localPlayersIndexesCount = 0;
+        outPlayersIndexesCount = 0;
+
+        localPlayers[player.getIndex()] = player;
+        localPlayersIndexes[localPlayersIndexesCount++] = player.getIndex();
+
+        builder.setBitAccess();
+        builder.putBits(30, player.getLocation().toPositionPacked());
+        for (int playerIndex = 1; playerIndex < 2048; playerIndex++) {
+            if (playerIndex != player.getIndex()) {
+                Player player = Repository.getPlayers().get(playerIndex);
+                builder.putBits(18, 0);
+                outPlayersIndexes[outPlayersIndexesCount++] = playerIndex;
+            }
+        }
+        builder.setByteAccess();
+
+        initialized = true;
+    }
+
+    public synchronized void refresh() {
+        localPlayersIndexesCount = 0;
+        outPlayersIndexesCount = 0;
+        localAddedPlayers = 0;
+        for (int playerIndex = 1; playerIndex < 2048; playerIndex++) {
+            slotFlags[playerIndex] >>= 1;
+            Player player = localPlayers[playerIndex];
+            if (player == null) {
+                outPlayersIndexes[outPlayersIndexesCount++] = playerIndex;
+            } else {
+                localPlayersIndexes[localPlayersIndexesCount++] = playerIndex;
+            }
+        }
+
+        if (!excessivePlayers) {
+            if (viewingDistance < 15) {//what did this change to?
+                viewingDistance++;
+            }
+        } else {
+            if (viewingDistance > 1) {
+                viewingDistance--;
+            }
+            excessivePlayers = false;
+        }
+    }
+
+    public final boolean slotAvailable() {
+        if (localPlayersIndexesCount >= 255) {
+            flagExcessivePlayers();
+            return false;
+        } else if (localAddedPlayers >= 20) {
+            return false;
+        }
+        return true;
+    }
+
+    public final boolean initialized() {
+        return initialized;
     }
 
     /**
-     * Updates the player rendering information.
+     * @return the position
      */
-    public void updateInformation() {
-        onFirstCycle = false;
-        lastLocation = player.getLocation();
-        preparedAppearance = false;
+    public Location getPosition() {
+        return position;
     }
 
     /**
-     * Registers an entity requiring a mask update.
-     *
-     * @param entity The entity.
+     * @param position the position to set
      */
-    public void registerMaskUpdate(Entity entity) {
-        maskUpdates[maskUpdateCount++] = entity;
+    public void setPosition(Location position) {
+        this.position = position;
     }
 
     /**
-     * Gets the localNpcs.
-     *
-     * @return The localNpcs.
+     * @return the player
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * @return the localNpcs
      */
     public List<NPC> getLocalNpcs() {
         return localNpcs;
     }
 
     /**
-     * Sets the localNpcs.
-     *
-     * @param localNpcs The localNpcs to set.
+     * @param index
+     * @return
      */
-    public void setLocalNpcs(List<NPC> localNpcs) {
-        this.localNpcs = localNpcs;
+    public Player getLocalPlayer(int index) {
+        return localPlayers[index];
     }
 
     /**
-     * Gets the onFirstCycle.
-     *
-     * @return The onFirstCycle.
+     * @param index
+     * @param player
      */
-    public boolean isOnFirstCycle() {
-        return onFirstCycle;
+    public void setLocalPlayer(int index, Player player) {
+        localPlayers[index] = player;
     }
 
     /**
-     * Sets the onFirstCycle.
-     *
-     * @param onFirstCycle The onFirstCycle to set.
+     * @return the localPlayersIndex
      */
-    public void setOnFirstCycle(boolean onFirstCycle) {
-        this.onFirstCycle = onFirstCycle;
+    public int getLocalPlayersIndex(int index) {
+        return localPlayersIndexes[index];
     }
 
     /**
-     * Gets the lastLocation.
-     *
-     * @return The lastLocation.
+     * @return the localPlayersIndexesCount
      */
-    public Location getLastLocation() {
-        return lastLocation;
+    public int getLocalPlayersIndexesCount() {
+        return localPlayersIndexesCount;
     }
 
     /**
-     * Sets the lastLocation.
-     *
-     * @param lastLocation The lastLocation to set.
+     * @return the outPlayersIndex
      */
-    public void setLastLocation(Location lastLocation) {
-        this.lastLocation = lastLocation;
+    public int getOutPlayersIndex(int index) {
+        return outPlayersIndexes[index];
     }
 
     /**
-     * Gets the appearanceStamps.
-     *
-     * @return The appearanceStamps.
+     * @return the outPlayersIndexesCount
      */
-    public long[] getAppearanceStamps() {
-        return appearanceStamps;
+    public int getOutPlayersIndexesCount() {
+        return outPlayersIndexesCount;
     }
 
     /**
-     * Sets the prepared appearance flag.
-     *
-     * @param prepared If the player has prepared appearance setting this cycle.
+     * @param index the Index
+     * @param hash the Hash
+     * @return if they match
      */
-    public void setPreparedAppearance(boolean prepared) {
-        this.preparedAppearance = prepared;
+    public boolean regionUpdate(int index, int hash) {
+        return regionHashes[index] != hash;
     }
 
     /**
-     * Checks if the player has prepared appearance data this cycle.
-     *
-     * @return {@code True} if so.
+     * @param index the Index
+     * @return the Hash
      */
-    public boolean preparedAppearance() {
-        return preparedAppearance;
+    public int getRegionHash(int index) {
+        return regionHashes[index];
     }
 
     /**
-     * The skipped player indexes.
+     * Sets the region hash
+     * @param index the Index
+     * @param hash the Hash
      */
-    public final byte[] skips = new byte[2048];
-
-    public void enterWorld(IoBuffer stream) {
-        stream.setBitAccess();
-        stream.putBits(30, player.getLocation().toPositionPacked());
-        localPlayers[player.getIndex()] = player;
-        localPlayersIndexes[localPlayersIndexesCount++] = player.getIndex();
-        for (int playerIndex = 1; playerIndex < 2048; playerIndex++) {
-            if (playerIndex == player.getIndex())
-                continue;
-            Player player = Repository.getPlayers().get(playerIndex);
-            stream.putBits(18, regionHashes[playerIndex] = player == null ? 0 : player.getLocation().toRegionPacked());
-            outPlayersIndexes[outPlayersIndexesCount++] = playerIndex;
-
-        }
-        stream.setByteAccess();
+    public void setRegionHash(int index, int hash) {
+        regionHashes[index] = hash;
     }
 
-    private boolean needsRemove(Player p) {
-        // can't just do this or you'll get chat from other dungeons
-        return p != player && (!p.isActive() || !(player.getLocation().withinDistance(p.getLocation(), player.getSettings().hasLargeSceneView() ? 126 : 14)));
+    /**
+     * @return the slotFlag
+     */
+    public byte getSlotFlag(int index) {
+        return slotFlags[index];
     }
 
-    private boolean needsAdd(Player p) {
-        return p != null && p.getSettings().isRunToggled() && (player.getLocation().withinDistance(p.getLocation(), player.getSettings().hasLargeSceneView() ? 126 : 14)
-                 && localAddedPlayers < MAX_PLAYER_ADD);
+    public void setSlotFlag(int index, byte flag) {
+        slotFlags[index] = flag;
+    }
+
+    /**
+     * @return the movementType
+     */
+    public byte getMovementType(int index) {
+        return movementTypes[index];
+    }
+
+    /**
+     * @return the localAddedPlayers
+     */
+    public int getLocalAddedPlayers() {
+        return localAddedPlayers;
+    }
+
+    public void incrementLocals() {
+        localAddedPlayers++;
+    }
+
+    /**
+     * @return the largeScene
+     */
+    public boolean isLargeScene() {
+        return largeScene;
+    }
+
+    /**
+     * Checks if there are excessive npcs.
+     *
+     * @return {@code true} if so, {@code false} if not.
+     */
+    public boolean isExcessiveNpcsSet() {
+        return excessiveNpcs;
+    }
+
+    /**
+     * Checks if there are excessive players.
+     *
+     * @return {@code true} if so, {@code false} if not.
+     */
+    public boolean isExcessivePlayersSet() {
+        return excessivePlayers;
+    }
+
+    /**
+     * Sets the excessive npcs flag.
+     */
+    public void flagExcessiveNpcs() {
+        excessiveNpcs = true;
+    }
+    /**
+     * Sets the excessive players flag.
+     */
+    public void flagExcessivePlayers() {
+        excessivePlayers = true;
+    }
+
+    /**
+     * Gets this player's viewing distance.
+     *
+     * @return The viewing distance.
+     */
+    public int getViewingDistance() {
+        return viewingDistance;
+    }
+
+    /**
+     * Resets this player's viewing distance.
+     */
+    public void resetViewingDistance() {
+        viewingDistance = 1;
     }
 
 }
+

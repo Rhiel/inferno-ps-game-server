@@ -3,6 +3,8 @@ package org.arios.net.packet.out;
 import org.arios.cache.xtea.XteaManager;
 import org.arios.game.node.entity.player.Player;
 import org.arios.game.world.map.RegionManager;
+import org.arios.game.world.update.PlayerRenderer;
+import org.arios.game.world.update.flag.player.AppearanceFlag;
 import org.arios.net.packet.IoBuffer;
 import org.arios.net.packet.OutgoingPacket;
 import org.arios.net.packet.PacketHeader;
@@ -24,7 +26,7 @@ public final class UpdateSceneGraph implements OutgoingPacket<SceneGraphContext>
         Player player = context.getPlayer();
         player.getPlayerFlags().setLastSceneGraph(player.getLocation());
         if (context.isLogin()) {
-            player.getRenderInfo().enterWorld(buffer);
+            player.getRenderInfo().initialize(buffer);
         }
         int count = 0;
         final int chunkX = player.getLocation().getRegionX();
@@ -55,7 +57,10 @@ public final class UpdateSceneGraph implements OutgoingPacket<SceneGraphContext>
                 .putShortA(chunkY)
                 .putShort(count)
                 .put(xteaBuffer);
-        player.getDetails().getSession().write(buffer);
+        if (!context.isLogin()) {
+            player.getDetails().getSession().write(buffer, PlayerRenderer.render(player));
+        } else
+            player.getDetails().getSession().write(buffer);
     }
 
 }

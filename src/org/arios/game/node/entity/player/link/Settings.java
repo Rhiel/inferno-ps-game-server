@@ -119,7 +119,7 @@ public final class Settings {
      */
     private int attackStyleIndex = 0;
 
-    public transient boolean largeSceneView;
+    public transient boolean largeSceneView = false;
 
     /**
      * Constructs a new {@code Settings} {@code Object}.
@@ -401,11 +401,11 @@ public final class Settings {
      * @param If the run button should be enabled.
      */
     public void setRunToggled(boolean enabled) {
-        if (TutorialSession.getExtension(player).getStage() < 25) {
+       /* if (TutorialSession.getExtension(player).getStage() < 25) {
             player.getConfigManager().set(173, 1);
             player.getConfigManager().set(173, 0);
             return;
-        }
+        }*/
         runToggled = enabled;
         player.getConfigManager().set(173, runToggled ? 1 : 0);
     }

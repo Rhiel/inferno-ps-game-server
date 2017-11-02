@@ -24,5 +24,10 @@ public final class LoginEventProducer implements EventProducer {
     public IoWriteEvent produceWriter(IoSession session, Object context) {
 	return new LoginWriteEvent(session, context);
     }
+    @Override
+    public IoWriteEvent produceWriter(IoSession session, Object context1, Object context2) {
+        return null;
+    }
+
 
 }

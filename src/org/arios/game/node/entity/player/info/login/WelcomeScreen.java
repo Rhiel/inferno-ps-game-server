@@ -4,6 +4,7 @@ import org.arios.game.component.Component;
 import org.arios.game.node.entity.player.Player;
 import org.arios.game.world.GameWorld;
 import org.arios.game.world.repository.Repository;
+import org.arios.game.world.update.flag.player.AppearanceFlag;
 import org.arios.net.Constants;
 import org.arios.net.packet.PacketRepository;
 import org.arios.net.packet.context.CameraContext;
@@ -23,6 +24,7 @@ public class WelcomeScreen {
      * @param player The player.
      */
     public static void configureLobby(Player player) {
+        player.getUpdateMasks().register(new AppearanceFlag(player));
         player.updateSceneGraph(true);
         PacketRepository.send(CameraViewPacket.class, new CameraContext(player, CameraContext.CameraType.SET, 0, 0, 0, 0,0));
         PacketRepository.send(IPEncoder.class, new IPContext(player, "127.0.0.1"));

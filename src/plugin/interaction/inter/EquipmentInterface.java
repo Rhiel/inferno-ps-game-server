@@ -186,7 +186,7 @@ public final class EquipmentInterface extends ComponentPlugin {
                 return true;*/
             default:
                 switch (button) {
-                    case 50:
+                    case 21:
                         if (p.getInterfaceManager().isOpened() && p.getInterfaceManager().getOpened().getId() == 102) {
                             return true;
                         }
@@ -205,7 +205,7 @@ public final class EquipmentInterface extends ComponentPlugin {
                         //PacketRepository.send(ContainerPacket.class, new ContainerContext(p, 149, 0, 91, itemArray[1], false)); //THIS PUT THE ITEMS IN INV? LOL TODO REMOVE.
                         p.getPacketDispatch().sendRunScript(118, "iiooooiisii", params);
                         break;
-                    case 51:
+                    case 17:
                         if (p.getInterfaceManager().isOpened() && p.getInterfaceManager().getOpened().getId() == 465) {
                             return true;
                         }
@@ -236,12 +236,12 @@ public final class EquipmentInterface extends ComponentPlugin {
                         p.setAttribute("equip_stats_open", true);
 
                         //Arios way below
-                        EquipmentContainer.update(p);
+                       // EquipmentContainer.update(p);
                         //p.getInterfaceManager().removeTabs(0, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13);
                         //p.getInterfaceManager().openTab(new Component(149));
-                        p.getInventory().getListeners().add(listener);
-                        p.getInventory().refresh();
-                        ItemDefinition.statsUpdate(p);
+                       // p.getInventory().getListeners().add(listener);
+                       // p.getInventory().refresh();
+                       // ItemDefinition.statsUpdate(p);
                         //p.getPacketDispatch().sendAccessMask(BitregisterAssembler.calculateRegister(2), 20, 465, 0, 13);
 
                         //My way below

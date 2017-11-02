@@ -180,13 +180,26 @@ public class ActionButtonPacket implements IncomingPacket {
                 componentId = (data >> 16) & 0xFFFF;
                 buttonId = data & 0xFFFF;
                 break;
-            /*case 250:
-                itemId = buffer.getShort();
-                data = buffer.getLEInt();
-                slot = buffer.getShort();
+            case 250:
+                data = buffer.getInt();
+                itemId = buffer.getLEShort();
+                //slot = buffer.getShort();
                 componentId = (data >> 16) & 0xFFFF;
                 buttonId = data & 0xFFFF;
-                break;*/
+                if (player.getDialogueInterpreter().getDialogue() == null && player.getDialogueInterpreter().getDialogueStage() == null) {
+                    player.getInterfaceManager().closeChatbox();
+                    List<DialogueAction> actions = player.getDialogueInterpreter().getActions();
+                    if (actions.size() > 0) {
+                        DialogueAction action = actions.get(0);
+                        action.handle(player, buttonId);
+                        actions.remove(action);
+                        actions.clear();
+                    }
+                    break;
+                }
+                player.getDialogueInterpreter().handle(componentId, buttonId);
+                System.out.println(componentId +" , " + buttonId +", " + itemId);
+                break;
             case 221:
                 data = buffer.getInt();
                 componentId = (data >> 16) & 0xFFFF;

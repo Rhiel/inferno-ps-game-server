@@ -25,4 +25,9 @@ public final class RegistryEventProducer implements EventProducer {
 	return new RegistryWriteEvent(session, context);
     }
 
+    @Override
+    public IoWriteEvent produceWriter(IoSession session, Object context1, Object context2) {
+        return null;
+    }
+
 }

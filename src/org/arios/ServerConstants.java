@@ -15,7 +15,7 @@ public final class ServerConstants {
     /**
      * The start locations for the tutorial.
      */
-    public static final Location[] START_LOCS = new Location[]{Location.create(3094, 3107, 0), Location.create(3094, 3473, 0)};
+    public static final Location[] START_LOCS = new Location[]{Location.create(3089, 3498, 0), Location.create(3088, 3496, 0)};
 
     /**
      * The home locations for economy & spawn.

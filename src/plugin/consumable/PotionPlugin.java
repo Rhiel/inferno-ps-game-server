@@ -33,7 +33,6 @@ public final class PotionPlugin implements Plugin<Object> {
 	new RelicymsBalm().newInstance(arg);
 	new RestorePotion().newInstance(arg);
 	new SaradominBrew().newInstance(arg);
-	new SummoningPotion().newInstance(arg);
 	new SuperantiPoison().newInstance(arg);
 	new SuperenergyPotion().newInstance(arg);
 	new SuperestorePlugin().newInstance(arg);
@@ -432,44 +431,6 @@ public final class PotionPlugin implements Plugin<Object> {
 	    }
 	    player.getSkills().updateLevel(Skills.DEFENCE, (int) ((player.getSkills().getStaticLevel(Skills.DEFENCE) * 0.20) + 2));
 	    super.consume(item, player);
-	}
-
-    }
-
-    /**
-     * Represents the summoning potion.
-     * @author 'Vexia
-     * @date 23/12/2013
-     */
-    public final class SummoningPotion extends Potion {
-
-	/**
-	 * Constructs a new {@code SummoningPotionPlugin} {@code Object}.
-	 */
-	public SummoningPotion() {
-	    /**
-	     * empty.
-	     */
-	}
-
-	@Override
-	public Plugin<Object> newInstance(Object arg) throws Throwable {
-	    Consumables.add(new SummoningPotion(new PotionEffect.Effect("Summoning potion", new int[] { 12140, 12142, 12144, 12146 }, null)));
-	    return this;
-	}
-
-	/**
-	 * Constructs a new {@code PrayerPotionPlugin} {@code Object}.
-	 * @param effect the effect.
-	 */
-	public SummoningPotion(Effect effect) {
-	    super(effect);
-	    super.emptyItem = VIAL;
-	}
-
-	@Override
-	public void effect(final Player player, final Item item) {
-	    player.getSkills().updateLevel(Skills.SUMMONING, (int) (7 + player.getSkills().getLevel(Skills.SUMMONING) * 0.25), player.getSkills().getStaticLevel(Skills.SUMMONING));
 	}
 
     }

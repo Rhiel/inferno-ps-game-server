@@ -120,7 +120,7 @@ public class SmeltingPulse extends SkillPulse<Item> {
 	    }
 	}
 	if (success(player)) {
-	    int amt = player.getInventory().freeSlots() != 0 && player.getAchievementDiaryManager().getDiary(DiaryType.VARROCK).getLevel() != -1 && player.getAchievementDiaryManager().checkSmithReward(bar) && RandomFunction.random(100) <= 10 ? 2 : 1;
+	    int amt = player.getInventory().freeSlots() != 0 && player.getAchievementDiaryManager().getDiary(DiaryType.VARROCK).getLevel() != -1 /*&& player.getAchievementDiaryManager().checkSmithReward(bar)*/ && RandomFunction.random(100) <= 10 ? 2 : 1;
 	    if (amt != 1) {
 		player.sendMessage("Throught the powers of your varrock armour you recieve double the reward.");
 	    }

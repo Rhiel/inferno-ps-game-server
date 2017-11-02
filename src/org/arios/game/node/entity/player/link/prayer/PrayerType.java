@@ -14,9 +14,38 @@ import org.arios.tools.StringUtils;
  * @author Emperor
  */
 public enum PrayerType {
-    THICK_SKIN(1, 12, 83, 5, PrayerCategory.BABY_BLUE, 10000, new SkillBonus(Skills.DEFENCE, 0.05)), BURST_OF_STRENGTH(4, 12, 84, 7, PrayerCategory.GREEN, 2689, new SkillBonus(Skills.STRENGTH, 0.05)), CLARITY_OF_THOUGHT(7, 12, 85, 9, PrayerCategory.PINK, 2664, new SkillBonus(Skills.ATTACK, 0.05)), SHARP_EYE(8, 12, 862, 11, PrayerCategory.LIME_GREEN, 2685, new SkillBonus(Skills.RANGE, 0.05)), MYSTIC_WILL(9, 12, 863, 13, PrayerCategory.LIME_GREEN, 2670, new SkillBonus(Skills.MAGIC, 0.05)), ROCK_SKIN(10, 6, 86, 15, PrayerCategory.BABY_BLUE, 2684, new SkillBonus(Skills.DEFENCE, 0.1)), SUPERHUMAN_STRENGTH(13, 6, 87, 17, PrayerCategory.GREEN, 2689, new SkillBonus(Skills.STRENGTH, 0.1)), IMPROVED_REFLEXES(16, 6, 88, 19, PrayerCategory.PINK, 2662, new SkillBonus(Skills.ATTACK, 0.1)), RAPID_RESTORE(19, 26, 89, 21, PrayerCategory.PURPLE, 2679), RAPID_HEAL(22, 18, 90, 23, PrayerCategory.PURPLE, 2678), PROTECT_ITEMS(25, 18, 91, 25, PrayerCategory.DARK_GREEN, 1982), HAWK_EYE(26, 6, 864, 27, PrayerCategory.LIME_GREEN, 2666, new SkillBonus(Skills.RANGE, 0.1)), MYSTIC_LORE(27, 6, 865, 29, PrayerCategory.LIME_GREEN, 2668, new SkillBonus(Skills.MAGIC, 0.1)), STEEL_SKIN(28, 3, 92, 31, PrayerCategory.BABY_BLUE, 2687, new SkillBonus(Skills.DEFENCE, 0.15)), ULTIMATE_STRENGTH(31, 3, 93, 33, PrayerCategory.GREEN, 2691, new SkillBonus(Skills.STRENGTH, 0.15)), INCREDIBLE_REFLEXES(34, 3, 94, 35, PrayerCategory.PINK, 2667, new SkillBonus(Skills.ATTACK, 0.15)), PROTECT_FROM_SUMMONING(35, 2, 1168, 53, PrayerCategory.DARK_BROWN, PrayerCategory.MAGENTA, new Audio(-1)), PROTECT_FROM_MAGIC(37, 3, 95, 37, PrayerCategory.LIGHT_BROWN, 2675), PROTECT_FROM_MISSILES(40, 3, 96, 39, PrayerCategory.LIGHT_BROWN, 2677), PROTECT_FROM_MELEE(43, 4, 97, 41, PrayerCategory.LIGHT_BROWN, 2676), EAGLE_EYE(44, 3, 866, 43, PrayerCategory.LIME_GREEN, 2666, new SkillBonus(Skills.RANGE, 0.15)), MYSTIC_MIGHT(45, 3, 867, 45, PrayerCategory.LIME_GREEN, 2669, new SkillBonus(Skills.MAGIC, 0.15)), RETRIBUTION(46, 12, 98, 47, PrayerCategory.LIGHT_BROWN, PrayerCategory.MAGENTA, new Audio(10000)), REDEMPTION(49, 6, 99, 49, PrayerCategory.LIGHT_BROWN, PrayerCategory.MAGENTA, new Audio(2678)), SMITE(52, 2, 100, 51, PrayerCategory.LIGHT_BROWN, PrayerCategory.MAGENTA, new Audio(2685)), CHIVALRY(60, 2, 1052, 55, PrayerCategory.PINK, 1000, new SkillBonus(Skills.DEFENCE, 0.2), new SkillBonus(Skills.STRENGTH, 0.18), new SkillBonus(Skills.ATTACK, 0.15)), PIETY(70, 2, 1053, 57, PrayerCategory.PINK, 1000, new SkillBonus(Skills.DEFENCE, 0.25), new SkillBonus(Skills.STRENGTH, 0.23), new SkillBonus(Skills.ATTACK, 0.2));
 
-    /**
+	THICK_SKIN(1, 12, 83, 4, PrayerCategory.BABY_BLUE, 2690, new SkillBonus(Skills.DEFENCE, 0.05)),
+	BURST_OF_STRENGTH(4,12,84, 5, PrayerCategory.GREEN, 2688, new SkillBonus(Skills.STRENGTH, 0.05)),
+	CLARITY_OF_THOUGHT(7, 12, 85, 6, PrayerCategory.PINK, 2664, new SkillBonus(Skills.ATTACK, 0.05)),
+	SHARP_EYE(8, 12, 862, 22, PrayerCategory.LIME_GREEN, 2685, new SkillBonus(Skills.RANGE, 0.05)),
+	MYSTIC_WILL(9, 12, 863, 23, PrayerCategory.LIME_GREEN, 2670, new SkillBonus(Skills.MAGIC, 0.05)),
+	ROCK_SKIN(10, 6, 86, 7, PrayerCategory.BABY_BLUE, 2684, new SkillBonus(Skills.DEFENCE, 0.1)),
+	SUPERHUMAN_STRENGTH(13, 6, 87, 8, PrayerCategory.GREEN, 2689, new SkillBonus(Skills.STRENGTH, 0.1)),
+	IMPROVED_REFLEXES(16, 6, 88, 9, PrayerCategory.PINK, 2662, new SkillBonus(Skills.ATTACK, 0.1)),
+	RAPID_RESTORE(19, 26, 89, 10, PrayerCategory.PURPLE, 2679),
+	RAPID_HEAL(22, 18, 90, 11, PrayerCategory.PURPLE, 2678),
+	PROTECT_ITEMS(25, 18, 91, 12, PrayerCategory.DARK_GREEN, 1982),
+	HAWK_EYE(26, 6, 864, 24, PrayerCategory.LIME_GREEN, 2666, new SkillBonus(Skills.RANGE, 0.1)),
+	MYSTIC_LORE(27, 6, 865, 25, PrayerCategory.LIME_GREEN, 2668, new SkillBonus(Skills.MAGIC, 0.1)),
+	STEEL_SKIN(28, 3, 92, 13, PrayerCategory.BABY_BLUE, 2687, new SkillBonus(Skills.DEFENCE, 0.15)),
+	ULTIMATE_STRENGTH(31, 3, 93, 14, PrayerCategory.GREEN, 2691, new SkillBonus(Skills.STRENGTH, 0.15)),
+	INCREDIBLE_REFLEXES(34, 3, 94, 15, PrayerCategory.PINK, 2667, new SkillBonus(Skills.ATTACK, 0.15)),
+	PROTECT_FROM_SUMMONING(35, 2, 1168, 530, PrayerCategory.DARK_BROWN, PrayerCategory.MAGENTA, new Audio(-1)), //TODO REMOVE THIS!
+	PROTECT_FROM_MAGIC(37, 3, 95, 16, PrayerCategory.LIGHT_BROWN, 2675),
+	PROTECT_FROM_MISSILES(40, 3, 96, 17, PrayerCategory.LIGHT_BROWN, 2677),
+	PROTECT_FROM_MELEE(43, 4, 97, 18, PrayerCategory.LIGHT_BROWN, 2676),
+	EAGLE_EYE(44, 3, 866, 26, PrayerCategory.LIME_GREEN, 2665, new SkillBonus(Skills.RANGE, 0.15)),
+	MYSTIC_MIGHT(45, 3, 867, 27, PrayerCategory.LIME_GREEN, 2669, new SkillBonus(Skills.MAGIC, 0.15)),
+	RETRIBUTION(46, 12, 98, 19, PrayerCategory.LIGHT_BROWN, PrayerCategory.MAGENTA, new Audio(2682)),
+	REDEMPTION(49, 6, 99, 20, PrayerCategory.LIGHT_BROWN, PrayerCategory.MAGENTA,  new Audio(2680)),
+	SMITE(52, 2, 100, 21, PrayerCategory.LIGHT_BROWN,  PrayerCategory.MAGENTA, new Audio(2686)),
+	//TODO Remove below
+	CHIVALRY(60, 2, 1052, 28, PrayerCategory.PINK, 1000, new SkillBonus(Skills.DEFENCE, 0.2), new SkillBonus(Skills.STRENGTH, 0.18), new SkillBonus(Skills.ATTACK, 0.15)),
+	PIETY(70, 2, 1053, 29, PrayerCategory.PINK, 1000, new SkillBonus(Skills.DEFENCE, 0.25), new SkillBonus(Skills.STRENGTH, 0.23), new SkillBonus(Skills.ATTACK, 0.2));
+
+
+	/**
      * Represents the a cache of objects related to prayers in order to decide
      * what head icon to display.
      */

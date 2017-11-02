@@ -277,6 +277,12 @@ public final class Location extends Node {
         return Math.sqrt(xdiff * xdiff + ydiff * ydiff);
     }
 
+    public int getLongestDelta(Location other) {
+        int deltaX = Math.abs(getX() - other.getX());
+        int deltaY = Math.abs(getY() - other.getY());
+        return Math.max(deltaX, deltaY);
+    }
+
     /**
      * Gets the x position on the region chunk.
      *
@@ -485,7 +491,7 @@ public final class Location extends Node {
     }
 
     public int toRegionPacked() {
-        return (y >> 6) + ((x >> 6) << 8) + (z << 16);
+        return getRegionY() + (getRegionX() << 8) + (z << 16);//(y >> 6) + ((x >> 6) << 8) + (z << 16);
     }
 
 }

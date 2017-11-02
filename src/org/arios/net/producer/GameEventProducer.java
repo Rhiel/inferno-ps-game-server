@@ -22,7 +22,12 @@ public final class GameEventProducer implements EventProducer {
 
     @Override
     public IoWriteEvent produceWriter(IoSession session, Object context) {
-	return new GameWriteEvent(session, context);
+	    return new GameWriteEvent(session, context);
+    }
+
+    @Override
+    public IoWriteEvent produceWriter(IoSession session, Object context1, Object context2) {
+        return new GameWriteEvent(session, context1, context2);
     }
 
 }

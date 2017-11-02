@@ -223,15 +223,15 @@ public class SkillDialogueHandler {
             public int getAmount(SkillDialogueHandler handler, final int buttonId) {
                 return buttonId == 6 ? 1 : buttonId == 5 ? 5 : buttonId == 4 ? -1 : handler.getAll(getIndex(handler, buttonId));
             }
-        }, TWO_OPTION(303, 0, 2) { //TODO: FIXME CHECKME
+        }, TWO_OPTION(306, 0, 2) { //TODO: FIXME CHECKME
             @Override
             public void display(Player player, SkillDialogueHandler handler) {
                 Item item;
                 player.getInterfaceManager().openChatbox(306);
                 for (int i = 0; i < handler.getData().length; i++) {
                     item = (Item) handler.getData()[i];
-                    player.getPacketDispatch().sendString("<br><br><br><br>" + (handler.names != null ? handler.names[i] : item.getName()), 303, 7 + i);
-                    player.getPacketDispatch().sendItemZoomOnInterface(item.getId(), handler.zooms != null ? handler.zooms[i] : 160, 303, 2 + i);
+                    player.getPacketDispatch().sendString("<br><br><br><br>" + (handler.names != null ? handler.names[i] : item.getName()), 306, 7 + i);
+                    player.getPacketDispatch().sendItemZoomOnInterface(item.getId(), handler.zooms != null ? handler.zooms[i] : 160, 306, 2 + i);
                 }
             }
         },

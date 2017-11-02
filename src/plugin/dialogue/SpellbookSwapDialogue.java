@@ -45,7 +45,7 @@ public class SpellbookSwapDialogue extends DialoguePlugin {
 	    if (perk) {
 		SpellBook book = SpellBook.values()[buttonId - 1];
 		player.getSpellBookManager().setSpellBook(book);
-		player.getInterfaceManager().openTab(new Component(book.getInterfaceId()));
+		//player.getInterfaceManager().openTab(new Component(book.getInterfaceId()));
 		end();
 		return true;
 	    }
@@ -60,7 +60,7 @@ public class SpellbookSwapDialogue extends DialoguePlugin {
 	    }
 	    final SpellBook book = type == 1 ? SpellBook.ANCIENT : SpellBook.MODERN;
 	    player.getSpellBookManager().setSpellBook(book);
-	    player.getInterfaceManager().openTab(new Component(book.getInterfaceId()));
+	  //  player.getInterfaceManager().openTab(new Component(book.getInterfaceId()));
 	    end();
 	    break;
 	}

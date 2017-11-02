@@ -46,6 +46,7 @@ public final class PacketRepository {
         OUTGOING_PACKETS.put(CloseInterface.class, new CloseInterface());
         OUTGOING_PACKETS.put(ConstructObject.class, new ConstructObject());
         OUTGOING_PACKETS.put(ClearObject.class, new ClearObject());
+        OUTGOING_PACKETS.put(DisplayModel.class, new DisplayModel());
        // OUTGOING_PACKETS.put(AnimateInterface.class, new AnimateInterface());
        // OUTGOING_PACKETS.put(DisplayModel.class, new DisplayModel());
         //OUTGOING_PACKETS.put(InterfaceConfig.class, new InterfaceConfig());
@@ -90,6 +91,7 @@ public final class PacketRepository {
         INCOMING_PACKETS.put(93, packet);
         INCOMING_PACKETS.put(0, packet);
         INCOMING_PACKETS.put(80, packet);
+        INCOMING_PACKETS.put(250, packet);
 
         INCOMING_PACKETS.put(82, new ChatPacket());
 
